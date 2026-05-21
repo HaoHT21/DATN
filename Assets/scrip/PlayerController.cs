@@ -29,39 +29,43 @@ public partial class PlayerController : NetworkBehaviour
     public override void FixedUpdateNetwork()
     {
         // Fusion xử lý Input và Prediction (Dự đoán) ở đây
-        if (GetInput(out PlayerInputData data))
+        if (!GetInput(out PlayerInputData data))
+            return;
+
+        if (!Object.HasInputAuthority)
+            return;
+
+        // 1. DI CHUYỂN
+        Vector3 moveVec = new Vector3(data.MovementDirection.x, data.MovementDirection.y, 0).normalized;
+
+        // Thay vì transform.Translate, dùng cách này để NetworkTransform bắt tọa độ tốt hơn
+        transform.position += moveVec * moveSpeed * Runner.DeltaTime;
+
+        // 2. XOAY MẶT (Chỉ thực hiện trên máy có quyền điều khiển hoặc StateAuthority)
+        if (Object.HasStateAuthority)
         {
-            // 1. DI CHUYỂN
-            Vector3 moveVec = new Vector3(data.MovementDirection.x, data.MovementDirection.y, 0).normalized;
+            if (data.MovementDirection.x > 0) IsFacingRight = true;
+            else if (data.MovementDirection.x < 0) IsFacingRight = false;
+        }
 
-            // Thay vì transform.Translate, dùng cách này để NetworkTransform bắt tọa độ tốt hơn
-            transform.position += moveVec * moveSpeed * Runner.DeltaTime;
+        // 3. LOGIC CHIẾN ĐẤU (chỉ StateAuthority thay đổi trạng thái mạng)
+        if (Object.HasStateAuthority)
+        {
+            if (IsAttacking && attackTimer.Expired(Runner))
+                IsAttacking = false;
 
-            // 2. XOAY MẶT (Chỉ thực hiện trên máy có quyền điều khiển hoặc Server)
-            if (Object.HasStateAuthority)
+            if (data.IsAttackPressed && attackTimer.ExpiredOrNotRunning(Runner))
             {
-                if (data.MovementDirection.x > 0) IsFacingRight = true;
-                else if (data.MovementDirection.x < 0) IsFacingRight = false;
+                IsAttacking = true;
+                attackTimer = TickTimer.CreateFromSeconds(Runner, attackRate);
+                DealDamageToEnemies();
             }
+        }
 
-            // 3. LOGIC CHIẾN ĐẤU
-            if (Object.HasStateAuthority)
-            {
-                if (IsAttacking && attackTimer.Expired(Runner)) IsAttacking = false;
-
-                if (data.IsAttackPressed && attackTimer.ExpiredOrNotRunning(Runner))
-                {
-                    IsAttacking = true;
-                    attackTimer = TickTimer.CreateFromSeconds(Runner, attackRate);
-                    DealDamageToEnemies();
-                }
-            }
-
-            // Animation đi bộ (Cập nhật cục bộ để mượt, không cần qua mạng)
-            if (_animator != null)
-            {
-                _animator.SetBool("isWalking", data.MovementDirection.magnitude > 0.1f);
-            }
+        // Animation đi bộ (Cập nhật cục bộ để mượt, không cần qua mạng)
+        if (_animator != null)
+        {
+            _animator.SetBool("isWalking", data.MovementDirection.magnitude > 0.1f);
         }
     }
 
@@ -74,7 +78,7 @@ public partial class PlayerController : NetworkBehaviour
 
     void DealDamageToEnemies()
     {
-        int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, attackRange, _hitResults, enemyLayer);
+        int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, attackRange,_hitResults, enemyLayer);
         for (int i = 0; i < hitCount; i++)
         {
             if (_hitResults[i].TryGetComponent<EnemyHealth>(out var eHealth))
