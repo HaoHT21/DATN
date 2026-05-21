@@ -225,6 +225,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   damageAmount: 20
+  attackRate: 0.5
+  _IsFacingRight: 1
+  _IsAttacking: 0
 --- !u!114 &-4460460525912193171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,5 +274,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd4da1672f09544d89e27ba818ad65e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
   _currentHealth: 0
+  maxHealth: 100
+  IsDead: 0
