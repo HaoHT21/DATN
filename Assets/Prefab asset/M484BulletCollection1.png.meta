@@ -116,10 +116,10 @@ TextureImporter:
       name: M484BulletCollection1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 276
-        width: 60
-        height: 85
+        x: 419
+        y: 151
+        width: 16
+        height: 17
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -138,10 +138,10 @@ TextureImporter:
       name: M484BulletCollection1_1
       rect:
         serializedVersion: 2
-        x: 437
-        y: 293
-        width: 15
-        height: 60
+        x: 442
+        y: 152
+        width: 14
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -150,7 +150,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 33ac482339583b74fa23f7283094a299
+      spriteID: 660eb5fa0e716c140bbb1da9aa97293b
       internalID: 1847257820
       vertices: []
       indices: 
@@ -160,10 +160,10 @@ TextureImporter:
       name: M484BulletCollection1_2
       rect:
         serializedVersion: 2
-        x: 11
-        y: 166
-        width: 8
-        height: 8
+        x: 463
+        y: 152
+        width: 15
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -172,7 +172,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7a29d30403aa4aa43ada930ede93fd0b
+      spriteID: f2223190199487a4482875361898ad41
       internalID: 1579938193
       vertices: []
       indices: 
@@ -182,10 +182,10 @@ TextureImporter:
       name: M484BulletCollection1_3
       rect:
         serializedVersion: 2
-        x: 23
-        y: 166
-        width: 13
-        height: 8
+        x: 486
+        y: 151
+        width: 15
+        height: 17
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,7 +194,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d1ce114b31b9ee742b845e01b86f0230
+      spriteID: 1b12d3d61985e0c43a9257a3ec6885e0
       internalID: 1321879451
       vertices: []
       indices: 
@@ -204,10 +204,10 @@ TextureImporter:
       name: M484BulletCollection1_4
       rect:
         serializedVersion: 2
-        x: 40
-        y: 166
-        width: 19
-        height: 8
+        x: 439
+        y: 295
+        width: 11
+        height: 56
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -216,7 +216,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8b06b845a38b7064e9bb61d1500ce5e8
+      spriteID: 481d70bc425b14242b0345e7ed03a6f2
       internalID: -1043062255
       vertices: []
       indices: 
@@ -226,10 +226,10 @@ TextureImporter:
       name: M484BulletCollection1_5
       rect:
         serializedVersion: 2
-        x: 63
-        y: 166
-        width: 30
-        height: 8
+        x: 455
+        y: 294
+        width: 13
+        height: 59
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -238,8 +238,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a3ab6916c1575b94d83268c6dba03d56
+      spriteID: 7ddba2b9a28e85645b8fb42a5c58b304
       internalID: 572366562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M484BulletCollection1_6
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 295
+        width: 14
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9bb795103782c7d4d83f654d45d37ff3
+      internalID: -500432349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: M484BulletCollection1_7
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 294
+        width: 11
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21f49d47e79df164984e3158daf94abe
+      internalID: -1658243196
       vertices: []
       indices: 
       edges: []
@@ -266,6 +310,8 @@ TextureImporter:
       M484BulletCollection1_3: 1321879451
       M484BulletCollection1_4: -1043062255
       M484BulletCollection1_5: 572366562
+      M484BulletCollection1_6: -500432349
+      M484BulletCollection1_7: -1658243196
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
