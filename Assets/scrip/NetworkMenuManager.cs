@@ -7,6 +7,10 @@ using UnityEngine;
 
 public class NetworkMenuManager : MonoBehaviour, INetworkRunnerCallbacks
 {
+    public static NetworkMenuManager Instance { get; private set; }
+    public PlayerStats LocalPlayerStats { get; set; } // Giữ liên kết đến nhân vật cục bộ của máy này
+
+   
     [Header("Network Config")]
     public NetworkRunner runnerPrefab;
 
@@ -32,6 +36,7 @@ public class NetworkMenuManager : MonoBehaviour, INetworkRunnerCallbacks
         if (createRoomCanvas) createRoomCanvas.gameObject.SetActive(false);
         if (roomListCanvas) roomListCanvas.gameObject.SetActive(false);
         if (passwordJoinCanvas) passwordJoinCanvas.gameObject.SetActive(false);
+        Instance = this;
     }
 
     public void OnClickHost() => createRoomCanvas.gameObject.SetActive(true);
