@@ -1,43 +1,98 @@
 ﻿using UnityEngine;
 using Fusion;
+using TMPro;
 
 public class PlayerStats : NetworkBehaviour
 {
-    // Đồng bộ biến tiền trên toàn mạng, chỉ Host được quyền sửa đổi trực tiếp
-    [Networked] public int CurrentMoney { get; set; }
+    [Header("Score & Money Settings")]
+    // Tự động đồng bộ số tiền xuyên mạng. Khi ví tiền thay đổi, tự kích hoạt hàm OnScoreChanged dưới Client
+    [Networked, OnChangedRender(nameof(OnScoreChanged))]
+    public int Score { get; set; }
+
+    [Header("UI Components")]
+    public TextMeshProUGUI scoreText;
 
     public override void Spawned()
     {
-        // Khi người chơi được khởi sinh, cấp sẵn một lượng vốn ban đầu trên máy chủ (Host)
+        // Máy chủ (Host) cấp sẵn 1000 xu ban đầu cho nhân vật khi vừa sinh ra
         if (Object.HasStateAuthority)
         {
-            CurrentMoney = 1000; // Cho sẵn 1000 vàng để test mua súng thoải mái
+            Score = 1000;
         }
 
-        // Đăng ký lưu vết người chơi nội bộ vào quản lý hệ thống
+        // Đăng ký nhân vật của chính máy này vào hệ thống quản lý để Shop dễ tìm kiếm
         if (Object.HasInputAuthority && NetworkMenuManager.Instance != null)
         {
             NetworkMenuManager.Instance.LocalPlayerStats = this;
         }
+
+        TryFindScoreUI();
+        UpdateUI();
     }
 
-    // RPC: Client gửi yêu cầu mua đồ, lệnh này sẽ bay xuyên không gian mạng lên thực thi tại máy Host
+    // Hàm Hook bắt sự kiện thay đổi dữ liệu mạng chuẩn của Fusion 2.0 (Không dùng static)
+    void OnScoreChanged()
+    {
+        UpdateUI();
+    }
+
+    /// <summary>
+    /// Tự động tìm kiếm linh kiện hiển thị tiền trên Canvas để tránh lỗi load chậm của Client
+    /// </summary>
+    private void TryFindScoreUI()
+    {
+        if (scoreText == null)
+        {
+            GameObject scoreObj = GameObject.Find("CoinScore");
+            if (scoreObj != null)
+            {
+                scoreText = scoreObj.GetComponent<TextMeshProUGUI>();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Hàm cộng xu mạng (Chỉ chạy duy nhất trên máy Host/Server để bảo mật chống hack)
+    /// </summary>
+    public void AddCoin(int amount)
+    {
+        if (Object.HasStateAuthority)
+        {
+            Score += amount;
+        }
+    }
+
+    /// <summary>
+    /// Ép văn bản trên màn hình UI cập nhật số tiền mới nhất
+    /// </summary>
+    public void UpdateUI()
+    {
+        TryFindScoreUI();
+
+        if (scoreText != null)
+        {
+            scoreText.text = "" + Score;
+            Debug.Log($"[Ví Mạng UI] Đã đồng bộ số hiển thị trên Canvas thành: {Score} xu.");
+        }
+    }
+
+    // Lệnh RPC: Client bắn yêu cầu giao dịch xuyên không gian mạng lên cho Host xử lý trừ tiền
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void RPC_RequestPurchase(int price, int id)
     {
-        // Kiểm tra điều kiện ngặt nghèo ngay tại Host để chống hack tiền từ Client
-        if (CurrentMoney >= price)
+        // Server kiểm tra số dư ví tiền thực tế trên mạng
+        if (Score >= price)
         {
-            CurrentMoney -= price; // Thực hiện trừ tiền trên ví mạng công bằng
+            Score -= price; // Máy chủ thực hiện trừ tiền trực tiếp trên ví gốc
 
-            Debug.Log($"[Giao dịch] Mua thành công! Số tiền còn lại: {CurrentMoney}G");
+            Debug.Log($"[RPC Thành Công] Đã trừ {price} xu. Số dư ví mạng còn lại: {Score}");
 
-            // Tiến hành sinh vật phẩm thực tế rơi ra đất
+            // Kích hoạt hàm sinh món đồ rơi ra đất
             SpawnPurchasedItemOnGround(id);
         }
         else
         {
-            Debug.LogWarning("[Giao dịch] Thất bại! Người chơi không đủ số dư để thanh toán.");
+            Debug.LogWarning($"[RPC Từ Chối] Không đủ tiền! Ví có {Score} xu, món đồ giá {price} xu.");
         }
     }
 
@@ -45,15 +100,15 @@ public class PlayerStats : NetworkBehaviour
     {
         if (ShopManager.Instance == null) return;
 
-        // Truy vấn lấy file Prefab mạng chuẩn từ danh sách ScriptableObject
+        // Lấy Prefab chứa NetworkObject từ danh sách cấu hình ShopManager dựa vào ID món đồ
         GameObject itemPrefabToSpawn = ShopManager.Instance.GetPrefabByID(id);
 
         if (itemPrefabToSpawn != null)
         {
-            // Tạo độ lệch nhỏ (Offset) để món đồ rơi ra ngay phía bên cạnh dưới chân nhân vật mua
+            // Tạo vị trí rơi ngay dưới chân người chơi (hơi lệch xuống dưới một chút)
             Vector3 spawnPosition = transform.position + new Vector3(0, -0.8f, 0);
 
-            // Lệnh tối quan trọng của Photon Fusion: Sinh thực thể mạng đồng bộ 100% các máy khách
+            // Gọi lệnh sinh vật thể mạng đồng bộ tối cao của Fusion để tất cả Client cùng nhìn thấy món đồ rơi ra
             Runner.Spawn(itemPrefabToSpawn, spawnPosition, Quaternion.identity);
         }
     }

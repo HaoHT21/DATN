@@ -124,8 +124,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ac01580b8d7f3e4abc504b9583b27a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coinValue: 1
   detectRange: 3
   moveSpeed: 10
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &1288275690742618175
 MonoBehaviour:
   m_ObjectHideFlags: 0
