@@ -225,6 +225,7 @@ GameObject:
   - component: {fileID: -4460460525912193171}
   - component: {fileID: -1673135767734302123}
   - component: {fileID: -8053739653458759313}
+  - component: {fileID: -3834506383818014163}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -474,6 +475,7 @@ MonoBehaviour:
   - {fileID: -8230275147079382920}
   - {fileID: -4460460525912193171}
   - {fileID: -8053739653458759313}
+  - {fileID: -3834506383818014163}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &-8053739653458759313
 MonoBehaviour:
@@ -490,3 +492,17 @@ MonoBehaviour:
   _currentHealth: 0
   maxHealth: 100
   IsDead: 0
+--- !u!114 &-3834506383818014163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6374291142697423168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8228bd67ee7acf04bb877318f1505aa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Score: 0
+  scoreText: {fileID: 0}
