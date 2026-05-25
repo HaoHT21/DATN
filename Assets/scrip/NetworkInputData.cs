@@ -6,4 +6,5 @@ public struct PlayerInputData : INetworkInput
 {
     public Vector2 MovementDirection;
     public NetworkBool IsAttackPressed; // Thêm dòng này để dùng được nút đánh
+    public bool IsRPressed;
 }

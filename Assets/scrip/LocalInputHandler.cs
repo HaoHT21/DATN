@@ -14,6 +14,7 @@ public class LocalInputHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     // --- BIẾN TẠM ĐỂ LƯU CÚ CLICK ---
     private bool _isAttackConsumed = false;
+    private bool _isRPressedConsumed = false;
 
     private void Start()
     {
@@ -23,11 +24,16 @@ public class LocalInputHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     private void Update()
     {
-        // 1. Thu thập cú click chuột ở Update (đảm bảo cực nhạy)
-        // GetMouseButtonDown chỉ trả về true 1 lần duy nhất khi vừa nhấn vào
+        // 1. Thu thập cú click chuột/phím K
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.K))
         {
             _isAttackConsumed = true;
+        }
+
+        // 2. Thu thập cú nhấn phím R
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            _isRPressedConsumed = true;
         }
     }
 
@@ -36,20 +42,20 @@ public class LocalInputHandler : MonoBehaviour, INetworkRunnerCallbacks
     {
         var myInput = new PlayerInputData();
 
-        // Đọc hướng di chuyển
         myInput.MovementDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        // 2. Gán giá trị từ biến tạm vào dữ liệu mạng
+        // QUAN TRỌNG: Gán giá trị từ biến tạm vào dữ liệu mạng
         myInput.IsAttackPressed = _isAttackConsumed;
+        myInput.IsRPressed = _isRPressedConsumed; // <--- TRUNG THIẾU DÒNG NÀY NÈ!
 
         input.Set(myInput);
 
-        // 3. QUAN TRỌNG NHẤT: Reset biến tạm về false ngay sau khi đã gửi đi
-        // Điều này giúp máy chủ hiểu là bạn đã "xài" xong cú click đó rồi
+        // Reset các biến tạm về false để không bị lặp lại hành động
         _isAttackConsumed = false;
+        _isRPressedConsumed = false; // <--- TRUNG THIẾU DÒNG NÀY NỮA!
     }
 
-    // CẬP NHẬT DANH SÁCH PHÒNG (Giữ nguyên code cũ của bạn)
+    // --- CÁC HÀM CALLBACKS GIỮ NGUYÊN ---
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
         if (roomListContent == null) return;
