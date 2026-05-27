@@ -1,7 +1,6 @@
-﻿using Fusion;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Player : NetworkBehaviour
+public class Player : MonoBehaviour
 {
     [Header("Move")]
     public float moveSpeed = 5f;
@@ -12,137 +11,73 @@ public class Player : NetworkBehaviour
     public int damageAmount = 20;
     public float attackRate = 0.5f;
 
-    [Networked]
-    public bool IsFacingRight { get; set; } = true;
+    // Các biến trạng thái thường
+    public bool IsFacingRight { get; private set; } = true;
+    public bool IsAttacking { get; private set; }
 
-    [Networked]
-    public bool IsAttacking { get; set; }
-
-    [Networked]
-    private TickTimer attackTimer { get; set; }
-
+    private float _attackTimer;
     private Animator anim;
     private SpriteRenderer sprite;
     private Rigidbody2D rb;
 
-    private Collider2D[] hitResults =
-        new Collider2D[10];
+    private Collider2D[] hitResults = new Collider2D[10];
 
-    public override void Spawned()
+    private void Awake()
     {
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
 
+        // Thiết lập Rigidbody
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
-
-        rb.collisionDetectionMode =
-            CollisionDetectionMode2D.Continuous;
-
-        rb.interpolation =
-            RigidbodyInterpolation2D.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
     }
 
-    public override void FixedUpdateNetwork()
+    private void Update()
     {
-        if (!GetInput(out PlayerInputData data))
-            return;
+        // 1. INPUT DI CHUYỂN
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveY = Input.GetAxisRaw("Vertical");
+        Vector2 moveDir = new Vector2(moveX, moveY).normalized;
+        rb.linearVelocity = moveDir * moveSpeed;
 
-        // ===== MOVE =====
+        // 2. FLIP (Xoay hướng)
+        if (moveX > 0) IsFacingRight = true;
+        else if (moveX < 0) IsFacingRight = false;
+        sprite.flipX = !IsFacingRight;
 
-        Vector2 moveDir =
-            data.MovementDirection.normalized;
-
-        // Dùng velocity thay vì MovePosition
-        rb.linearVelocity =
-            moveDir * moveSpeed;
-
-        // ===== FLIP =====
-
-        if (Object.HasStateAuthority)
+        // 3. XỬ LÝ ĐĂNG CẤP TẤN CÔNG (Cooldown)
+        if (IsAttacking)
         {
-            if (moveDir.x > 0)
-            {
-                IsFacingRight = true;
-            }
-            else if (moveDir.x < 0)
-            {
-                IsFacingRight = false;
-            }
+            _attackTimer -= Time.deltaTime;
+            if (_attackTimer <= 0) IsAttacking = false;
         }
 
-        // ===== ATTACK =====
-
-        if (Object.HasStateAuthority)
+        // 4. INPUT TẤN CÔNG
+        if (Input.GetButtonDown("Fire1") && !IsAttacking)
         {
-            if (IsAttacking &&
-                attackTimer.Expired(Runner))
-            {
-                IsAttacking = false;
-            }
-
-            if (data.IsAttackPressed &&
-                attackTimer.ExpiredOrNotRunning(Runner))
-            {
-                IsAttacking = true;
-
-                attackTimer =
-                    TickTimer.CreateFromSeconds(
-                        Runner,
-                        attackRate
-                    );
-
-                DealDamageToEnemies();
-            }
+            IsAttacking = true;
+            _attackTimer = attackRate;
+            anim.SetTrigger("Attack"); // Kích hoạt animation Attack
+            DealDamageToEnemies();
         }
 
-        // ===== ANIMATION =====
-
-        if (anim != null)
-        {
-            anim.SetBool(
-                "isWalking",
-                moveDir.magnitude > 0.1f
-            );
-        }
-    }
-
-    public override void Render()
-    {
-        if (sprite != null)
-        {
-            sprite.flipX = !IsFacingRight;
-        }
-
-        if (anim != null)
-        {
-            anim.SetBool(
-                "Attack",
-                IsAttacking
-            );
-        }
+        // 5. ANIMATION DI CHUYỂN
+        anim.SetBool("isWalking", moveDir.magnitude > 0.1f);
     }
 
     void DealDamageToEnemies()
     {
-        int hitCount =
-            Physics2D.OverlapCircleNonAlloc(
-                transform.position,
-                attackRange,
-                hitResults,
-                enemyLayer
-            );
+        // Dùng OverlapCircleAll thay vì NonAlloc để hết cảnh báo
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange, enemyLayer);
 
-        for (int i = 0; i < hitCount; i++)
+        foreach (Collider2D hit in hits)
         {
-            if (hitResults[i]
-                .TryGetComponent(
-                    out EnemyHealth enemy))
+            if (hit.TryGetComponent(out EnemyHealth enemy))
             {
-                enemy.Rpc_TakeDamage(
-                    damageAmount
-                );
+                enemy.TakeDamage(damageAmount);
             }
         }
     }

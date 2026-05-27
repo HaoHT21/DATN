@@ -1,27 +1,20 @@
-﻿using Fusion;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BossFireball : NetworkBehaviour
+public class BossFireball : MonoBehaviour
 {
     public float speed = 8f;
     public int damage = 20;
 
-    public override void FixedUpdateNetwork()
-    {
-        // Đạn bay thẳng về phía trước theo trục X (hoặc hướng bạn muốn)
-        transform.Translate(Vector3.right * speed * Runner.DeltaTime);
+    private void Start() => Destroy(gameObject, 3f); // Tự hủy sau 3s
 
-        // Tự hủy sau 3 giây để tránh rác server
-        if (Object.HasStateAuthority && TickTimer.CreateFromSeconds(Runner, 3f).Expired(Runner))
-            Runner.Despawn(Object);
-    }
+    private void Update() => transform.Translate(Vector3.right * speed * Time.deltaTime);
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (Object.HasStateAuthority && other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            if (other.TryGetComponent<PlayerHealth>(out var hp)) hp.Rpc_TakeDamage(damage);
-            Runner.Despawn(Object); // Chạm người chơi là biến mất
+            other.GetComponent<PlayerHealth>()?.TakeDamage(damage);
+            Destroy(gameObject);
         }
     }
 }

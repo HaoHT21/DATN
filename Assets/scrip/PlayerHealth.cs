@@ -1,25 +1,21 @@
-﻿using Fusion;
+﻿using UnityEngine;
 
-using UnityEngine;
-
-public class PlayerHealth : NetworkBehaviour
+public class PlayerHealth : MonoBehaviour
 {
-    [Networked] public int currentHealth { get; set; }
+    public int currentHealth = 100;
     public int maxHealth = 100;
-    public bool IsDead;
+    public bool IsDead { get; private set; }
 
-    public override void Spawned()
-    {
-        if (Object.HasStateAuthority) currentHealth = maxHealth;
-    }
+    private Animator _animator;
 
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void Rpc_TakeDamage(int damage)
+    private void Awake() => _animator = GetComponent<Animator>();
+
+    public void TakeDamage(int damage)
     {
-        if (IsDead || currentHealth <= 0) return;
+        if (IsDead) return;
 
         currentHealth -= damage;
-        Debug.Log($"<color=blue>[PLAYER]</color> Trúng đòn! Máu còn: {currentHealth}");
+        Debug.Log($"Player bị tấn công! Máu còn: {currentHealth}");
 
         if (currentHealth <= 0)
         {
@@ -27,16 +23,13 @@ public class PlayerHealth : NetworkBehaviour
         }
     }
 
-    void PlayerDie()
+    private void PlayerDie()
     {
         IsDead = true;
-        Debug.Log("<color=black>PLAYER ĐÃ HY SINH!</color>");
+        _animator?.SetTrigger("Death"); // Giả sử animation của bạn dùng trigger "Death"
+        Debug.Log("PLAYER ĐÃ HY SINH!");
 
-        // 3. PLAYER BIẾN MẤT (DESPAWN)
-        // Chỉ máy có quyền (StateAuthority) mới được thực hiện lệnh xóa
-        if (Object.HasStateAuthority)
-        {
-            Runner.Despawn(Object);
-        }
+        // Bạn có thể kích hoạt UI Game Over ở đây thông qua GameUIManager
+        // GameUIManager.Instance.ShowGameOver();
     }
 }

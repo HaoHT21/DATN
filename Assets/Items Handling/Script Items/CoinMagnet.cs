@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using Fusion;
 
-public class CoinMagnet : NetworkBehaviour
+public class CoinMagnet : MonoBehaviour
 {
     [Header("Cấu hình Coin")]
-    [SerializeField] private int coinValue = 1; // Giá trị cộng điểm của đồng xu này
+    [SerializeField] private int coinValue = 1;
 
     [Header("Khoảng hút")]
     public float detectRange = 3f;
@@ -12,16 +11,15 @@ public class CoinMagnet : NetworkBehaviour
     [Header("Tốc độ bay")]
     public float moveSpeed = 10f;
 
-    private Transform targetPlayer;
-    private bool isFlying = false;
-
-    // Lớp mặt nạ vật lý để đồng xu chỉ quét đúng Layer của Player, tránh quét nhầm quái vật/tường
     [Header("Physics Settings")]
     [SerializeField] private LayerMask playerLayer;
 
-    public override void FixedUpdateNetwork()
+    private Transform targetPlayer;
+    private bool isFlying = false;
+
+    private void Update()
     {
-        // Nếu chưa bay -> tìm player gần nhất bằng vòng quét vật lý mạng
+        // Sử dụng Update thay vì FixedUpdateNetwork
         if (!isFlying)
         {
             FindPlayerPhysics();
@@ -34,12 +32,11 @@ public class CoinMagnet : NetworkBehaviour
 
     void FindPlayerPhysics()
     {
-        // Sử dụng hệ thống vật lý tích hợp của Fusion để quét các Collider trong tầm hút
-        Collider2D hit = Runner.GetPhysicsScene2D().OverlapCircle(transform.position, detectRange, playerLayer);
+        // Dùng Physics2D chuẩn của Unity
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, detectRange, playerLayer);
 
         if (hit != null)
         {
-            // Kiểm tra xem đối tượng va chạm có chứa linh kiện PlayerStats hay không
             PlayerStats stats = hit.GetComponent<PlayerStats>();
             if (stats != null)
             {
@@ -57,11 +54,11 @@ public class CoinMagnet : NetworkBehaviour
             return;
         }
 
-        // Tịnh tiến mượt mà theo thời gian thực mạng
+        // Tịnh tiến mượt mà theo Time.deltaTime
         transform.position = Vector2.MoveTowards(
             transform.position,
             targetPlayer.position,
-            moveSpeed * Runner.DeltaTime
+            moveSpeed * Time.deltaTime
         );
 
         // Kiểm tra khoảng cách chạm ăn xu
@@ -69,23 +66,19 @@ public class CoinMagnet : NetworkBehaviour
 
         if (distance < 0.2f)
         {
-            // Quyền tối cao thuộc về Server/Host để cộng tiền và hủy thực thể mạng
-            if (Object.HasStateAuthority)
+            // Trong chế độ Offline, không cần kiểm tra HasStateAuthority
+            PlayerStats stats = targetPlayer.GetComponent<PlayerStats>();
+            if (stats != null)
             {
-                PlayerStats stats = targetPlayer.GetComponent<PlayerStats>();
-                if (stats != null)
-                {
-                    stats.AddCoin(coinValue); // Tăng điểm Score mạng công bằng
-                    Debug.Log($"[Coin Network] Đã cộng {coinValue} xu vào ví mạng.");
-                }
-
-                // Xóa đồng xu trên toàn bộ tất cả màn hình các Client
-                Runner.Despawn(Object);
+                stats.AddCoin(coinValue);
+                Debug.Log($"[Coin Offline] Đã cộng {coinValue} xu vào ví.");
             }
+
+            // Hủy đồng xu ngay lập tức
+            Destroy(gameObject);
         }
     }
 
-    // Vẽ vòng tròn giả lập ngoài Scene để bạn dễ căn chỉnh khoảng cách hút trong Inspector
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.gold;

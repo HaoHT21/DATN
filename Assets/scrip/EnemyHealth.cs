@@ -1,129 +1,26 @@
-﻿using Fusion;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
 
-public class EnemyHealth : NetworkBehaviour
+public class EnemyHealth : MonoBehaviour
 {
-    [Header("Máu")]
-    public int maxHealth = 100;
-
-    [Networked] public int currentHealth { get; set; }
-    [Networked] public bool IsDead { get; set; }
-    [Networked] private TickTimer despawnTimer { get; set; }
-
-    [Header("Drop Coin")]
-    public NetworkPrefabRef coinPrefab;
-    public int coinAmount = 5;
-
+    public int currentHealth = 100;
     private Animator _animator;
-    private ChangeDetector _changes;
+    private Collider2D _collider;
 
-    public override void Spawned()
+    private void Awake() { _animator = GetComponent<Animator>(); _collider = GetComponent<Collider2D>(); }
+
+    public void TakeDamage(int damage)
     {
-        _animator = GetComponent<Animator>();
-        _changes = GetChangeDetector(ChangeDetector.Source.SimulationState);
-
-        if (Object.HasStateAuthority)
-        {
-            currentHealth = maxHealth;
-        }
-    }
-
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void Rpc_TakeDamage(int damage)
-    {
-        if (IsDead) return;
-
         currentHealth -= damage;
-
-        Debug.Log("Enemy HP: " + currentHealth);
-
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        _animator?.SetTrigger("Hit");
+        if (currentHealth <= 0) StartCoroutine(DieSequence());
     }
 
-    void Die()
+    private IEnumerator DieSequence()
     {
-        IsDead = true;
-
-        // Tắt collider
-        if (TryGetComponent<Collider2D>(out var col))
-        {
-            col.enabled = false;
-        }
-
-        // Animation chết
-        if (_animator != null)
-        {
-            _animator.SetBool("isDead", true);
-        }
-
-        // Spawn coin
-        SpawnCoins();
-
-        // Delay trước khi xoá enemy
-        despawnTimer = TickTimer.CreateFromSeconds(Runner, 2f);
-    }
-
-    void SpawnCoins()
-    {
-        // Chỉ host được spawn
-        if (!Object.HasStateAuthority)
-            return;
-
-        for (int i = 0; i < coinAmount; i++)
-        {
-            // Random vị trí xung quanh enemy
-            Vector2 randomOffset = Random.insideUnitCircle * 1.5f;
-
-            Vector3 spawnPos = transform.position + (Vector3)randomOffset;
-
-            Runner.Spawn(
-                coinPrefab,
-                spawnPos,
-                Quaternion.identity
-            );
-        }
-    }
-
-    public override void FixedUpdateNetwork()
-    {
-        if (Object.HasStateAuthority &&
-            IsDead &&
-            despawnTimer.Expired(Runner))
-        {
-            Runner.Despawn(Object);
-        }
-    }
-
-    public override void Render()
-    {
-        foreach (var change in _changes.DetectChanges(this))
-        {
-            switch (change)
-            {
-                case nameof(currentHealth):
-
-                    if (currentHealth > 0 && currentHealth < maxHealth)
-                    {
-                        if (_animator != null)
-                        {
-                            _animator.SetTrigger("Hit");
-                        }
-                    }
-
-                    break;
-
-                case nameof(IsDead):
-
-                    if (IsDead && _animator != null)
-                    {
-                        _animator.SetBool("isDead", true);
-                    }
-
-                    break;
-            }
-        }
+        if (_collider) _collider.enabled = false;
+        _animator?.SetBool("Death", true);
+        yield return new WaitForSeconds(0.8f);
+        Destroy(gameObject);
     }
 }

@@ -11,9 +11,6 @@ GameObject:
   - component: {fileID: 358035745019997963}
   - component: {fileID: 1662483668974094703}
   - component: {fileID: 983696969247361766}
-  - component: {fileID: 516027502409592956}
-  - component: {fileID: 4373245960349483085}
-  - component: {fileID: 255903356170043874}
   - component: {fileID: 1942116945829342057}
   - component: {fileID: 7403597301283554849}
   - component: {fileID: 519009119834546279}
@@ -117,63 +114,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &516027502409592956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4626376719991054897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 983696969247361766}
-  ApplyTiming: 2
-  SyncSettings: 79
-  StateHashes: 0000000058cfd6bcb6ad1ec9b53a42b85b588acdf112e54a2fb9a429ad620db56f10cc179123e3278c242460
-  TriggerHashes: 000000000d286c40a1609f62
-  TotalWords: 1
---- !u!114 &4373245960349483085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4626376719991054897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SortKey: 559920932
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 516027502409592956}
-  - {fileID: 255903356170043874}
-  - {fileID: 519009119834546279}
-  - {fileID: 3306993658421237439}
-  ForceRemoteRenderTimeframe: 0
---- !u!114 &255903356170043874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4626376719991054897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  DisableSharedModeInterpolation: 0
 --- !u!50 &1942116945829342057
 Rigidbody2D:
   serializedVersion: 5
@@ -183,7 +123,7 @@ Rigidbody2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4626376719991054897}
   m_BodyType: 1
-  m_Simulated: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -250,15 +190,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e83bc8dc9a1e17d4f9b599d75dcb9c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
+  moveSpeed: 6
   stoppingDistance: 1.2
   attackRate: 1.36
   damage: 10
   attackRange: 1.5
   chaseRange: 4
-  _IsAttacking: 0
-  _IsMoving: 0
-  _IsFacingLeft: 0
 --- !u!114 &3306993658421237439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +208,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a9fcb8db05d7f542a6511cca90d2c61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
-  _currentHealth: 0
-  _IsDead: 0
+  currentHealth: 100

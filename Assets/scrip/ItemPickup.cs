@@ -1,24 +1,23 @@
-﻿using Fusion;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ItemPickup : NetworkBehaviour
+public class ItemPickup : MonoBehaviour
 {
-    public int weaponIndex; // ID của khẩu súng (ví dụ: 1 là Pistol, 2 là Rifle)
+    public GameObject weaponVisualPrefab; // Prefab hiển thị trên tay (file Project)
+    public GameObject weaponPickupPrefab; // File Prefab gốc (file Project)
+    public GameObject bulletPrefab;
+    public bool isGun;
+    public int damage = 25;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Chỉ Host mới xử lý việc nhặt đồ để tránh xung đột mạng
-        if (!Object || !Object.HasStateAuthority) return;
-
         if (other.CompareTag("Player"))
         {
-            if (other.TryGetComponent<PlayerController>(out var player))
+            PlayerController pc = other.GetComponent<PlayerController>();
+            if (pc != null)
             {
-                // Gọi hàm nhặt súng trên Player
-                player.Rpc_PickupWeapon(weaponIndex);
-
-                // Sau khi nhặt xong thì xóa vật phẩm trên Map
-                Runner.Despawn(Object);
+                // Truyền trực tiếp các Prefab từ file Project
+                pc.PickupWeapon(weaponVisualPrefab, weaponPickupPrefab, isGun, damage, bulletPrefab);
+                Destroy(gameObject); // Xóa vật phẩm trên bản đồ
             }
         }
     }

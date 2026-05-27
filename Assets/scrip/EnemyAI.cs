@@ -1,7 +1,6 @@
-﻿using Fusion;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class EnemyAI : NetworkBehaviour
+public class EnemyAI : MonoBehaviour
 {
     [Header("Cấu hình di chuyển")]
     public float moveSpeed = 3f;
@@ -13,69 +12,61 @@ public class EnemyAI : NetworkBehaviour
     public float attackRange = 1.1f;
     public float chaseRange = 5.0f;
 
-    // --- BIẾN MẠNG: Đồng bộ trạng thái cho tất cả máy khách ---
-    [Networked] public bool IsAttacking { get; set; }
-    [Networked] public bool IsMoving { get; set; } // Đồng bộ trạng thái đi bộ
-    [Networked] public bool IsFacingLeft { get; set; } // Đồng bộ hướng mặt
-    [Networked] private TickTimer attackTimer { get; set; }
+    // Trạng thái cục bộ
+    public bool IsAttacking { get; private set; }
+    public bool IsMoving { get; private set; }
+    public bool IsFacingLeft { get; private set; }
 
+    private float _attackTimer;
     private Animator _animator;
     private SpriteRenderer _sprite;
     private Rigidbody2D _rb;
     private Transform _target;
 
-    public override void Spawned()
+    private void Awake()
     {
         _animator = GetComponent<Animator>();
         _sprite = GetComponent<SpriteRenderer>();
         _rb = GetComponent<Rigidbody2D>();
     }
 
-    public override void FixedUpdateNetwork()
+    private void Update()
     {
-        // 1. Chỉ máy Host/Server mới có quyền tính toán logic di chuyển
-        if (!Object.HasStateAuthority) return;
-
-        // Tìm người chơi ở gần nhất
+        // 1. Tìm người chơi gần nhất
         FindClosestPlayer();
 
         if (_target == null)
         {
             IsMoving = false;
+            UpdateAnimations();
             return;
         }
 
         float distanceToPlayer = Vector3.Distance(transform.position, _target.position);
 
-        // 2. LOGIC PHÁT HIỆN & ĐUỔI THEO
+        // 2. LOGIC ĐUỔI THEO & TẤN CÔNG
         if (distanceToPlayer <= chaseRange)
         {
             if (distanceToPlayer > stoppingDistance)
             {
+                // Di chuyển
                 IsAttacking = false;
                 IsMoving = true;
 
                 Vector3 direction = (_target.position - transform.position).normalized;
+                _rb.MovePosition(transform.position + (direction * moveSpeed * Time.deltaTime));
 
-                // Di chuyển bằng MovePosition (Phải để Rigidbody là Kinematic)
-                Vector2 nextPos = (Vector2)transform.position + ((Vector2)direction * moveSpeed * Runner.DeltaTime);
-                _rb.MovePosition(nextPos);
-
-                // Đồng bộ hướng mặt
+                // Hướng mặt
                 if (direction.x > 0.01f) IsFacingLeft = false;
                 else if (direction.x < -0.01f) IsFacingLeft = true;
             }
-            // 3. LOGIC TẤN CÔNG
             else
             {
+                // Tấn công
                 IsMoving = false;
-                if (attackTimer.ExpiredOrNotRunning(Runner))
+                if (_attackTimer <= 0)
                 {
-                    IsAttacking = true;
-                    attackTimer = TickTimer.CreateFromSeconds(Runner, attackRate);
-
-                    if (_target.TryGetComponent<PlayerHealth>(out var pHealth))
-                        pHealth.Rpc_TakeDamage(damage);
+                    PerformAttack();
                 }
             }
         }
@@ -85,12 +76,36 @@ public class EnemyAI : NetworkBehaviour
             IsAttacking = false;
         }
 
-        // Tự động tắt trạng thái chém sau một khoảng thời gian để reset animation
-        if (IsAttacking && attackTimer.RemainingTime(Runner) < (attackRate - 0.5f))
+        // Đếm ngược thời gian tấn công
+        if (_attackTimer > 0) _attackTimer -= Time.deltaTime;
+
+        // Reset trạng thái tấn công sau khi animation chạy được một phần
+        if (IsAttacking && _attackTimer < (attackRate - 0.5f))
             IsAttacking = false;
+
+        UpdateAnimations();
     }
 
-    // HÀM QUÉT PLAYER: Tìm người ở gần nhất để đuổi
+    void PerformAttack()
+    {
+        IsAttacking = true;
+        _attackTimer = attackRate;
+
+        // Gọi trực tiếp hàm sát thương (không dùng Rpc)
+        if (_target.TryGetComponent<PlayerHealth>(out var pHealth))
+            pHealth.TakeDamage(damage);
+    }
+
+    void UpdateAnimations()
+    {
+        if (_sprite != null) _sprite.flipX = IsFacingLeft;
+        if (_animator != null)
+        {
+            _animator.SetBool("isWalking", IsMoving);
+            _animator.SetBool("Attack", IsAttacking);
+        }
+    }
+
     void FindClosestPlayer()
     {
         float minDistance = float.MaxValue;
@@ -99,7 +114,6 @@ public class EnemyAI : NetworkBehaviour
 
         foreach (GameObject p in players)
         {
-            // Bỏ qua nếu Player đã chết
             if (p.TryGetComponent<PlayerHealth>(out var hp) && hp.currentHealth <= 0) continue;
 
             float dist = Vector3.Distance(transform.position, p.transform.position);
@@ -110,19 +124,6 @@ public class EnemyAI : NetworkBehaviour
             }
         }
         _target = closest;
-    }
-
-    // Render chạy trên TẤT CẢ các máy khách để hiển thị hình ảnh
-    public override void Render()
-    {
-        if (_sprite != null) _sprite.flipX = IsFacingLeft;
-
-        if (_animator != null)
-        {
-            // Sử dụng các biến mạng [Networked] để ép Animator chạy giống nhau
-            _animator.SetBool("isWalking", IsMoving);
-            _animator.SetBool("Attack", IsAttacking);
-        }
     }
 
     private void OnDrawGizmosSelected()

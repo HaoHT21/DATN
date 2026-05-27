@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Fusion;
 
 public class ChestNetwork : MonoBehaviour
 {

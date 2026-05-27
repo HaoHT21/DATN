@@ -1,19 +1,23 @@
-﻿using Fusion;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class CameraFollow : NetworkBehaviour
+public class CameraFollow : MonoBehaviour
 {
-    public override void Spawned()
+    public Transform target;
+    public float smoothSpeed = 0.125f;
+    public Vector3 offset;
+
+    private void LateUpdate()
     {
-        // Chỉ máy của mình mới điều khiển Camera của mình
-        if (HasInputAuthority)
+        if (target == null)
         {
-            var cam = Camera.main;
-            if (cam != null)
-            {
-                cam.transform.SetParent(transform); // Dính camera vào nhân vật
-                cam.transform.localPosition = new Vector3(0, 0, -10); // Khoảng cách nhìn
-            }
+            // Tự tìm người chơi nếu bị mất kết nối
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null) target = p.transform;
+            return;
         }
+
+        Vector3 desiredPosition = target.position + offset;
+        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+        transform.position = smoothedPosition;
     }
 }
