@@ -10,16 +10,22 @@ public class CoinMagnet : MonoBehaviour
 
     [Header("Tốc độ bay")]
     public float moveSpeed = 10f;
+    [SerializeField] private float acceleration = 2f; // Tăng tốc để hút mượt hơn
 
     [Header("Physics Settings")]
     [SerializeField] private LayerMask playerLayer;
 
     private Transform targetPlayer;
     private bool isFlying = false;
+    private float currentSpeed;
+
+    private void Start()
+    {
+        currentSpeed = moveSpeed;
+    }
 
     private void Update()
     {
-        // Sử dụng Update thay vì FixedUpdateNetwork
         if (!isFlying)
         {
             FindPlayerPhysics();
@@ -32,13 +38,13 @@ public class CoinMagnet : MonoBehaviour
 
     void FindPlayerPhysics()
     {
-        // Dùng Physics2D chuẩn của Unity
+        // Kiểm tra vùng quanh đồng xu
         Collider2D hit = Physics2D.OverlapCircle(transform.position, detectRange, playerLayer);
 
         if (hit != null)
         {
-            PlayerStats stats = hit.GetComponent<PlayerStats>();
-            if (stats != null)
+            // Kiểm tra xem đối tượng có script PlayerStats không
+            if (hit.TryGetComponent<PlayerStats>(out PlayerStats stats))
             {
                 targetPlayer = hit.transform;
                 isFlying = true;
@@ -51,37 +57,46 @@ public class CoinMagnet : MonoBehaviour
         if (targetPlayer == null)
         {
             isFlying = false;
+            currentSpeed = moveSpeed;
             return;
         }
 
-        // Tịnh tiến mượt mà theo Time.deltaTime
+        // Tăng dần tốc độ khi đang bay về phía player
+        currentSpeed += acceleration * Time.deltaTime;
+
+        // Di chuyển đồng xu
         transform.position = Vector2.MoveTowards(
             transform.position,
             targetPlayer.position,
-            moveSpeed * Time.deltaTime
+            currentSpeed * Time.deltaTime
         );
 
-        // Kiểm tra khoảng cách chạm ăn xu
-        float distance = Vector2.Distance(transform.position, targetPlayer.position);
+        // Kiểm tra khoảng cách bằng bình phương (sqrMagnitude) để tối ưu hiệu suất
+        float sqrDistance = (transform.position - targetPlayer.position).sqrMagnitude;
 
-        if (distance < 0.2f)
+        // 0.2f * 0.2f = 0.04f
+        if (sqrDistance < 0.04f)
         {
-            // Trong chế độ Offline, không cần kiểm tra HasStateAuthority
-            PlayerStats stats = targetPlayer.GetComponent<PlayerStats>();
-            if (stats != null)
-            {
-                stats.AddCoin(coinValue);
-                Debug.Log($"[Coin Offline] Đã cộng {coinValue} xu vào ví.");
-            }
-
-            // Hủy đồng xu ngay lập tức
-            Destroy(gameObject);
+            CollectCoin();
         }
+    }
+
+    void CollectCoin()
+    {
+        if (targetPlayer.TryGetComponent<PlayerStats>(out PlayerStats stats))
+        {
+            stats.AddCoin(coinValue);
+            Debug.Log($"<color=yellow>[Coin]</color> Đã cộng {coinValue} xu.");
+        }
+
+        // Hủy đồng xu
+        Destroy(gameObject);
     }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.gold;
+        // Sửa lỗi Color.gold bằng mã màu RGB vàng kim
+        Gizmos.color = new Color(1f, 0.84f, 0f);
         Gizmos.DrawWireSphere(transform.position, detectRange);
     }
 }
