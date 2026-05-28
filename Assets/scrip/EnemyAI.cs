@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
+[RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(SpriteRenderer))]
 public class EnemyAI : MonoBehaviour
 {
     [Header("Cấu hình di chuyển")]
@@ -9,15 +11,16 @@ public class EnemyAI : MonoBehaviour
     [Header("Cấu hình AI & Tấn công")]
     public float attackRate = 1.36f;
     public int damage = 10;
-    public float attackRange = 1.1f;
     public float chaseRange = 5.0f;
 
-    // Trạng thái cục bộ
-    public bool IsAttacking { get; private set; }
-    public bool IsMoving { get; private set; }
-    public bool IsFacingLeft { get; private set; }
+    [Header("Drop Settings")]
+    public GameObject coinPrefab;
 
     private float _attackTimer;
+    private bool _isAttacking;
+    private bool _isMoving;
+    private bool _isFacingLeft;
+
     private Animator _animator;
     private SpriteRenderer _sprite;
     private Rigidbody2D _rb;
@@ -28,109 +31,99 @@ public class EnemyAI : MonoBehaviour
         _animator = GetComponent<Animator>();
         _sprite = GetComponent<SpriteRenderer>();
         _rb = GetComponent<Rigidbody2D>();
+        _rb.gravityScale = 0;
+        _rb.freezeRotation = true;
     }
 
     private void Update()
     {
-        // 1. Tìm người chơi gần nhất
         FindClosestPlayer();
 
         if (_target == null)
         {
-            IsMoving = false;
-            UpdateAnimations();
-            return;
-        }
-
-        float distanceToPlayer = Vector3.Distance(transform.position, _target.position);
-
-        // 2. LOGIC ĐUỔI THEO & TẤN CÔNG
-        if (distanceToPlayer <= chaseRange)
-        {
-            if (distanceToPlayer > stoppingDistance)
-            {
-                // Di chuyển
-                IsAttacking = false;
-                IsMoving = true;
-
-                Vector3 direction = (_target.position - transform.position).normalized;
-                _rb.MovePosition(transform.position + (direction * moveSpeed * Time.deltaTime));
-
-                // Hướng mặt
-                if (direction.x > 0.01f) IsFacingLeft = false;
-                else if (direction.x < -0.01f) IsFacingLeft = true;
-            }
-            else
-            {
-                // Tấn công
-                IsMoving = false;
-                if (_attackTimer <= 0)
-                {
-                    PerformAttack();
-                }
-            }
+            _rb.linearVelocity = Vector2.zero;
+            _isMoving = false;
         }
         else
         {
-            IsMoving = false;
-            IsAttacking = false;
+            float distanceToPlayer = Vector3.Distance(transform.position, _target.position);
+
+            if (distanceToPlayer <= chaseRange)
+            {
+                if (distanceToPlayer > stoppingDistance)
+                {
+                    // DI CHUYỂN VẬT LÝ
+                    _isAttacking = false;
+                    _isMoving = true;
+                    Vector2 direction = (_target.position - transform.position).normalized;
+                    _rb.linearVelocity = direction * moveSpeed;
+
+                    _isFacingLeft = direction.x < 0;
+                }
+                else
+                {
+                    // DỪNG LẠI TẤN CÔNG
+                    _rb.linearVelocity = Vector2.zero;
+                    _isMoving = false;
+                    if (_attackTimer <= 0) PerformAttack();
+                }
+            }
+            else
+            {
+                _rb.linearVelocity = Vector2.zero;
+                _isMoving = false;
+                _isAttacking = false;
+            }
         }
 
-        // Đếm ngược thời gian tấn công
         if (_attackTimer > 0) _attackTimer -= Time.deltaTime;
-
-        // Reset trạng thái tấn công sau khi animation chạy được một phần
-        if (IsAttacking && _attackTimer < (attackRate - 0.5f))
-            IsAttacking = false;
+        if (_isAttacking && _attackTimer < (attackRate - 0.5f)) _isAttacking = false;
 
         UpdateAnimations();
     }
 
     void PerformAttack()
     {
-        IsAttacking = true;
+        _isAttacking = true;
         _attackTimer = attackRate;
-
-        // Gọi trực tiếp hàm sát thương (không dùng Rpc)
         if (_target.TryGetComponent<PlayerHealth>(out var pHealth))
             pHealth.TakeDamage(damage);
     }
 
+    // HÀM NÀY GỌI KHI MÁU <= 0
+    public void Die()
+    {
+        if (coinPrefab != null)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Vector3 spawnPos = transform.position + (Vector3)(Random.insideUnitCircle * 0.5f);
+                Instantiate(coinPrefab, spawnPos, Quaternion.identity);
+            }
+        }
+        Destroy(gameObject);
+    }
+
     void UpdateAnimations()
     {
-        if (_sprite != null) _sprite.flipX = IsFacingLeft;
+        if (_sprite != null) _sprite.flipX = _isFacingLeft;
         if (_animator != null)
         {
-            _animator.SetBool("isWalking", IsMoving);
-            _animator.SetBool("Attack", IsAttacking);
+            _animator.SetBool("isWalking", _isMoving);
+            _animator.SetBool("Attack", _isAttacking);
         }
     }
 
     void FindClosestPlayer()
     {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         float minDistance = float.MaxValue;
         Transform closest = null;
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
         foreach (GameObject p in players)
         {
-            if (p.TryGetComponent<PlayerHealth>(out var hp) && hp.currentHealth <= 0) continue;
-
             float dist = Vector3.Distance(transform.position, p.transform.position);
-            if (dist < minDistance)
-            {
-                minDistance = dist;
-                closest = p.transform;
-            }
+            if (dist < minDistance) { minDistance = dist; closest = p.transform; }
         }
         _target = closest;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, chaseRange);
     }
 }

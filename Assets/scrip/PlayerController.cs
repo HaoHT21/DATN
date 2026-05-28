@@ -111,7 +111,7 @@ public class PlayerController : MonoBehaviour
         spawned.transform.localRotation = Quaternion.identity;
 
         // ÉP CỨNG TỈ LỆ 0.2 CHO SÚNG CON (CLONE)
-        spawned.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        spawned.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
 
         spawned.SetActive(false);
 
@@ -157,11 +157,18 @@ public class PlayerController : MonoBehaviour
 
         if (weapon.isGun && weapon.bulletPrefab != null)
         {
-            // ÉP CỨNG HƯỚNG ĐẠN BAY NGANG
-            // Nếu flipX = true (nhìn trái) thì xoay đạn 180 độ, ngược lại thì 0 độ
             Quaternion bulletRotation = _sprite.flipX ? Quaternion.Euler(0, 0, 180f) : Quaternion.identity;
 
-            Instantiate(weapon.bulletPrefab, firePoint.position, bulletRotation);
+            // --- SỬA Ở ĐÂY ---
+            GameObject bulletObj = Instantiate(weapon.bulletPrefab, firePoint.position, bulletRotation);
+
+            // Lấy script Bullet và gán sát thương vào
+            Bullet bulletScript = bulletObj.GetComponent<Bullet>();
+            if (bulletScript != null)
+            {
+                bulletScript.damage = weapon.damage; // Truyền damage từ vũ khí vào đạn
+            }
+            // ------------------
         }
         else
         {
