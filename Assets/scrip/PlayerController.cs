@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour
         public bool isGun;
         public int damage;
         public GameObject bulletPrefab;
+        public bool isPotion;    // Thêm để nhận diện bình máu
+        public int healAmount;   // Lượng máu hồi
     }
 
     private void Awake()
@@ -52,7 +54,6 @@ public class PlayerController : MonoBehaviour
         moveInput.y = Input.GetAxisRaw("Vertical");
         moveInput = moveInput.normalized;
 
-        // XỬ LÝ LẬT NGƯỜI VÀ XOAY SÚNG
         if (moveInput.x != 0)
         {
             bool isFlip = moveInput.x < 0;
@@ -60,19 +61,15 @@ public class PlayerController : MonoBehaviour
 
             if (weaponHolder != null)
             {
-                // ÉP CỨNG TỈ LỆ 0.2 CHO HOLDER
                 float s = 0.2f;
-
-                if (!isFlip) // Nhìn sang PHẢI
+                if (!isFlip)
                 {
                     weaponHolder.localRotation = Quaternion.Euler(0, 0, weaponRotationOffset);
                     weaponHolder.localScale = new Vector3(s, s, s);
                 }
-                else // Nhìn sang TRÁI
+                else
                 {
-                    // Xoay 180 độ và bù trừ offset
                     weaponHolder.localRotation = Quaternion.Euler(0, 0, 180f - weaponRotationOffset);
-                    // Lật súng theo trục Y để không ngửa bụng
                     weaponHolder.localScale = new Vector3(s, -s, s);
                 }
             }
@@ -100,19 +97,59 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
     }
 
+    public void PerformAttack()
+    {
+        var weapon = inventory[_currentWeaponIndex];
+        _attackTimer = attackRate;
+
+        if (weapon.isPotion)
+        {
+            // DÙNG BÌNH MÁU
+            PlayerHealth ph = GetComponent<PlayerHealth>();
+            if (ph != null)
+            {
+                ph.Heal(weapon.healAmount);
+
+                // --- SỬA Ở ĐÂY: XÓA CẢ HÌNH ẢNH TRÊN TAY ---
+                if (weapon.visualPrefab != null)
+                {
+                    Destroy(weapon.visualPrefab);
+                }
+                // -------------------------------------------
+
+                inventory.RemoveAt(_currentWeaponIndex);
+                _currentWeaponIndex = Mathf.Clamp(_currentWeaponIndex, 0, Mathf.Max(0, inventory.Count - 1));
+
+                // Cập nhật lại UI/Visuals sau khi xóa
+                UpdateWeaponVisuals();
+            }
+        }
+        else if (weapon.isGun && weapon.bulletPrefab != null)
+        {
+            // BẮN SÚNG (Giữ nguyên như cũ)
+            Quaternion bulletRotation = _sprite.flipX ? Quaternion.Euler(0, 0, 180f) : Quaternion.identity;
+            GameObject bulletObj = Instantiate(weapon.bulletPrefab, firePoint.position, bulletRotation);
+            Bullet bulletScript = bulletObj.GetComponent<Bullet>();
+            if (bulletScript != null)
+            {
+                bulletScript.damage = weapon.damage;
+            }
+        }
+        else
+        {
+            _animator.SetTrigger("Attack");
+        }
+    }
+
     public void PickupWeapon(GameObject visualPrefab, GameObject pickupPrefab, bool isGun, int dmg, GameObject bulletType)
     {
         if (inventory.Count >= MAX_INVENTORY_SIZE) return;
         if (pickupPrefab == null) return;
 
         GameObject spawned = Instantiate(visualPrefab, weaponHolder);
-
         spawned.transform.localPosition = Vector3.zero;
         spawned.transform.localRotation = Quaternion.identity;
-
-        // ÉP CỨNG TỈ LỆ 0.2 CHO SÚNG CON (CLONE)
-        spawned.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
-
+        spawned.transform.localScale = new Vector3(2f, 2f, 2f);
         spawned.SetActive(false);
 
         WeaponItem newItem = new WeaponItem
@@ -121,7 +158,8 @@ public class PlayerController : MonoBehaviour
             pickupPrefab = pickupPrefab,
             isGun = isGun,
             damage = dmg,
-            bulletPrefab = bulletType
+            bulletPrefab = bulletType,
+            isPotion = false
         };
 
         inventory.Add(newItem);
@@ -133,8 +171,11 @@ public class PlayerController : MonoBehaviour
     {
         if (inventory == null || inventory.Count == 0) return;
         var item = inventory[_currentWeaponIndex];
+
+        // Không vứt bình máu nếu không có pickupPrefab
         if (item.pickupPrefab != null)
             Instantiate(item.pickupPrefab, transform.position + (Vector3.down * 0.5f), Quaternion.identity);
+
         if (item.visualPrefab != null) Destroy(item.visualPrefab);
         inventory.RemoveAt(_currentWeaponIndex);
         _currentWeaponIndex = Mathf.Clamp(_currentWeaponIndex, 0, Mathf.Max(0, inventory.Count - 1));
@@ -147,32 +188,6 @@ public class PlayerController : MonoBehaviour
         {
             if (inventory[i].visualPrefab != null)
                 inventory[i].visualPrefab.SetActive(i == _currentWeaponIndex);
-        }
-    }
-
-    void PerformAttack()
-    {
-        var weapon = inventory[_currentWeaponIndex];
-        _attackTimer = attackRate;
-
-        if (weapon.isGun && weapon.bulletPrefab != null)
-        {
-            Quaternion bulletRotation = _sprite.flipX ? Quaternion.Euler(0, 0, 180f) : Quaternion.identity;
-
-            // --- SỬA Ở ĐÂY ---
-            GameObject bulletObj = Instantiate(weapon.bulletPrefab, firePoint.position, bulletRotation);
-
-            // Lấy script Bullet và gán sát thương vào
-            Bullet bulletScript = bulletObj.GetComponent<Bullet>();
-            if (bulletScript != null)
-            {
-                bulletScript.damage = weapon.damage; // Truyền damage từ vũ khí vào đạn
-            }
-            // ------------------
-        }
-        else
-        {
-            _animator.SetTrigger("Attack");
         }
     }
 }

@@ -41,7 +41,7 @@ public class EnemyHealth : MonoBehaviour
             _enemyAI.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
         }
 
-        _animator?.SetBool("Death", true);
+        _animator?.SetBool("isDead", true);
 
         yield return new WaitForSeconds(0.8f);
 
