@@ -1,9 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 
-public class EnemyHealth : MonoBehaviour
+public class EnemyHealth : MonoBehaviour, IHealthProvider
 {
     public int currentHealth = 100;
+    public int maxHealth = 100;
+
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+    public bool IsDead => currentHealth <= 0;
+
+    public event Action<HealthChangeInfo> OnHealthChanged;
     private Animator _animator;
     private Collider2D _collider;
     private EnemyAI _enemyAI; // Thêm biến này để gọi hàm Die()
@@ -12,7 +20,14 @@ public class EnemyHealth : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _collider = GetComponent<Collider2D>();
-        _enemyAI = GetComponent<EnemyAI>(); // Lấy script EnemyAI
+        _enemyAI = GetComponent<EnemyAI>();
+        if (maxHealth < currentHealth)
+            maxHealth = currentHealth;
+    }
+
+    private void NotifyHealthChanged(int previousHealth)
+    {
+        OnHealthChanged?.Invoke(new HealthChangeInfo(currentHealth, maxHealth, currentHealth - previousHealth));
     }
 
     public void TakeDamage(int damage)
@@ -20,7 +35,10 @@ public class EnemyHealth : MonoBehaviour
         // Chặn sát thương nếu đã chết
         if (currentHealth <= 0) return;
 
+        int before = currentHealth;
         currentHealth -= damage;
+        if (currentHealth < 0) currentHealth = 0;
+        NotifyHealthChanged(before);
         _animator?.SetTrigger("Hit");
 
         if (currentHealth <= 0)
