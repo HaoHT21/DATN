@@ -1,83 +1,119 @@
-﻿using UnityEngine;
+﻿using SceneTransition;
+using UnityEngine;
 using UnityEngine.Video;
-using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
     [Header("UI Panels")]
-    public GameObject mainMenuUI;    // Kéo Canvas/Panel Menu chính vào đây
-    public GameObject settingPanel;  // Kéo Panel Setting vào đây
+    public GameObject mainMenuUI;
+    public GameObject settingPanel;
 
     [Header("Intro Video Settings")]
-    public VideoPlayer introVideo;   // Kéo đối tượng Video Player vào đây
-    public string gameSceneName = "Level1"; // Điền tên Scene Game của bạn vào đây
+    public VideoPlayer introVideo;
+    public string gameSceneName = "Sanh";
+
+    [Header("Chuyển cảnh sau Intro")]
+    [SerializeField] private SceneTransitionMode transitionMode = SceneTransitionMode.Asynchronous;
+
+    private bool _isEnteringGame;
 
     void Start()
     {
-        // Lúc mới vào, đảm bảo Setting và Video đều tắt
-        if (settingPanel != null) settingPanel.SetActive(false);
+        if (settingPanel != null)
+            settingPanel.SetActive(false);
+
         if (introVideo != null)
         {
             introVideo.gameObject.SetActive(false);
-            // Đăng ký sự kiện: Khi video chạy hết thì gọi hàm OnVideoFinished
             introVideo.loopPointReached += OnVideoFinished;
         }
     }
 
-    // --- CHỨC NĂNG PLAY & INTRO ---
-
-    public void PlayGame()
+    void OnDestroy()
     {
         if (introVideo != null)
-        {
-            // 1. Ẩn Menu chính đi
-            if (mainMenuUI != null) mainMenuUI.SetActive(false);
+            introVideo.loopPointReached -= OnVideoFinished;
+    }
 
-            // 2. Bật và phát Video Intro
+    /// <summary>Bắt đầu intro — transition chỉ chạy khi video kết thúc hoặc người chơi skip.</summary>
+    public void PlayGame()
+    {
+        if (_isEnteringGame)
+            return;
+
+        if (introVideo != null)
+        {
+            if (mainMenuUI != null)
+                mainMenuUI.SetActive(false);
+
             introVideo.gameObject.SetActive(true);
             introVideo.Play();
-            Debug.Log("Đang chạy Intro...");
+            return;
         }
-        else
-        {
-            // Nếu quên không gán Video, vào thẳng game luôn
-            LoadGameScene();
-        }
+
+        BeginTransitionToGame();
     }
 
-    // Hàm tự động chạy khi video kết thúc
     void OnVideoFinished(VideoPlayer vp)
     {
-        LoadGameScene();
+        BeginTransitionToGame();
     }
 
-    void LoadGameScene()
-    {
-        Debug.Log("Chuyển sang Scene Game!");
-        SceneManager.LoadScene(gameSceneName);
-    }
-
-    // Nhấn phím bất kỳ để bỏ qua Intro (Skip)
     void Update()
     {
-        if (introVideo != null && introVideo.isPlaying)
-        {
-            if (Input.anyKeyDown)
-            {
-                LoadGameScene();
-            }
-        }
+        if (_isEnteringGame || introVideo == null || !introVideo.isPlaying)
+            return;
+
+        if (Input.anyKeyDown)
+            SkipIntroAndBeginTransition();
     }
 
-    // --- CHỨC NĂNG SETTING ---
+    void SkipIntroAndBeginTransition()
+    {
+        if (_isEnteringGame)
+            return;
+
+        introVideo.Stop();
+        introVideo.gameObject.SetActive(false);
+        BeginTransitionToGame();
+    }
+
+    void BeginTransitionToGame()
+    {
+        if (_isEnteringGame)
+            return;
+
+        _isEnteringGame = true;
+
+        if (introVideo != null)
+        {
+            introVideo.Stop();
+            introVideo.gameObject.SetActive(false);
+        }
+
+        if (SceneTransitionManager.Instance == null)
+        {
+            Debug.LogError(
+                "[MenuManager] Thiếu SceneTransitionSystem trong MainMenu. " +
+                "Không load thẳng để tránh bỏ qua fade — hãy thêm prefab Scene Transition.");
+            _isEnteringGame = false;
+            return;
+        }
+
+        Debug.Log($"Intro xong — fade out rồi load '{gameSceneName}'.");
+        SceneTransitionManager.Instance.LoadScene(
+            new SceneTransitionRequest(gameSceneName, transitionMode));
+    }
 
     public void OpenSetting()
     {
-        if (settingPanel != null) settingPanel.SetActive(true);
+        if (settingPanel != null)
+            settingPanel.SetActive(true);
     }
 
     public void CloseSetting()
     {
-        if (settingPanel != null) settingPanel.SetActive(false);
+        if (settingPanel != null)
+            settingPanel.SetActive(false);
     }
 }

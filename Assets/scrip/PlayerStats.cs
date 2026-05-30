@@ -6,7 +6,11 @@ public class PlayerStats : MonoBehaviour
     public int Score = 1000;
     public TextMeshProUGUI scoreText;
 
-    private void Start() => UpdateUI();
+    private void Start()
+    {
+        GameSessionSave.LoadInto(this);
+        UpdateUI();
+    }
 
     public void AddCoin(int amount)
     {

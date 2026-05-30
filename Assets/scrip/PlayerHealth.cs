@@ -1,11 +1,17 @@
-﻿using UnityEngine;
-using System.Collections; // Cần thiết để dùng Coroutine
+﻿using System;
+using UnityEngine;
+using System.Collections;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, IHealthProvider
 {
     public int currentHealth = 100;
     public int maxHealth = 100;
     public bool IsDead { get; private set; }
+
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
+    public event Action<HealthChangeInfo> OnHealthChanged;
 
     [Header("Respawn Settings")]
     public Vector3 spawnPosition; // Vị trí điểm hồi sinh ở Sảnh (Set trong Inspector)
@@ -24,7 +30,10 @@ public class PlayerHealth : MonoBehaviour
     {
         if (IsDead) return;
 
+        int before = currentHealth;
         currentHealth -= damage;
+        if (currentHealth < 0) currentHealth = 0;
+        NotifyHealthChanged(before);
         Debug.Log($"Player bị tấn công! Máu còn: {currentHealth}");
 
         if (currentHealth <= 0)
@@ -36,8 +45,15 @@ public class PlayerHealth : MonoBehaviour
     public void Heal(int amount)
     {
         if (IsDead) return;
+        int before = currentHealth;
         currentHealth += amount;
         if (currentHealth > maxHealth) currentHealth = maxHealth;
+        NotifyHealthChanged(before);
+    }
+
+    private void NotifyHealthChanged(int previousHealth)
+    {
+        OnHealthChanged?.Invoke(new HealthChangeInfo(currentHealth, maxHealth, currentHealth - previousHealth));
     }
 
     private void PlayerDie()
@@ -59,8 +75,10 @@ public class PlayerHealth : MonoBehaviour
 
         // Hồi sinh
         transform.position = spawnPosition; // Di chuyển về Sảnh
-        currentHealth = maxHealth;          // Hồi đầy máu
-        IsDead = false;                     // Cho phép hoạt động lại
+        int before = currentHealth;
+        currentHealth = maxHealth;
+        IsDead = false;
+        NotifyHealthChanged(before);
 
         _rb.simulated = true;               // Bật lại vật lý
         _animator.Play("Idel Animation");   // Chuyển về trạng thái Idle (hoặc reset trigger)
