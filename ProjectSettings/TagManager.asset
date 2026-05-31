@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Boss
+  - MusicTrigger
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - UI
   - Player
   - Enemy
-  - 
+  - MusicTrigger
   - 
   - 
   - 
@@ -42,6 +43,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 3313051225
     locked: 0
   m_RenderingLayers:
   - Default
