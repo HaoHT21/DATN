@@ -99,6 +99,7 @@ public class PlayerController : MonoBehaviour
 
     public void PerformAttack()
     {
+
         var weapon = inventory[_currentWeaponIndex];
         _attackTimer = attackRate;
 

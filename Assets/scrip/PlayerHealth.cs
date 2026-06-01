@@ -63,7 +63,7 @@ public class PlayerHealth : MonoBehaviour
         IsDead = false;                     // Cho phép hoạt động lại
 
         _rb.simulated = true;               // Bật lại vật lý
-        _animator.Play("Idel Animation");   // Chuyển về trạng thái Idle (hoặc reset trigger)
+        _animator.Play("Idle");   // Chuyển về trạng thái Idle (hoặc reset trigger)
 
         Debug.Log("ĐÃ HỒI SINH TẠI SẢNH!");
     }

@@ -5,6 +5,11 @@ public class PlayerStats : MonoBehaviour
 {
     public int Score = 1000;
     public TextMeshProUGUI scoreText;
+    
+    // Thêm dòng này để các script khác gọi được PlayerStats
+    public static PlayerStats Instance;
+
+    private void Awake() => Instance = this; // Khởi tạo Singleton
 
     private void Start() => UpdateUI();
 
@@ -14,7 +19,6 @@ public class PlayerStats : MonoBehaviour
         UpdateUI();
     }
 
-    // Đảm bảo hàm này nhận đúng 2 tham số: price và itemID
     public bool TryPurchase(int price, int itemID)
     {
         Debug.Log($"[Shop] Đang mua ID: {itemID}, Giá: {price}. Số dư: {Score}");
@@ -36,10 +40,35 @@ public class PlayerStats : MonoBehaviour
 
     private void SpawnPurchasedItem(int id)
     {
-        GameObject prefab = ShopManager.Instance.GetPrefabByID(id);
+        // LOGIC MỚI: Phân biệt ID để lấy prefab từ đúng nơi
+        GameObject prefab = null;
+
+        if (id >= 20) // Giả sử ID nhân vật bắt đầu từ 20 trở lên
+        {
+            prefab = HiroManager.Instance.GetHeroPrefabByID(id);
+        }
+        else // Các ID nhỏ hơn là vật phẩm thông thường
+        {
+            // Kiểm tra xem ShopManager có tồn tại không
+            if (ShopManager.Instance != null)
+                prefab = ShopManager.Instance.GetPrefabByID(id);
+        }
+
         if (prefab != null)
         {
-            Instantiate(prefab, transform.position + new Vector3(0, -0.8f, 0), Quaternion.identity);
+            // Xử lý đổi nhân vật nếu là nhân vật
+            if (id >= 20)
+            {
+                GameObject currentObj = GameObject.FindGameObjectWithTag("Player");
+                Vector3 spawnPos = currentObj ? currentObj.transform.position : Vector3.zero;
+                if (currentObj) Destroy(currentObj);
+                Instantiate(prefab, spawnPos, Quaternion.identity).tag = "Player";
+            }
+            else
+            {
+                // Xử lý vật phẩm thường như cũ
+                Instantiate(prefab, transform.position + new Vector3(0, -0.8f, 0), Quaternion.identity);
+            }
         }
         else
         {
