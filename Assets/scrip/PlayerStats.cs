@@ -11,7 +11,11 @@ public class PlayerStats : MonoBehaviour
 
     private void Awake() => Instance = this; // Khởi tạo Singleton
 
-    private void Start() => UpdateUI();
+    private void Start()
+    {
+        GameSessionSave.LoadInto(this);
+        UpdateUI();
+    }
 
     public void AddCoin(int amount)
     {

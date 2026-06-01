@@ -49,6 +49,13 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!GameplayInputGate.CanProcessInput)
+        {
+            moveInput = Vector2.zero;
+            _animator.SetBool("isWalking", false);
+            return;
+        }
+
         // 1. Logic di chuyển
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
@@ -94,6 +101,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!GameplayInputGate.CanProcessInput)
+            return;
+
         rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
     }
 
