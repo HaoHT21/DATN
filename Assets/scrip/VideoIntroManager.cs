@@ -1,83 +1,32 @@
-using SceneTransition;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Ch? dùng khi KHÔNG có MenuManager ?i?u ph?i intro.
-/// Luôn chuy?n c?nh qua SceneTransitionManager (fade tr??c khi load).
-/// </summary>
-[DisallowMultipleComponent]
 public class VideoIntroManager : MonoBehaviour
 {
-    [SerializeField] private VideoPlayer videoPlayer;
-    [SerializeField] private string nextSceneName = "Sanh";
-    [SerializeField] private SceneTransitionMode transitionMode = SceneTransitionMode.Asynchronous;
+    public VideoPlayer videoPlayer;
+    public string nextSceneName = "Tên_Scene_Game";
 
-    private bool _hasStartedTransition;
-
-    private void Reset()
+    void Start()
     {
-        videoPlayer = GetComponent<VideoPlayer>();
+        // ??ng ký s? ki?n khi video ch?y xong
+        videoPlayer.loopPointReached += OnVideoFinished;
     }
-
-    private void OnEnable()
+    void Update()
     {
-        if (videoPlayer != null)
-            videoPlayer.loopPointReached += OnVideoFinished;
-    }
-
-    private void OnDisable()
-    {
-        if (videoPlayer != null)
-            videoPlayer.loopPointReached -= OnVideoFinished;
-    }
-
-    private void Update()
-    {
-        if (_hasStartedTransition || videoPlayer == null || !videoPlayer.isPlaying)
-            return;
-
+        // Nh?n phím b?t k? ho?c click chu?t ?? b? qua video
         if (Input.anyKeyDown)
-            BeginTransition();
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
     }
-
     public void PlayVideo()
     {
-        if (videoPlayer == null)
-            return;
-
-        _hasStartedTransition = false;
-        videoPlayer.gameObject.SetActive(true);
         videoPlayer.Play();
     }
 
-    private void OnVideoFinished(VideoPlayer vp)
+    void OnVideoFinished(VideoPlayer vp)
     {
-        BeginTransition();
-    }
-
-    private void BeginTransition()
-    {
-        if (_hasStartedTransition)
-            return;
-
-        _hasStartedTransition = true;
-
-        if (videoPlayer != null)
-        {
-            videoPlayer.Stop();
-            videoPlayer.gameObject.SetActive(false);
-        }
-
-        if (SceneTransitionManager.Instance != null)
-        {
-            SceneTransitionManager.Instance.LoadScene(
-                new SceneTransitionRequest(nextSceneName, transitionMode));
-            return;
-        }
-
-        Debug.LogWarning("[VideoIntroManager] Thi?u SceneTransitionManager — fallback LoadScene.");
         SceneManager.LoadScene(nextSceneName);
     }
 }

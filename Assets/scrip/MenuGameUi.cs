@@ -1,219 +1,53 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Điều phối hiển thị menu trong scene gameplay (Pause, Game Over, xác nhận thoát).
-/// Gọi GameManager để thay đổi timeScale và trạng thái gameplay.
-/// </summary>
 public class GameUIManager : MonoBehaviour
 {
-    public static GameUIManager Instance { get; private set; }
+    [Header("Menus")]
+    public GameObject mainMenu;
+    public GameObject gameOverMenu;
+    public GameObject gamePauseMenu;
 
-    [Header("Panels")]
-    [SerializeField] private GameObject pauseMenuPanel;
-    [SerializeField] private GameObject gameOverMenuPanel;
-    [SerializeField] private GameObject inGameMainMenuPanel;
+    private bool isPaused = false;
 
-    [Header("Xác nhận")]
-    [SerializeField] private ConfirmationDialogUI confirmationDialog;
-
-    [Header("Thông báo thoát")]
-    [SerializeField] private string exitLevelMessage = "Bạn có chắc muốn thoát màn chơi?\nTiến trình sẽ được lưu.";
-    [SerializeField] private string exitGameMessage = "Bạn có chắc muốn thoát game?";
-
-    private GameManager _gameManager;
-
-    private void Awake()
+    public void MainMenu()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        _gameManager = FindFirstObjectByType<GameManager>();
-
-        if (_gameManager != null)
-            _gameManager.OnStateChanged += HandleGameStateChanged;
+        mainMenu.SetActive(true);
+        gameOverMenu.SetActive(false);
+        gamePauseMenu.SetActive(false);
+        Time.timeScale = 0f;
     }
 
-    private void OnDestroy()
+    public void GameOverMenu()
     {
-        if (_gameManager != null)
-            _gameManager.OnStateChanged -= HandleGameStateChanged;
-
-        if (Instance == this)
-            Instance = null;
+        gameOverMenu.SetActive(true);
+        mainMenu.SetActive(false);
+        gamePauseMenu.SetActive(false);
+        Time.timeScale = 0f;
     }
 
-    private void Start()
+    public void PauseGameMenu()
     {
-        HideAllMenus();
-        EnsureGameRunning();
+        gamePauseMenu.SetActive(true);
+        mainMenu.SetActive(false);
+        gameOverMenu.SetActive(false);
+        Time.timeScale = 0f; // dừng game
     }
 
-    // --- Pause / Resume (gọi từ UI Button) ---
-
-    public void PauseGame()
+    public void StartGame()
     {
-        if (_gameManager == null)
-        {
-            Debug.LogWarning("[GameUIManager] Thiếu GameManager trong scene.");
-            return;
-        }
-
-        confirmationDialog?.Hide();
-        _gameManager.PauseGame();
-        ShowPauseMenu();
+        mainMenu.SetActive(false);
+        gamePauseMenu.SetActive(false);
+        gameOverMenu.SetActive(false);
+        Time.timeScale = 1f; // chạy game
     }
 
     public void ResumeGame()
     {
-        if (_gameManager == null)
-            return;
-
-        confirmationDialog?.Hide();
-        _gameManager.ResumeGame();
-        HidePauseMenu();
+        mainMenu.SetActive(false);
+        gamePauseMenu.SetActive(false);
+        gameOverMenu.SetActive(false);
+        Time.timeScale = 1f; // tiếp tục game
     }
 
-    // --- Thoát màn / Thoát game ---
-
-    public void RequestExitLevel()
-    {
-        ShowConfirmation(exitLevelMessage, ConfirmExitLevel);
-    }
-
-    public void RequestExitGame()
-    {
-        ShowConfirmation(exitGameMessage, ConfirmExitGame);
-    }
-
-    private void ShowConfirmation(string message, System.Action onConfirm)
-    {
-        if (confirmationDialog == null)
-        {
-            onConfirm?.Invoke();
-            return;
-        }
-
-        bool wasPaused = _gameManager != null && _gameManager.IsGameplayPaused;
-        if (!wasPaused)
-        {
-            _gameManager?.PauseGame();
-            HidePauseMenu();
-        }
-
-        confirmationDialog.Show(
-            message,
-            onConfirm,
-            onCancel: () =>
-            {
-                if (!wasPaused)
-                    _gameManager?.ResumeGame();
-            });
-    }
-
-    public void ConfirmExitLevel()
-    {
-        if (_gameManager == null)
-        {
-            Debug.LogWarning("[GameUIManager] Thiếu GameManager — không thể load Main Menu.");
-            return;
-        }
-
-        HideAllMenus();
-        _gameManager.ExitToMainMenu();
-    }
-
-    public void ConfirmExitGame()
-    {
-        if (_gameManager == null)
-        {
-            Debug.LogWarning("[GameUIManager] Thiếu GameManager — không thể thoát ứng dụng.");
-            return;
-        }
-
-        _gameManager.QuitApplication();
-    }
-
-    // --- Menu phụ (giữ tương thích code cũ) ---
-
-    public void ShowGameOverMenu()
-    {
-        SetPanelActive(gameOverMenuPanel, true);
-        SetPanelActive(pauseMenuPanel, false);
-        SetPanelActive(inGameMainMenuPanel, false);
-        _gameManager?.PauseGame();
-    }
-
-    public void ShowInGameMainMenu()
-    {
-        SetPanelActive(inGameMainMenuPanel, true);
-        SetPanelActive(pauseMenuPanel, false);
-        SetPanelActive(gameOverMenuPanel, false);
-        _gameManager?.PauseGame();
-    }
-
-    public void StartGameplay()
-    {
-        HideAllMenus();
-        _gameManager?.ResumeGame();
-    }
-
-    // Tên cũ — tránh gãy reference trong scene/prefab
-    public void PauseGameMenu() => PauseGame();
-    public void MainMenu() => ShowInGameMainMenu();
-    public void GameOverMenu() => ShowGameOverMenu();
-    public void StartGame() => StartGameplay();
-
-    // --- Nội bộ ---
-
-    private void HandleGameStateChanged(GameState state)
-    {
-        if (state == GameState.Paused)
-        {
-            confirmationDialog?.Hide();
-            ShowPauseMenu();
-        }
-        else
-        {
-            HidePauseMenu();
-        }
-    }
-
-    private void ShowPauseMenu()
-    {
-        SetPanelActive(pauseMenuPanel, true);
-        SetPanelActive(gameOverMenuPanel, false);
-        SetPanelActive(inGameMainMenuPanel, false);
-    }
-
-    private void HidePauseMenu()
-    {
-        SetPanelActive(pauseMenuPanel, false);
-    }
-
-    private void HideAllMenus()
-    {
-        SetPanelActive(pauseMenuPanel, false);
-        SetPanelActive(gameOverMenuPanel, false);
-        SetPanelActive(inGameMainMenuPanel, false);
-        confirmationDialog?.Hide();
-    }
-
-    private void EnsureGameRunning()
-    {
-        if (_gameManager != null && !_gameManager.IsGameplayPaused)
-            return;
-
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
-    }
-
-    private static void SetPanelActive(GameObject panel, bool active)
-    {
-        if (panel != null)
-            panel.SetActive(active);
-    }
 }

@@ -24,16 +24,21 @@ public class ItemSlotUI : MonoBehaviour
 
     private void OnBuyClick()
     {
-        Debug.Log("[UI] Nút mua đã được nhấn!");
+        PlayerStats playerStats =
+            FindAnyObjectByType<PlayerStats>();
 
-        PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
-        if (playerStats != null)
+        if (playerStats == null)
+            return;
+
+        bool success =
+            playerStats.TryPurchase(
+                _data.price,
+                _data.itemID
+            );
+
+        if (success)
         {
-            playerStats.TryPurchase(_data.price, _data.itemID);
-        }
-        else
-        {
-            Debug.LogError("[UI] Không tìm thấy PlayerStats trong Scene!");
+            InventoryManager.Instance.AddItem(_data);
         }
     }
 }

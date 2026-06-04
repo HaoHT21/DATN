@@ -1,119 +1,83 @@
-﻿using SceneTransition;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Video;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
     [Header("UI Panels")]
-    public GameObject mainMenuUI;
-    public GameObject settingPanel;
+    public GameObject mainMenuUI;    // Kéo Canvas/Panel Menu chính vào đây
+    public GameObject settingPanel;  // Kéo Panel Setting vào đây
 
     [Header("Intro Video Settings")]
-    public VideoPlayer introVideo;
-    public string gameSceneName = "Sanh";
-
-    [Header("Chuyển cảnh sau Intro")]
-    [SerializeField] private SceneTransitionMode transitionMode = SceneTransitionMode.Asynchronous;
-
-    private bool _isEnteringGame;
+    public VideoPlayer introVideo;   // Kéo đối tượng Video Player vào đây
+    public string gameSceneName = "Level1"; // Điền tên Scene Game của bạn vào đây
 
     void Start()
     {
-        if (settingPanel != null)
-            settingPanel.SetActive(false);
-
+        // Lúc mới vào, đảm bảo Setting và Video đều tắt
+        if (settingPanel != null) settingPanel.SetActive(false);
         if (introVideo != null)
         {
             introVideo.gameObject.SetActive(false);
+            // Đăng ký sự kiện: Khi video chạy hết thì gọi hàm OnVideoFinished
             introVideo.loopPointReached += OnVideoFinished;
         }
     }
 
-    void OnDestroy()
-    {
-        if (introVideo != null)
-            introVideo.loopPointReached -= OnVideoFinished;
-    }
+    // --- CHỨC NĂNG PLAY & INTRO ---
 
-    /// <summary>Bắt đầu intro — transition chỉ chạy khi video kết thúc hoặc người chơi skip.</summary>
     public void PlayGame()
     {
-        if (_isEnteringGame)
-            return;
-
         if (introVideo != null)
         {
-            if (mainMenuUI != null)
-                mainMenuUI.SetActive(false);
+            // 1. Ẩn Menu chính đi
+            if (mainMenuUI != null) mainMenuUI.SetActive(false);
 
+            // 2. Bật và phát Video Intro
             introVideo.gameObject.SetActive(true);
             introVideo.Play();
-            return;
+            Debug.Log("Đang chạy Intro...");
         }
-
-        BeginTransitionToGame();
+        else
+        {
+            // Nếu quên không gán Video, vào thẳng game luôn
+            LoadGameScene();
+        }
     }
 
+    // Hàm tự động chạy khi video kết thúc
     void OnVideoFinished(VideoPlayer vp)
     {
-        BeginTransitionToGame();
+        LoadGameScene();
     }
 
+    void LoadGameScene()
+    {
+        Debug.Log("Chuyển sang Scene Game!");
+        SceneManager.LoadScene(gameSceneName);
+    }
+
+    // Nhấn phím bất kỳ để bỏ qua Intro (Skip)
     void Update()
     {
-        if (_isEnteringGame || introVideo == null || !introVideo.isPlaying)
-            return;
-
-        if (Input.anyKeyDown)
-            SkipIntroAndBeginTransition();
-    }
-
-    void SkipIntroAndBeginTransition()
-    {
-        if (_isEnteringGame)
-            return;
-
-        introVideo.Stop();
-        introVideo.gameObject.SetActive(false);
-        BeginTransitionToGame();
-    }
-
-    void BeginTransitionToGame()
-    {
-        if (_isEnteringGame)
-            return;
-
-        _isEnteringGame = true;
-
-        if (introVideo != null)
+        if (introVideo != null && introVideo.isPlaying)
         {
-            introVideo.Stop();
-            introVideo.gameObject.SetActive(false);
+            if (Input.anyKeyDown)
+            {
+                LoadGameScene();
+            }
         }
-
-        if (SceneTransitionManager.Instance == null)
-        {
-            Debug.LogError(
-                "[MenuManager] Thiếu SceneTransitionSystem trong MainMenu. " +
-                "Không load thẳng để tránh bỏ qua fade — hãy thêm prefab Scene Transition.");
-            _isEnteringGame = false;
-            return;
-        }
-
-        Debug.Log($"Intro xong — fade out rồi load '{gameSceneName}'.");
-        SceneTransitionManager.Instance.LoadScene(
-            new SceneTransitionRequest(gameSceneName, transitionMode));
     }
+
+    // --- CHỨC NĂNG SETTING ---
 
     public void OpenSetting()
     {
-        if (settingPanel != null)
-            settingPanel.SetActive(true);
+        if (settingPanel != null) settingPanel.SetActive(true);
     }
 
     public void CloseSetting()
     {
-        if (settingPanel != null)
-            settingPanel.SetActive(false);
+        if (settingPanel != null) settingPanel.SetActive(false);
     }
 }

@@ -78,12 +78,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 76142755, guid: f32d5e22b632da04aaa9c910cda3c45f, type: 3}
+  m_Sprite: {fileID: -912327750, guid: f32d5e22b632da04aaa9c910cda3c45f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.1, y: 0.1}
+  m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -124,7 +124,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinValue: 1
-  coinPickupSound: {fileID: 8300000, guid: c218711074db2464abe746a2a3b7b0ea, type: 3}
   detectRange: 3
   moveSpeed: 10
   acceleration: 2

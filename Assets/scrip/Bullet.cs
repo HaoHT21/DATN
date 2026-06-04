@@ -4,49 +4,34 @@
 public class Bullet : MonoBehaviour
 {
     public float speed = 10f;
-    [HideInInspector] public int damage = 20;
+    [HideInInspector] public int damage = 20; // Đặt giá trị mặc định
     private Rigidbody2D _rb;
-
-    [Header("Hiệu ứng")]
-    public GameObject hitEffectPrefab; // Kéo Prefab hiệu ứng hạt vào đây
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
-
-        // Đảm bảo đạn là Trigger để xuyên qua Player nhưng chạm được tường
+        // Đảm bảo là Trigger
         GetComponent<Collider2D>().isTrigger = true;
 
-        // Di chuyển đạn (Dùng linearVelocity cho Unity 6)
+        // Di chuyển
         _rb.linearVelocity = transform.right * speed;
-
-        // Tự hủy sau 3 giây để tránh rác bộ nhớ
         Destroy(gameObject, 3f);
     }
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        // 1. Bỏ qua nếu chạm Player hoặc các vùng Trigger (như vùng đổi nhạc)
-        if (col.CompareTag("Player") || col.isTrigger)
-        {
-            return;
-        }
+        // Kiểm tra Layer để tránh va chạm với chính Player hoặc các vật không cần thiết
+        if (col.CompareTag("Player")) return;
 
-        // 2. TẠO HIỆU ỨNG NỔ (Cái này Trung đang thiếu nè)
-        if (hitEffectPrefab != null)
-        {
-            // Tạo hiệu ứng tại đúng vị trí viên đạn đang đứng
-            Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
-        }
-
-        // 3. Xử lý gây sát thương cho Enemy
+        // Xử lý sát thương Enemy
         if (col.TryGetComponent<EnemyHealth>(out var e))
         {
             e.TakeDamage(damage);
-            Debug.Log($"<color=red>[Bullet]</color> Gây {damage} sát thương cho {col.name}");
         }
 
-        // 4. Hủy viên đạn sau khi nổ
+        // Hủy đạn khi va chạm với bất kỳ thứ gì có Collider (Enemy, Wall, v.v.)
         Destroy(gameObject);
+
+        Debug.Log("Đạn chạm vào: " + col.name);
     }
 }
