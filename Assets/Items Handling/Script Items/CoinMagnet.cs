@@ -4,7 +4,7 @@ public class CoinMagnet : MonoBehaviour
 {
     [Header("Cấu hình Coin")]
     [SerializeField] private int coinValue = 1;
-    public AudioClip coinPickupSound; // Kéo file âm thanh tiếng "ting" vào đây
+    public AudioClip coinPickupSound;
 
     [Header("Khoảng hút")]
     public float detectRange = 3f;
@@ -27,16 +27,21 @@ public class CoinMagnet : MonoBehaviour
 
     private void Update()
     {
-        if (!isFlying) FindPlayerPhysics();
-        else FlyToPlayer();
+        if (!isFlying)
+            FindPlayerPhysics();
+        else
+            FlyToPlayer();
     }
 
     void FindPlayerPhysics()
     {
+        // Quét các đối tượng trong layer Player
         Collider2D hit = Physics2D.OverlapCircle(transform.position, detectRange, playerLayer);
+
         if (hit != null)
         {
-            if (hit.TryGetComponent<PlayerStats>(out PlayerStats stats))
+            // Kiểm tra Tag "Player" thay vì tìm GetComponent để tránh lỗi do xóa script trên Prefab
+            if (hit.CompareTag("Player"))
             {
                 targetPlayer = hit.transform;
                 isFlying = true;
@@ -53,9 +58,11 @@ public class CoinMagnet : MonoBehaviour
             return;
         }
 
+        // Tăng tốc dần dần khi đang bay
         currentSpeed += acceleration * Time.deltaTime;
         transform.position = Vector2.MoveTowards(transform.position, targetPlayer.position, currentSpeed * Time.deltaTime);
 
+        // Kiểm tra khoảng cách để thu thập
         float sqrDistance = (transform.position - targetPlayer.position).sqrMagnitude;
         if (sqrDistance < 0.04f)
         {
@@ -71,13 +78,18 @@ public class CoinMagnet : MonoBehaviour
             AudioManager.Instance.PlaySound(coinPickupSound);
         }
 
-        // 2. CỘNG XU VÀO STATS
-        if (targetPlayer.TryGetComponent<PlayerStats>(out PlayerStats stats))
+        // 2. CỘNG XU VÀO STATS (Sử dụng Singleton Instance thay vì GetComponent)
+        if (PlayerStats.Instance != null)
         {
-            stats.AddCoin(coinValue);
-            Debug.Log($"<color=yellow>[Coin]</color> Đã cộng {coinValue} xu.");
+            PlayerStats.Instance.AddCoin(coinValue);
+            Debug.Log($"<color=yellow>[Coin]</color> Đã cộng {coinValue} xu vào hệ thống.");
+        }
+        else
+        {
+            Debug.LogWarning("[Coin] Không tìm thấy PlayerStats.Instance!");
         }
 
+        // 3. Hủy đối tượng
         Destroy(gameObject);
     }
 

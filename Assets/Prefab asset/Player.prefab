@@ -78,7 +78,6 @@ GameObject:
   - component: {fileID: 4514547587048646730}
   - component: {fileID: -8230275147079382920}
   - component: {fileID: -8053739653458759313}
-  - component: {fileID: -6430319050884165687}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -290,17 +289,3 @@ MonoBehaviour:
   currentHealth: 100
   maxHealth: 100
   spawnPosition: {x: -5, y: 2, z: 0}
---- !u!114 &-6430319050884165687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6374291142697423168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afa66a6f8aebcd041842a0620c3cb566, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Score: 1000
-  scoreText: {fileID: 0}

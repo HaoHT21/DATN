@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 952735831675948196}
   - component: {fileID: -4507376222864833711}
   - component: {fileID: -8763088116478079316}
-  - component: {fileID: 4586673064084488346}
   m_Layer: 6
   m_Name: Player2
   m_TagString: Player
@@ -221,21 +220,12 @@ MonoBehaviour:
   weaponHolder: {fileID: 5100272539435009921}
   firePoint: {fileID: 5096531112943356487}
   weaponRotationOffset: -45
+  shootSound: {fileID: 0}
+  healSound: {fileID: 0}
+  dropSound: {fileID: 0}
   inventory: []
---- !u!114 &4586673064084488346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 499513532388182079}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afa66a6f8aebcd041842a0620c3cb566, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Score: 1000
-  scoreText: {fileID: 0}
+  firePointXOffset: 0.355
+  firePointYOffset: 0.353
 --- !u!1 &935790148139077485
 GameObject:
   m_ObjectHideFlags: 0

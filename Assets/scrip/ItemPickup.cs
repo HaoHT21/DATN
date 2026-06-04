@@ -2,8 +2,9 @@
 
 public class ItemPickup : MonoBehaviour
 {
-    public GameObject weaponVisualPrefab; // Prefab hiển thị trên tay (file Project)
-    public GameObject weaponPickupPrefab; // File Prefab gốc (file Project)
+    public Sprite itemIcon;                // <--- Thêm biến này
+    public GameObject weaponVisualPrefab;
+    public GameObject weaponPickupPrefab;
     public GameObject bulletPrefab;
     public bool isGun;
     public int damage = 25;
@@ -15,9 +16,9 @@ public class ItemPickup : MonoBehaviour
             PlayerController pc = other.GetComponent<PlayerController>();
             if (pc != null)
             {
-                // Truyền trực tiếp các Prefab từ file Project
-                pc.PickupWeapon(weaponVisualPrefab, weaponPickupPrefab, isGun, damage, bulletPrefab);
-                Destroy(gameObject); // Xóa vật phẩm trên bản đồ
+                // Truyền thêm itemIcon vào đây
+                pc.PickupWeapon(weaponVisualPrefab, weaponPickupPrefab, isGun, damage, bulletPrefab, itemIcon);
+                Destroy(gameObject);
             }
         }
     }

@@ -59,29 +59,32 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     private void PlayerDie()
     {
         IsDead = true;
-        _animator.SetTrigger("Dead"); // Kích hoạt animation Dead
-        _rb.linearVelocity = Vector2.zero;   // Dừng di chuyển
-        _rb.simulated = false;         // Vô hiệu hóa vật lý để không bị quái đẩy
 
-        Debug.Log("PLAYER ĐÃ HY SINH! Đang chờ hồi sinh...");
+        _animator.SetBool("Dead", true);
 
-        // Bắt đầu đếm ngược hồi sinh
+        _rb.linearVelocity = Vector2.zero;
+        _rb.simulated = false;
+
+        Debug.Log("PLAYER ĐÃ CHẾT! Đang chờ hồi sinh...");
+
         StartCoroutine(RespawnRoutine());
     }
 
     private IEnumerator RespawnRoutine()
     {
-        yield return new WaitForSeconds(3f); // Đợi 3 giây
+        yield return new WaitForSeconds(3f);
 
-        // Hồi sinh
-        transform.position = spawnPosition; // Di chuyển về Sảnh
+        transform.position = spawnPosition;
+
         int before = currentHealth;
         currentHealth = maxHealth;
         IsDead = false;
+
         NotifyHealthChanged(before);
 
-        _rb.simulated = true;               // Bật lại vật lý
-        _animator.Play("Idel Animation");   // Chuyển về trạng thái Idle (hoặc reset trigger)
+        _rb.simulated = true;
+
+        _animator.SetBool("Dead", false);
 
         Debug.Log("ĐÃ HỒI SINH TẠI SẢNH!");
     }

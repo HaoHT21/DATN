@@ -120,19 +120,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2792190173783236531}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8718702366633708305}
-        m_TargetAssemblyTypeName: HeroSlot, Assembly-CSharp
-        m_MethodName: BuyCurrentHero
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &2463975665288406262
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,7 +149,7 @@ RectTransform:
   m_GameObject: {fileID: 2463975665288406262}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.0972, y: 1.0972, z: 1.0972}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8784333599694062026}
@@ -697,19 +685,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1808656585895456120}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8718702366633708305}
-        m_TargetAssemblyTypeName: HeroSlot, Assembly-CSharp
-        m_MethodName: NextHero
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &7974088403049966498
 GameObject:
   m_ObjectHideFlags: 0
@@ -829,16 +805,4 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2336970610992659380}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8718702366633708305}
-        m_TargetAssemblyTypeName: HeroSlot, Assembly-CSharp
-        m_MethodName: PrevHero
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
