@@ -1,178 +1,208 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(SpriteRenderer))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Settings")]
+    [Header("Cài đặt cơ bản")]
     public float moveSpeed = 5f;
     public float attackRate = 0.5f;
     public Transform weaponHolder;
     public Transform firePoint;
-
-    [Tooltip("Chỉnh góc này để nòng súng nằm ngang (Thường là -45)")]
     public float weaponRotationOffset = -45f;
 
-    [Header("Inventory")]
-    public List<WeaponItem> inventory = new List<WeaponItem>();
-    private const int MAX_INVENTORY_SIZE = 4;
+    [Header("Âm thanh")]
+    public AudioClip shootSound;
+    public AudioClip healSound;
+    public AudioClip dropSound;
+
+    [System.Serializable]
+    public class WeaponItem
+    {
+        public Sprite icon;
+        public GameObject visualPrefab;
+        public GameObject pickupPrefab;
+        public bool isGun;
+        public int damage;
+        public GameObject bulletPrefab;
+        public bool isPotion;
+        public int healAmount;
+    }
+
+    // Kết nối tới kho đồ dùng chung
+    public List<WeaponItem> inventory
+    {
+        get
+        {
+            if (InventoryData.Instance == null)
+            {
+                Debug.LogError("LỖI: Chưa tìm thấy InventoryData Instance trong Scene! Hãy chắc chắn script InventoryData đã được gắn vào một GameObject.");
+                return null;
+            }
+            return InventoryData.Instance.sharedInventory;
+        }
+    }
+
+    public int currentWeaponIndex
+    {
+        get => InventoryData.Instance != null ? InventoryData.Instance.currentWeaponIndex : 0;
+        set { if (InventoryData.Instance != null) InventoryData.Instance.currentWeaponIndex = value; }
+    }
+
+    public event Action OnInventoryChanged;
 
     private Animator _animator;
     private SpriteRenderer _sprite;
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private float _attackTimer;
-    private int _currentWeaponIndex = 0;
+    private float gunScaleValue = 0.5f;
 
-    [System.Serializable]
-    public class WeaponItem
-    {
-        public GameObject visualPrefab;
-        public GameObject pickupPrefab;
-        public bool isGun;
-        public int damage;
-        public GameObject bulletPrefab;
-    }
+    [Header("Ép vị trí đầu nòng")]
+    [SerializeField] private float firePointXOffset = 0.355f;
+    [SerializeField] private float firePointYOffset = 0.353f;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _sprite = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
-
         rb.gravityScale = 0;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         rb.freezeRotation = true;
+        FixFirePointPosition();
     }
 
     private void Update()
     {
-        // 1. Logic di chuyển
-        moveInput.x = Input.GetAxisRaw("Horizontal");
-        moveInput.y = Input.GetAxisRaw("Vertical");
-        moveInput = moveInput.normalized;
-
-        // XỬ LÝ LẬT NGƯỜI VÀ XOAY SÚNG
+        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
         if (moveInput.x != 0)
         {
-            bool isFlip = moveInput.x < 0;
-            _sprite.flipX = isFlip;
-
+            _sprite.flipX = moveInput.x < 0;
             if (weaponHolder != null)
             {
-                // ÉP CỨNG TỈ LỆ 0.2 CHO HOLDER
-                float s = 0.2f;
-
-                if (!isFlip) // Nhìn sang PHẢI
-                {
-                    weaponHolder.localRotation = Quaternion.Euler(0, 0, weaponRotationOffset);
-                    weaponHolder.localScale = new Vector3(s, s, s);
-                }
-                else // Nhìn sang TRÁI
-                {
-                    // Xoay 180 độ và bù trừ offset
-                    weaponHolder.localRotation = Quaternion.Euler(0, 0, 180f - weaponRotationOffset);
-                    // Lật súng theo trục Y để không ngửa bụng
-                    weaponHolder.localScale = new Vector3(s, -s, s);
-                }
+                float s = gunScaleValue;
+                weaponHolder.localRotation = Quaternion.Euler(0, 0, !_sprite.flipX ? weaponRotationOffset : 180f - weaponRotationOffset);
+                weaponHolder.localScale = new Vector3(s, !_sprite.flipX ? s : -s, s);
             }
+            FixFirePointPosition();
         }
 
         _animator.SetBool("isWalking", moveInput.magnitude > 0.1f);
-
-        // 2. Logic chiến đấu
         if (_attackTimer > 0) _attackTimer -= Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.K) && _attackTimer <= 0 && inventory.Count > 0) PerformAttack();
 
-        // 3. Logic đổi súng
-        if (Input.GetKeyDown(KeyCode.R) && inventory.Count > 1)
+        if (Input.GetKeyDown(KeyCode.K) && _attackTimer <= 0 && inventory != null && inventory.Count > 0) PerformAttack();
+
+        if (Input.GetKeyDown(KeyCode.R) && inventory != null && inventory.Count > 1)
         {
-            _currentWeaponIndex = (_currentWeaponIndex + 1) % inventory.Count;
+            currentWeaponIndex = (currentWeaponIndex + 1) % inventory.Count;
             UpdateWeaponVisuals();
+            FixFirePointPosition();
         }
 
-        // 4. Logic vứt súng
-        if (Input.GetKeyDown(KeyCode.E) && inventory.Count > 0) DropWeapon();
+        if (Input.GetKeyDown(KeyCode.T) && inventory != null && inventory.Count > 0) DropWeapon();
     }
 
-    private void FixedUpdate()
+    private void FixedUpdate() => rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
+
+    public void PerformAttack()
     {
-        rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
-    }
+        if (inventory == null || inventory.Count == 0) return;
+        var weapon = inventory[currentWeaponIndex];
+        _attackTimer = attackRate;
 
-    public void PickupWeapon(GameObject visualPrefab, GameObject pickupPrefab, bool isGun, int dmg, GameObject bulletType)
-    {
-        if (inventory.Count >= MAX_INVENTORY_SIZE) return;
-        if (pickupPrefab == null) return;
-
-        GameObject spawned = Instantiate(visualPrefab, weaponHolder);
-
-        spawned.transform.localPosition = Vector3.zero;
-        spawned.transform.localRotation = Quaternion.identity;
-
-        // ÉP CỨNG TỈ LỆ 0.2 CHO SÚNG CON (CLONE)
-        spawned.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
-
-        spawned.SetActive(false);
-
-        WeaponItem newItem = new WeaponItem
+        if (weapon.isGun && weapon.bulletPrefab != null)
         {
+            if (AudioManager.Instance != null && shootSound != null)
+                AudioManager.Instance.PlaySound(shootSound);
+
+            Quaternion rot = _sprite.flipX ? Quaternion.Euler(0, 0, 180f) : Quaternion.identity;
+            GameObject b = Instantiate(weapon.bulletPrefab, firePoint.position, rot);
+            if (b.TryGetComponent<Bullet>(out var bs)) bs.damage = weapon.damage;
+        }
+        else if (weapon.isPotion)
+        {
+            PlayerHealth ph = GetComponent<PlayerHealth>();
+            if (ph != null) { ph.Heal(weapon.healAmount); RemoveWeapon(currentWeaponIndex); }
+        }
+        else { _animator.SetTrigger("Attack"); }
+    }
+
+    public void UpdateWeaponVisuals()
+    {
+        if (inventory == null) return;
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            if (inventory[i].visualPrefab != null)
+            {
+                // Chỉ bật vũ khí đang cầm (trùng index), tắt toàn bộ vũ khí ẩn còn lại
+                inventory[i].visualPrefab.SetActive(i == currentWeaponIndex);
+            }
+        }
+        OnInventoryChanged?.Invoke();
+    }
+
+    public void PickupWeapon(GameObject visualPrefab, GameObject pickupPrefab, bool isGun, int dmg, GameObject bulletType, Sprite icon)
+    {
+        if (inventory == null) return;
+        if (inventory.Count >= 4) return;
+
+        if (weaponHolder == null)
+        {
+            Debug.LogError($"Lỗi: Bạn chưa kéo thả 'Weapon Holder' vào script PlayerController gắn trên {gameObject.name}!");
+            return;
+        }
+
+        GameObject spawned = null;
+        if (visualPrefab != null)
+        {
+            spawned = Instantiate(visualPrefab, weaponHolder);
+            spawned.transform.localPosition = Vector3.zero;
+            spawned.transform.localRotation = Quaternion.identity;
+            spawned.transform.localScale = Vector3.one;
+
+            // SỬA TẠI ĐÂY: Mặc định để false, hàm UpdateWeaponVisuals() bên dưới sẽ tự động kích hoạt lại nếu được chọn
+            spawned.SetActive(false);
+        }
+
+        inventory.Add(new WeaponItem
+        {
+            icon = icon,
             visualPrefab = spawned,
             pickupPrefab = pickupPrefab,
             isGun = isGun,
             damage = dmg,
-            bulletPrefab = bulletType
-        };
+            bulletPrefab = bulletType,
+            isPotion = false,
+            healAmount = 0
+        });
 
-        inventory.Add(newItem);
-        _currentWeaponIndex = inventory.Count - 1;
+        currentWeaponIndex = inventory.Count - 1;
+
+        // Gọi hàm này để cập nhật trạng thái SetActive(true) cho vũ khí vừa nhặt!
         UpdateWeaponVisuals();
     }
 
     void DropWeapon()
     {
         if (inventory == null || inventory.Count == 0) return;
-        var item = inventory[_currentWeaponIndex];
-        if (item.pickupPrefab != null)
-            Instantiate(item.pickupPrefab, transform.position + (Vector3.down * 0.5f), Quaternion.identity);
-        if (item.visualPrefab != null) Destroy(item.visualPrefab);
-        inventory.RemoveAt(_currentWeaponIndex);
-        _currentWeaponIndex = Mathf.Clamp(_currentWeaponIndex, 0, Mathf.Max(0, inventory.Count - 1));
+        var item = inventory[currentWeaponIndex];
+        if (item.pickupPrefab) Instantiate(item.pickupPrefab, transform.position + Vector3.down, Quaternion.identity);
+        RemoveWeapon(currentWeaponIndex);
+    }
+
+    void RemoveWeapon(int index)
+    {
+        if (inventory == null || index < 0 || index >= inventory.Count) return;
+        if (inventory[index].visualPrefab) Destroy(inventory[index].visualPrefab);
+        inventory.RemoveAt(index);
+        currentWeaponIndex = Mathf.Clamp(currentWeaponIndex, 0, Mathf.Max(0, inventory.Count - 1));
         UpdateWeaponVisuals();
     }
 
-    void UpdateWeaponVisuals()
+    void FixFirePointPosition()
     {
-        for (int i = 0; i < inventory.Count; i++)
-        {
-            if (inventory[i].visualPrefab != null)
-                inventory[i].visualPrefab.SetActive(i == _currentWeaponIndex);
-        }
-    }
-
-    void PerformAttack()
-    {
-        var weapon = inventory[_currentWeaponIndex];
-        _attackTimer = attackRate;
-
-        if (weapon.isGun && weapon.bulletPrefab != null)
-        {
-            Quaternion bulletRotation = _sprite.flipX ? Quaternion.Euler(0, 0, 180f) : Quaternion.identity;
-
-            // --- SỬA Ở ĐÂY ---
-            GameObject bulletObj = Instantiate(weapon.bulletPrefab, firePoint.position, bulletRotation);
-
-            // Lấy script Bullet và gán sát thương vào
-            Bullet bulletScript = bulletObj.GetComponent<Bullet>();
-            if (bulletScript != null)
-            {
-                bulletScript.damage = weapon.damage; // Truyền damage từ vũ khí vào đạn
-            }
-            // ------------------
-        }
-        else
-        {
-            _animator.SetTrigger("Attack");
-        }
+        if (firePoint != null) { firePoint.localPosition = new Vector3(firePointXOffset, firePointYOffset, 0); firePoint.localRotation = Quaternion.identity; }
     }
 }

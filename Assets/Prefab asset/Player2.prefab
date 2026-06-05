@@ -202,7 +202,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 100
   maxHealth: 100
-  spawnPosition: {x: -5.027205, y: 2.226017, z: 0}
 --- !u!114 &-8763088116478079316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,10 +219,9 @@ MonoBehaviour:
   weaponHolder: {fileID: 5100272539435009921}
   firePoint: {fileID: 5096531112943356487}
   weaponRotationOffset: -45
-  shootSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
   healSound: {fileID: 0}
   dropSound: {fileID: 0}
-  inventory: []
   firePointXOffset: 0.355
   firePointYOffset: 0.353
 --- !u!1 &935790148139077485

@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Thao tác đổi nhạc nền khi Player bước vào vùng Trigger của Bản đồ.
+/// </summary>
 public class MapMusicTrigger : MonoBehaviour
 {
     [Header("Cấu hình nhạc")]
@@ -12,8 +15,8 @@ public class MapMusicTrigger : MonoBehaviour
         {
             if (AudioManager.Instance != null && mapBGM != null)
             {
-                // Gọi AudioManager để đổi nhạc nền
-                AudioManager.Instance.PlayMusic(mapBGM);
+                // Gọi đúng hàm PlaySound có sẵn trong AudioManager gốc của bạn
+                AudioManager.Instance.PlaySound(mapBGM);
             }
         }
     }

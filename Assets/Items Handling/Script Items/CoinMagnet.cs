@@ -4,13 +4,14 @@ public class CoinMagnet : MonoBehaviour
 {
     [Header("Cấu hình Coin")]
     [SerializeField] private int coinValue = 1;
+    public AudioClip coinPickupSound;
 
     [Header("Khoảng hút")]
     public float detectRange = 3f;
 
     [Header("Tốc độ bay")]
     public float moveSpeed = 10f;
-    [SerializeField] private float acceleration = 2f; // Tăng tốc để hút mượt hơn
+    [SerializeField] private float acceleration = 2f;
 
     [Header("Physics Settings")]
     [SerializeField] private LayerMask playerLayer;
@@ -27,24 +28,20 @@ public class CoinMagnet : MonoBehaviour
     private void Update()
     {
         if (!isFlying)
-        {
             FindPlayerPhysics();
-        }
         else
-        {
             FlyToPlayer();
-        }
     }
 
     void FindPlayerPhysics()
     {
-        // Kiểm tra vùng quanh đồng xu
+        // Quét các đối tượng trong layer Player
         Collider2D hit = Physics2D.OverlapCircle(transform.position, detectRange, playerLayer);
 
         if (hit != null)
         {
-            // Kiểm tra xem đối tượng có script PlayerStats không
-            if (hit.TryGetComponent<PlayerStats>(out PlayerStats stats))
+            // Kiểm tra Tag "Player" thay vì tìm GetComponent để tránh lỗi do xóa script trên Prefab
+            if (hit.CompareTag("Player"))
             {
                 targetPlayer = hit.transform;
                 isFlying = true;
@@ -61,20 +58,12 @@ public class CoinMagnet : MonoBehaviour
             return;
         }
 
-        // Tăng dần tốc độ khi đang bay về phía player
+        // Tăng tốc dần dần khi đang bay
         currentSpeed += acceleration * Time.deltaTime;
+        transform.position = Vector2.MoveTowards(transform.position, targetPlayer.position, currentSpeed * Time.deltaTime);
 
-        // Di chuyển đồng xu
-        transform.position = Vector2.MoveTowards(
-            transform.position,
-            targetPlayer.position,
-            currentSpeed * Time.deltaTime
-        );
-
-        // Kiểm tra khoảng cách bằng bình phương (sqrMagnitude) để tối ưu hiệu suất
+        // Kiểm tra khoảng cách để thu thập
         float sqrDistance = (transform.position - targetPlayer.position).sqrMagnitude;
-
-        // 0.2f * 0.2f = 0.04f
         if (sqrDistance < 0.04f)
         {
             CollectCoin();
@@ -83,19 +72,29 @@ public class CoinMagnet : MonoBehaviour
 
     void CollectCoin()
     {
-        if (targetPlayer.TryGetComponent<PlayerStats>(out PlayerStats stats))
+        // 1. PHÁT ÂM THANH NHẶT XU
+        if (AudioManager.Instance != null && coinPickupSound != null)
         {
-            stats.AddCoin(coinValue);
-            Debug.Log($"<color=yellow>[Coin]</color> Đã cộng {coinValue} xu.");
+            AudioManager.Instance.PlaySound(coinPickupSound);
         }
 
-        // Hủy đồng xu
+        // 2. CỘNG XU VÀO STATS (Sử dụng Singleton Instance thay vì GetComponent)
+        if (PlayerStats.Instance != null)
+        {
+            PlayerStats.Instance.AddCoin(coinValue);
+            Debug.Log($"<color=yellow>[Coin]</color> Đã cộng {coinValue} xu vào hệ thống.");
+        }
+        else
+        {
+            Debug.LogWarning("[Coin] Không tìm thấy PlayerStats.Instance!");
+        }
+
+        // 3. Hủy đối tượng
         Destroy(gameObject);
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Sửa lỗi Color.gold bằng mã màu RGB vàng kim
         Gizmos.color = new Color(1f, 0.84f, 0f);
         Gizmos.DrawWireSphere(transform.position, detectRange);
     }

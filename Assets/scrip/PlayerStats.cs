@@ -6,7 +6,20 @@ public class PlayerStats : MonoBehaviour
     public int Score = 1000;
     public TextMeshProUGUI scoreText;
 
-    private void Start() => UpdateUI();
+    // Singleton instance để các script khác (như CoinMagnet) truy cập
+    public static PlayerStats Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        // Lưu ý: Nếu dữ liệu cũ reset tiền, hãy tạm thời comment dòng này lại để test
+        GameSessionSave.LoadInto(this);
+        UpdateUI();
+    }
 
     public void AddCoin(int amount)
     {
@@ -14,7 +27,6 @@ public class PlayerStats : MonoBehaviour
         UpdateUI();
     }
 
-    // Đảm bảo hàm này nhận đúng 2 tham số: price và itemID
     public bool TryPurchase(int price, int itemID)
     {
         Debug.Log($"[Shop] Đang mua ID: {itemID}, Giá: {price}. Số dư: {Score}");
@@ -36,20 +48,49 @@ public class PlayerStats : MonoBehaviour
 
     private void SpawnPurchasedItem(int id)
     {
-        GameObject prefab = ShopManager.Instance.GetPrefabByID(id);
+        // 1. Lấy prefab từ Manager tương ứng
+        GameObject prefab = (id >= 20) ? HiroManager.Instance?.GetHeroPrefabByID(id) : ShopManager.Instance?.GetPrefabByID(id);
+
         if (prefab != null)
         {
-            Instantiate(prefab, transform.position + new Vector3(0, -0.8f, 0), Quaternion.identity);
+            // 2. Tìm vị trí của Player hiện tại trong Scene
+            GameObject currentObj = GameObject.FindGameObjectWithTag("Player");
+            Vector3 spawnPos = (currentObj != null) ? currentObj.transform.position : Vector3.zero;
+
+            // 3. Xử lý logic
+            if (id >= 20)
+            {
+                // Thay thế nhân vật
+                if (currentObj != null) Destroy(currentObj);
+
+                GameObject newPlayer = Instantiate(prefab, spawnPos, Quaternion.identity);
+                newPlayer.tag = "Player"; // Đảm bảo gán lại Tag để các lần mua sau tìm được
+                Debug.Log($"[Shop] Đã thay thế nhân vật ID: {id}");
+            }
+            else
+            {
+                // Rớt vật phẩm dưới chân Player (Offset Y = -0.8f)
+                Instantiate(prefab, spawnPos + new Vector3(0, -0.8f, 0), Quaternion.identity);
+                Debug.Log($"[Shop] Đã spawn vật phẩm ID: {id} tại vị trí của Player");
+            }
         }
         else
         {
-            Debug.LogError($"[Shop] Không tìm thấy Prefab cho ID: {id}");
+            Debug.LogError($"[Shop] Không tìm thấy Prefab cho ID: {id}. Kiểm tra lại ShopManager/HiroManager!");
         }
     }
 
     public void UpdateUI()
     {
-        if (scoreText == null) scoreText = GameObject.Find("CoinScore")?.GetComponent<TextMeshProUGUI>();
-        if (scoreText != null) scoreText.text = Score.ToString();
+        if (scoreText == null)
+        {
+            GameObject coinObj = GameObject.Find("CoinScore");
+            if (coinObj != null) scoreText = coinObj.GetComponent<TextMeshProUGUI>();
+        }
+
+        if (scoreText != null)
+        {
+            scoreText.text = Score.ToString();
+        }
     }
 }
