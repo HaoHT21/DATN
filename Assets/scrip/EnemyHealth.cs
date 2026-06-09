@@ -8,7 +8,8 @@ public class EnemyHealth : MonoBehaviour, IHealthProvider
 
     private Animator _animator;
     private Collider2D _collider;
-    private EnemyAI _enemyAI; // Thêm biến này để gọi hàm Die()
+    private EnemyAI _enemyAI;
+    private RangedEnemyAI _rangedEnemyAI;
 
     // =================================================================
     // THỰC THI INTERFACE IHEALTHPROVIDER BẮT BUỘC CỦA DỰ ÁN
@@ -24,7 +25,8 @@ public class EnemyHealth : MonoBehaviour, IHealthProvider
     {
         _animator = GetComponent<Animator>();
         _collider = GetComponent<Collider2D>();
-        _enemyAI = GetComponent<EnemyAI>(); // Lấy script EnemyAI
+        _enemyAI = GetComponent<EnemyAI>();
+        _rangedEnemyAI = GetComponent<RangedEnemyAI>();
     }
 
     public void TakeDamage(int damage)
@@ -60,31 +62,28 @@ public class EnemyHealth : MonoBehaviour, IHealthProvider
         // Vô hiệu hóa collider để không bị va chạm khi đang chết
         if (_collider) _collider.enabled = false;
 
-        // Dừng mọi chuyển động của kẻ địch
-        if (_enemyAI != null)
-        {
-            _enemyAI.enabled = false; // Tắt AI để nó không đuổi theo nữa
-
-            // Kiểm tra xem Rigidbody2D có tồn tại hay không trước khi gán vận tốc
-            Rigidbody2D rb = _enemyAI.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                rb.linearVelocity = Vector2.zero;
-            }
-        }
+        DisableEnemyAI();
 
         _animator?.SetBool("Death", true);
 
         yield return new WaitForSeconds(0.8f);
 
-        // GỌI HÀM RƠI XU VÀ HỦY ĐỐI TƯỢNG
         if (_enemyAI != null)
-        {
-            _enemyAI.Die(); // Hàm này sẽ Instantiate 5 đồng xu và Destroy gameObject
-        }
+            _enemyAI.Die();
+        else if (_rangedEnemyAI != null)
+            _rangedEnemyAI.Die();
         else
-        {
             Destroy(gameObject);
-        }
+    }
+
+    private void DisableEnemyAI()
+    {
+        MonoBehaviour ai = _enemyAI != null ? _enemyAI : (MonoBehaviour)_rangedEnemyAI;
+        if (ai == null) return;
+
+        ai.enabled = false;
+
+        if (ai.TryGetComponent(out Rigidbody2D rb))
+            rb.linearVelocity = Vector2.zero;
     }
 }

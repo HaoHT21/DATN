@@ -247,7 +247,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1001806766499642190, guid: d1c97d678557b4c40bc84c2a85f558bc, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 19.6
+      value: 19.599998
       objectReference: {fileID: 0}
     - target: {fileID: 2482024599645577141, guid: d1c97d678557b4c40bc84c2a85f558bc, type: 3}
       propertyPath: m_LocalScale.x
@@ -535,6 +535,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1691337816948835297, guid: 07737b9f3cf4c2e469e8fffb47466bf6, type: 3}
+      propertyPath: progressFillImage
+      value: 
+      objectReference: {fileID: 1420558538}
     - target: {fileID: 1725486183292893268, guid: 07737b9f3cf4c2e469e8fffb47466bf6, type: 3}
       propertyPath: m_Name
       value: SceneTransitionSystem
@@ -1175,6 +1179,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1420558538 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1907462341573765147, guid: 07737b9f3cf4c2e469e8fffb47466bf6, type: 3}
+  m_PrefabInstance: {fileID: 511550121}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1526749895
 GameObject:
   m_ObjectHideFlags: 0
@@ -1257,7 +1272,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1527251872}
   - component: {fileID: 1527251874}
-  - component: {fileID: 1527251873}
   m_Layer: 5
   m_Name: introGame
   m_TagString: Untagged
@@ -1285,20 +1299,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1527251873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1527251871}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 930fbb18ed3b72f49af162c5f6858fcd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  videoPlayer: {fileID: 1527251874}
-  nextSceneName: Sanh
 --- !u!328 &1527251874
 VideoPlayer:
   m_ObjectHideFlags: 0
