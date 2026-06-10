@@ -192,10 +192,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2
   stoppingDistance: 1.2
-  attackRate: 1.36
-  damage: 10
-  chaseRange: 4
-  coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
 --- !u!114 &7531362932192062617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,5 +204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a9fcb8db05d7f542a6511cca90d2c61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHealth: 100
   maxHealth: 100
+  currentHealth: 100
+  destroyDelay: 1

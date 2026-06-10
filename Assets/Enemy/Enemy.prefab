@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 8076820450960945977}
   - component: {fileID: 4058807651296893449}
   - component: {fileID: 6827323096235088386}
-  - component: {fileID: 6103770147116697997}
   - component: {fileID: 3686815756302059144}
   - component: {fileID: 7531362932192062617}
+  - component: {fileID: 7681564690201352758}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Enemy
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 6252078204278402908}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.95, y: 0.6094808, z: 0}
+  m_LocalPosition: {x: 431.77, y: -217.36, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -102,7 +102,7 @@ Animator:
   m_GameObject: {fileID: 6252078204278402908}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b7a367e9c9eaefc49bbb5ff59d46b852, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2589c2c6e9f7f3d4abfa0dc27829fa63, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -141,43 +141,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!70 &6103770147116697997
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6252078204278402908}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: -0.015000001, y: 0.105000004}
-  m_Size: {x: 0.15, y: 0.15}
-  m_Direction: 0
 --- !u!114 &3686815756302059144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,11 +154,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 4
-  stoppingDistance: 1.2
+  stoppingDistance: 0.9
   attackRate: 1.36
   damage: 10
-  chaseRange: 4
-  coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
 --- !u!114 &7531362932192062617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,4 +169,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a9fcb8db05d7f542a6511cca90d2c61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
   currentHealth: 100
+  destroyDelay: 1
+--- !u!114 &7681564690201352758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6252078204278402908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6b7ba5200aa144b90af477056beaeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
+  coinAmount: 5
