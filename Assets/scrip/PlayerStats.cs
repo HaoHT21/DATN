@@ -21,10 +21,22 @@ public class PlayerStats : MonoBehaviour
         UpdateUI();
     }
 
+    public int CoinCount => Score;
+
     public void AddCoin(int amount)
     {
         Score += amount;
         UpdateUI();
+    }
+
+    public bool TrySpendCoins(int amount)
+    {
+        if (Score < amount)
+            return false;
+
+        Score -= amount;
+        UpdateUI();
+        return true;
     }
 
     public bool TryPurchase(int price, int itemID)

@@ -32,6 +32,41 @@ public class InventoryManager : MonoBehaviour
         return true;
     }
 
+    public int CountItem(int itemID)
+    {
+        int count = 0;
+        foreach (ItemData item in items)
+        {
+            if (item != null && item.itemID == itemID)
+                count++;
+        }
+        return count;
+    }
+
+    public bool HasEnoughItems(int itemID, int amount)
+    {
+        return CountItem(itemID) >= amount;
+    }
+
+    public bool TryRemoveItems(int itemID, int amount)
+    {
+        if (!HasEnoughItems(itemID, amount))
+            return false;
+
+        int removed = 0;
+        for (int i = items.Count - 1; i >= 0 && removed < amount; i--)
+        {
+            if (items[i] != null && items[i].itemID == itemID)
+            {
+                items.RemoveAt(i);
+                removed++;
+            }
+        }
+
+        RefreshUI();
+        return removed == amount;
+    }
+
     public void RefreshUI()
     {
         for (int i = 0; i < slots.Length; i++)
