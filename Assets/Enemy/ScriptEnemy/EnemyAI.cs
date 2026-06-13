@@ -5,6 +5,7 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 3f;
+    public float stoppingDistance = 1.2f;
 
     [Header("Combat")]
     public float attackRate = 1.36f;
@@ -18,8 +19,6 @@ public class EnemyAI : MonoBehaviour
     private SpriteRenderer sprite;
     private Rigidbody2D rb;
     private Transform target;
-
-    private bool playerInAttackRange;
 
     private string currentAnim;
 
@@ -35,7 +34,8 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        if (isDead) return;
+        if (isDead)
+            return;
 
         FindClosestPlayer();
 
@@ -46,16 +46,25 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        Vector2 direction = (target.position - transform.position).normalized;
+        float distance =
+            Vector2.Distance(
+                transform.position,
+                target.position);
+
+        Vector2 direction =
+            (target.position - transform.position)
+            .normalized;
 
         if (direction.x != 0)
             isFacingLeft = direction.x < 0;
 
         sprite.flipX = isFacingLeft;
 
-        if (!playerInAttackRange)
+        if (distance > stoppingDistance)
         {
-            rb.linearVelocity = direction * moveSpeed;
+            rb.linearVelocity =
+                direction * moveSpeed;
+
             PlayAnimation("idle");
         }
         else
@@ -72,22 +81,6 @@ public class EnemyAI : MonoBehaviour
             attackTimer -= Time.deltaTime;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInAttackRange = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInAttackRange = false;
-        }
-    }
-
     private void Attack()
     {
         attackTimer = attackRate;
@@ -95,12 +88,13 @@ public class EnemyAI : MonoBehaviour
         PlayAnimation("attack");
 
         if (target != null &&
-            target.TryGetComponent<PlayerHealth>(out var playerHealth))
+            target.TryGetComponent<PlayerHealth>(
+                out var playerHealth))
         {
             playerHealth.TakeDamage(damage);
         }
 
-        Invoke(nameof(ReturnToIdle), 0.4f);
+        Invoke(nameof(ReturnToIdle), 0.3f);
     }
 
     private void ReturnToIdle()
@@ -113,7 +107,8 @@ public class EnemyAI : MonoBehaviour
     {
         Debug.Log("HURT CALLED");
 
-        if (isDead) return;
+        if (isDead)
+            return;
 
         PlayAnimation("hurt");
 
@@ -123,7 +118,8 @@ public class EnemyAI : MonoBehaviour
 
     public void Die()
     {
-        if (isDead) return;
+        if (isDead)
+            return;
 
         isDead = true;
 
@@ -136,7 +132,8 @@ public class EnemyAI : MonoBehaviour
 
     private void PlayAnimation(string animName)
     {
-        if (currentAnim == animName) return;
+        if (currentAnim == animName)
+            return;
 
         currentAnim = animName;
         anim.Play(animName);
@@ -144,16 +141,18 @@ public class EnemyAI : MonoBehaviour
 
     private void FindClosestPlayer()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        GameObject[] players =
+            GameObject.FindGameObjectsWithTag("Player");
 
         float minDistance = float.MaxValue;
         Transform closest = null;
 
         foreach (GameObject p in players)
         {
-            float dist = Vector2.Distance(
-                transform.position,
-                p.transform.position);
+            float dist =
+                Vector2.Distance(
+                    transform.position,
+                    p.transform.position);
 
             if (dist < minDistance)
             {
@@ -163,5 +162,14 @@ public class EnemyAI : MonoBehaviour
         }
 
         target = closest;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            stoppingDistance);
     }
 }

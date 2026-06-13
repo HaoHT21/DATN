@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 952735831675948196}
   - component: {fileID: -4507376222864833711}
   - component: {fileID: -8763088116478079316}
+  - component: {fileID: 3965646904044123379}
   m_Layer: 6
   m_Name: Player2
   m_TagString: Player
@@ -31,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 499513532388182079}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 41.513184, y: -20.855808, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -200,8 +201,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd4da1672f09544d89e27ba818ad65e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthSlider: {fileID: 0}
   currentHealth: 100
   maxHealth: 100
+  spawnPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &-8763088116478079316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,6 +227,25 @@ MonoBehaviour:
   dropSound: {fileID: 0}
   firePointXOffset: 0.355
   firePointYOffset: 0.353
+--- !u!114 &3965646904044123379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499513532388182079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c98f7e4a96b61fc41a4b626c2fb19e02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lightningPrefab: {fileID: 3985251347831003669, guid: 85087ec33e1845445b94f66b35fe29a1, type: 3}
+  skillRadius: 4
+  cooldown: 1.5
+  damage: 30
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &935790148139077485
 GameObject:
   m_ObjectHideFlags: 0

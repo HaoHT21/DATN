@@ -40,7 +40,7 @@ public class Bullet : MonoBehaviour
         }
 
         // 3. Xử lý gây sát thương cho Enemy
-        if (col.TryGetComponent<EnemyHealth>(out var e))
+        if (col.TryGetComponent<EnemyHeath>(out var e))
         {
             e.TakeDamage(damage);
             Debug.Log($"<color=red>[Bullet]</color> Gây {damage} sát thương cho {col.name}");

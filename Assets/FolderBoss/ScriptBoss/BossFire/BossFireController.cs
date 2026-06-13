@@ -30,6 +30,13 @@ public class BossFireController : MonoBehaviour
     public float spitFireCooldown = 12f;
     public float spitFireDuration = 1f;
 
+    [Header("Fireball Cast")]
+    public float fireballCastTime = 1f;
+
+    [Header("Triple Shot")]
+    public int bulletsPerBurst = 3;
+    public float burstInterval = 0.08f;
+
     private float fireballTimer;
     private float spitFireTimer;
 

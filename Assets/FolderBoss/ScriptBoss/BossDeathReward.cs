@@ -1,56 +1,38 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class BossDeathReward : MonoBehaviour
 {
-    private GameObject targetObject;
+    [Header("Tags cần tìm")]
+    public string[] portalTags;
+
+    private List<GameObject> portals =
+        new List<GameObject>();
 
     private void Awake()
     {
-        GameObject[] allObjects =
-            Resources.FindObjectsOfTypeAll<GameObject>();
-
-        foreach (GameObject obj in allObjects)
+        foreach (string tag in portalTags)
         {
-            Debug.Log("Đang kiểm tra: " + obj.name);
+            GameObject[] found =
+                GameObject.FindGameObjectsWithTag(tag);
 
-            if (obj.CompareTag("Portal"))
-            {
-                targetObject = obj;
-
-                Debug.Log("Đã tìm thấy Portal: "
-                          + obj.name);
-
-                break;
-            }
-        }
-
-        if (targetObject == null)
-        {
-            Debug.LogError("Không tìm thấy object tag Portal");
+            portals.AddRange(found);
         }
     }
 
     private void Start()
     {
-        if (targetObject != null)
+        foreach (GameObject portal in portals)
         {
-            targetObject.SetActive(false);
-            Debug.Log("Đã ẩn Portal");
+            portal.SetActive(false);
         }
     }
 
     public void OnBossDeath()
     {
-        Debug.Log("OnBossDeath được gọi");
-
-        if (targetObject == null)
+        foreach (GameObject portal in portals)
         {
-            Debug.LogError("Portal NULL");
-            return;
+            portal.SetActive(true);
         }
-
-        Debug.Log("Hiện Portal: " + targetObject.name);
-
-        targetObject.SetActive(true);
     }
 }

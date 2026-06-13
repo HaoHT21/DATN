@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 4510077704236999905}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.22495107, w: 0.9743701}
-  m_LocalPosition: {x: 0.01, y: -0.03, z: 0}
+  m_LocalPosition: {x: 0.01, y: -0.027, z: 0}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -306,6 +306,7 @@ GameObject:
   - component: {fileID: 4514547587048646730}
   - component: {fileID: -8230275147079382920}
   - component: {fileID: -8053739653458759313}
+  - component: {fileID: 2361089398052253315}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -322,7 +323,7 @@ Transform:
   m_GameObject: {fileID: 6374291142697423168}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 39.79, y: -22.58, z: 0}
   m_LocalScale: {x: 4.3516226, y: 4.3516226, z: 4.3516226}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -497,7 +498,7 @@ MonoBehaviour:
   weaponHolder: {fileID: 8188927346685809397}
   firePoint: {fileID: 73214861480437594}
   weaponRotationOffset: -45
-  shootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
+  shootSound: {fileID: 8300000, guid: 474f5b12833b9124aaca040c989f2e58, type: 3}
   healSound: {fileID: 0}
   dropSound: {fileID: 0}
   firePointXOffset: 0.355
@@ -517,7 +518,23 @@ MonoBehaviour:
   healthSlider: {fileID: 8849190948643106108}
   currentHealth: 100
   maxHealth: 100
-  spawnPosition: {x: 0, y: 0, z: 0}
+  spawnPosition: {x: 28.64, y: -3.73, z: 0}
+--- !u!114 &2361089398052253315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6374291142697423168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acebfa14b0699c47bccb49dcef1f2d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buffVfxPrefab: {fileID: 685253278740951906, guid: b966050f6ff2ddb48a0bb9e7cbb92e27, type: 3}
+  skillDuration: 8
+  cooldown: 15
+  isBuffActive: 0
 --- !u!1 &6381446267107094810
 GameObject:
   m_ObjectHideFlags: 0
