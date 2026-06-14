@@ -3,8 +3,26 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class HostageController : MonoBehaviour
 {
+    [Header("Định danh")]
+    public string hostageId = "hostage_01";
+
+    [Header("Hội thoại sau mở lồng")]
+    public CycleContent[] rescueDialogue;
+    public float dialogueTypingSpeed = 0.05f;
+    public float postDialogueDelay = 0f;
+
+    public CycleContent[] RescueDialogue => rescueDialogue;
+    public float DialogueTypingSpeed => dialogueTypingSpeed;
+    public float PostDialogueDelay => postDialogueDelay;
+    public string HostageId => hostageId;
+
     [Header("Hành vi sau giải cứu")]
     public HostageRescueMode rescueMode = HostageRescueMode.Disappear;
+
+    [Header("Chuyển scene sau giải cứu")]
+    public bool transferAfterRescue = true;
+    public string targetSceneName = "Sanh";
+    public string targetSpawnPointId = "default";
 
     [Header("Walk To Exit")]
     public Transform exitPoint;
@@ -175,6 +193,16 @@ public class HostageController : MonoBehaviour
 
     private void DestroyHostage()
     {
+        RegisterTransferIfNeeded();
         Destroy(gameObject);
+    }
+
+    private void RegisterTransferIfNeeded()
+    {
+        if (!transferAfterRescue || string.IsNullOrEmpty(hostageId))
+            return;
+
+        HostageRescueManager manager = HostageRescueManager.EnsureInstance();
+        manager.RegisterRescue(hostageId, targetSceneName, targetSpawnPointId);
     }
 }
