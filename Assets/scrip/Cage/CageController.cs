@@ -40,6 +40,16 @@ public class CageController : MonoBehaviour
 
     private void Start()
     {
+        HostageRescueManager.EnsureInstance();
+
+        if (hostage != null
+            && !string.IsNullOrEmpty(hostage.HostageId)
+            && HostageRescueManager.Instance.IsAlreadyRescued(hostage.HostageId))
+        {
+            State = CageState.Rescued;
+            hostage.gameObject.SetActive(false);
+        }
+
         ApplyStateVisuals();
     }
 
@@ -141,10 +151,28 @@ public class CageController : MonoBehaviour
         if (hostage != null)
         {
             hostage.transform.SetParent(null);
-            hostage.OnRescued();
+            BeginHostageRescueSequence();
         }
 
         ApplyStateVisuals();
+    }
+
+    private void BeginHostageRescueSequence()
+    {
+        CycleContent[] dialogue = hostage.RescueDialogue;
+        bool hasDialogue = dialogue != null && dialogue.Length > 0 && DialogueManager.Instance != null;
+
+        if (hasDialogue)
+        {
+            DialogueManager.Instance.StartCyclingWithCallback(
+                dialogue,
+                hostage.DialogueTypingSpeed,
+                hostage.OnRescued,
+                hostage.PostDialogueDelay);
+            return;
+        }
+
+        hostage.OnRescued();
     }
 
     private void ApplyStateVisuals()

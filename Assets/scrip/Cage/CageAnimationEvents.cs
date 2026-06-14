@@ -18,5 +18,6 @@ public class CageAnimationEvents : MonoBehaviour
     {
         if (cageController != null)
             cageController.OnOpenAnimationComplete();
+            gameObject.SetActive(false);
     }
 }
