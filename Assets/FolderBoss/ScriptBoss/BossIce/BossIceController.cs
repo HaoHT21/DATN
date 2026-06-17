@@ -23,6 +23,16 @@ public class BossIceController : MonoBehaviour
     [Header("Ice Burst")]
     public int iceCount = 20;
 
+    [Header("Attack Ice")]
+    public GameObject attackIcePrefab;
+    public Transform attackIcePoint;
+    public float attackIceCooldown = 5f;
+
+    public int attackIceCount = 3;
+    public float attackIceInterval = 0.3f;
+
+    private float attackIceTimer;
+
     private float iceTimer;
 
     private bool isCastingSkill;
@@ -90,6 +100,18 @@ public class BossIceController : MonoBehaviour
 
         if (isCastingSkill)
             return;
+
+        attackIceTimer += Time.deltaTime;
+
+        if (attackIceTimer >= attackIceCooldown &&
+            !isCastingSkill)
+        {
+            attackIceTimer = 0f;
+
+            StartCoroutine(AttackIceSkill());
+
+            return;
+        }
 
         // ===== LOOK PLAYER =====
         Vector3 rot = bossVisual.localEulerAngles;
@@ -197,5 +219,50 @@ public class BossIceController : MonoBehaviour
                 rot
             );
         }
+    }
+    private IEnumerator AttackIceSkill()
+    {
+        isCastingSkill = true;
+
+        rb.linearVelocity = Vector2.zero;
+
+        for (int i = 0; i < attackIceCount; i++)
+        {
+            PlayAttack();
+
+            yield return new WaitForSeconds(0.3f);
+
+            SpawnAttackIce();
+
+            yield return new WaitForSeconds(attackIceInterval);
+        }
+
+        PlayIdle();
+
+        isCastingSkill = false;
+    }
+
+    private void SpawnAttackIce()
+    {
+        if (attackIcePrefab == null ||
+            attackIcePoint == null ||
+            target == null)
+            return;
+
+        Vector2 direction =
+            (target.position - attackIcePoint.position)
+            .normalized;
+
+        float angle =
+            Mathf.Atan2(
+                direction.y,
+                direction.x
+            ) * Mathf.Rad2Deg;
+
+        Instantiate(
+            attackIcePrefab,
+            attackIcePoint.position,
+            Quaternion.Euler(0, 0, angle)
+        );
     }
 }

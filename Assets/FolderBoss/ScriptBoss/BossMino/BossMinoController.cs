@@ -17,8 +17,21 @@ public class BossMinoController : MonoBehaviour
 
     [Header("RedBull Skill")]
     public float redBullCooldown = 10f;
-    public float redBullDuration = 5f;
-    public float speedMultiplier = 2f;
+    public float chargeSpeed = 10f;
+    public float chargeDuration = 2f;
+
+    [Header("RedBull Effect")]
+    public GameObject redBullEffect;
+
+    [Header("Shoot Skill")]
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+    public float shootCooldown = 5f;
+    public int bulletCount = 5;
+
+    private float shootTimer;
+
+    private Vector2 chargeDirection;
 
     private float redBullTimer;
 
@@ -54,6 +67,9 @@ public class BossMinoController : MonoBehaviour
 
         if (player != null)
             target = player.transform;
+
+        if (redBullEffect != null)
+            redBullEffect.SetActive(false);
     }
 
     private void Update()
@@ -90,7 +106,20 @@ public class BossMinoController : MonoBehaviour
             return;
         }
 
-        if (isCastingSkill)
+        shootTimer += Time.deltaTime;
+
+        if (shootTimer >= shootCooldown &&
+            !isCastingSkill &&
+            !isBuffed)
+        {
+            shootTimer = 0f;
+
+            StartCoroutine(ShootSkill());
+
+            return;
+        }
+
+        if (isCastingSkill || isBuffed)
             return;
 
         // ===== LOOK PLAYER =====
@@ -159,23 +188,113 @@ public class BossMinoController : MonoBehaviour
 
         rb.linearVelocity = Vector2.zero;
 
+        chargeDirection =
+            (target.position - transform.position)
+            .normalized;
+
         PlayRedBull();
 
-        // Thời gian uống RedBull
+        // Đợi 0.2 giây rồi hiện effect
+        yield return new WaitForSeconds(0.2f);
+
+        // Hiện effect
+        if (redBullEffect != null)
+            redBullEffect.SetActive(true);
+
         yield return new WaitForSeconds(1f);
 
-        // Buff
         isBuffed = true;
-        moveSpeed = originalSpeed * speedMultiplier;
+
+        float timer = 0f;
+
+        while (timer < chargeDuration)
+        {
+            rb.MovePosition(
+                rb.position +
+                chargeDirection *
+                chargeSpeed *
+                Time.fixedDeltaTime
+            );
+
+            timer += Time.fixedDeltaTime;
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        rb.linearVelocity = Vector2.zero;
+
+        isBuffed = false;
+
+        // Tắt effect
+        if (redBullEffect != null)
+            redBullEffect.SetActive(false);
+
+        PlayIdle();
 
         isCastingSkill = false;
+    }
 
-        yield return new WaitForSeconds(
-            redBullDuration
-        );
+    private IEnumerator ShootSkill()
+    {
+        isCastingSkill = true;
 
-        // Hết buff
-        moveSpeed = originalSpeed;
-        isBuffed = false;
+        rb.linearVelocity = Vector2.zero;
+
+        PlayAttack();
+
+        // đợi animation attack
+        yield return new WaitForSeconds(0.3f);
+        FireBullets();
+
+
+        yield return new WaitForSeconds(0.55f);
+        FireBullets();
+
+        yield return new WaitForSeconds(0.3f);
+
+        PlayIdle();
+
+        isCastingSkill = false;
+    }
+
+    private void FireBullets()
+    {
+        if (bulletPrefab == null ||
+            firePoint == null ||
+            target == null)
+            return;
+
+        Vector2 direction =
+            (target.position - firePoint.position).normalized;
+
+        float centerAngle =
+            Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        float spread = 45f;
+
+        if (bulletCount <= 1)
+        {
+            Instantiate(
+                bulletPrefab,
+                firePoint.position,
+                Quaternion.Euler(0, 0, centerAngle)
+            );
+
+            return;
+        }
+
+        for (int i = 0; i < bulletCount; i++)
+        {
+            float angle =
+                centerAngle -
+                spread / 2f +
+                (spread / (bulletCount - 1)) * i;
+
+            Instantiate(
+                bulletPrefab,
+                firePoint.position,
+                Quaternion.Euler(0, 0, angle)
+            );
+        }
     }
 } 

@@ -1,0 +1,168 @@
+﻿using System.Collections;
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody2D))]
+public class BulletCast : MonoBehaviour
+{
+    [Header("Movement")]
+    public float speed = 8f;
+
+    [Header("Damage")]
+    public int damage = 20;
+
+    [Header("Life Time")]
+    public float lifeTime = 5f;
+
+    [Header("Collider")]
+    public BoxCollider2D detectCollider;
+    public BoxCollider2D damageCollider;
+
+    private bool warningPhase;
+    private bool movingToMark;
+
+    private bool lockedPosition;
+
+    private Vector3 markPosition;
+
+    [Header("Animation")]
+    public Animator anim;
+
+    private bool isHit;
+
+    private Transform target;
+    private Rigidbody2D rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+
+        if (anim == null)
+            anim = GetComponent<Animator>();
+    }
+
+    private void Start()
+    {
+        GameObject player =
+            GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            target = player.transform;
+        }
+        else
+        {
+            Debug.LogError("Không tìm thấy Player");
+        }
+
+        // Ẩn collider gây damage
+        if (damageCollider != null)
+            damageCollider.enabled = false;
+
+        if (lifeTime > 0)
+            Destroy(gameObject, lifeTime);
+    }
+
+    private void Update()
+    {
+        if (lockedPosition)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        if (target == null)
+            return;
+
+        if (movingToMark)
+        {
+            Vector2 direction =
+                (markPosition - transform.position)
+                .normalized;
+
+            rb.linearVelocity =
+                direction * speed;
+
+            if (Vector2.Distance(
+                transform.position,
+                markPosition) < 0.1f)
+            {
+                rb.linearVelocity = Vector2.zero;
+
+                movingToMark = false;
+                lockedPosition = true;
+
+                StartCoroutine(WarningPhase());
+            }
+        }
+        else if (!lockedPosition)
+        {
+            Vector2 direction =
+                (target.position - transform.position)
+                .normalized;
+
+            rb.linearVelocity =
+                direction * speed;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        if (!warningPhase)
+        {
+            warningPhase = true;
+
+            rb.linearVelocity = Vector2.zero;
+            lockedPosition = true;
+
+            StartCoroutine(WarningPhase());
+
+            return;
+        }
+
+        if (isHit)
+            return;
+
+        isHit = true;
+
+        PlayerHealth player =
+            other.GetComponent<PlayerHealth>();
+
+        if (player != null)
+        {
+            player.TakeDamage(damage);
+        }
+
+        if (damageCollider != null)
+            damageCollider.enabled = false;
+
+        if (detectCollider != null)
+            detectCollider.enabled = false;
+
+        StartCoroutine(DestroyAfterCast());
+    }
+
+    private IEnumerator WarningPhase()
+    {
+        // Thời gian cảnh báo
+        yield return new WaitForSeconds(1f);
+
+        anim.Play("bulletcast");
+
+        // Đợi animation chạy trước khi gây damage
+        yield return new WaitForSeconds(0.2f);
+
+        if (damageCollider != null)
+            damageCollider.enabled = true;
+    }   
+
+    private System.Collections.IEnumerator DestroyAfterCast()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Destroy(gameObject);
+    }
+
+
+}
