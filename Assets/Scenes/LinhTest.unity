@@ -153,7 +153,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c3178e0e47dd246a33506370a57a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hostageId: hostage_01
+  rescueDialogue: []
+  dialogueTypingSpeed: 0.05
+  postDialogueDelay: 0
   rescueMode: 0
+  transferAfterRescue: 1
+  targetSceneName: Sanh
+  targetSpawnPointId: default
   exitPoint: {fileID: 841865787}
   moveSpeed: 5
   stoppingDistance: 0.2
@@ -1420,7 +1427,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c3178e0e47dd246a33506370a57a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hostageId: hostage_01
+  rescueDialogue: []
+  dialogueTypingSpeed: 0.05
+  postDialogueDelay: 0
   rescueMode: 0
+  transferAfterRescue: 1
+  targetSceneName: Sanh
+  targetSpawnPointId: default
   exitPoint: {fileID: 153686822}
   moveSpeed: 5
   stoppingDistance: 0.2
@@ -2079,7 +2093,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c3178e0e47dd246a33506370a57a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hostageId: hostage_01
+  rescueDialogue: []
+  dialogueTypingSpeed: 0.05
+  postDialogueDelay: 0
   rescueMode: 0
+  transferAfterRescue: 1
+  targetSceneName: Sanh
+  targetSpawnPointId: default
   exitPoint: {fileID: 1272849412}
   moveSpeed: 5
   stoppingDistance: 0.2
@@ -19099,7 +19120,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c3178e0e47dd246a33506370a57a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hostageId: hostage_01
+  rescueDialogue: []
+  dialogueTypingSpeed: 0.05
+  postDialogueDelay: 0
   rescueMode: 0
+  transferAfterRescue: 1
+  targetSceneName: Sanh
+  targetSpawnPointId: default
   exitPoint: {fileID: 182863201}
   moveSpeed: 5
   stoppingDistance: 0.2
@@ -20193,7 +20221,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c3178e0e47dd246a33506370a57a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hostageId: hostage_01
+  rescueDialogue: []
+  dialogueTypingSpeed: 0.05
+  postDialogueDelay: 0
   rescueMode: 0
+  transferAfterRescue: 1
+  targetSceneName: Sanh
+  targetSpawnPointId: default
   exitPoint: {fileID: 750217787}
   moveSpeed: 5
   stoppingDistance: 0.2

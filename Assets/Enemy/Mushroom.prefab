@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7502186222514870898
 Transform:
   m_ObjectHideFlags: 0
@@ -63,7 +63,7 @@ Transform:
   m_GameObject: {fileID: 4785285392394697881}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 36.56173, y: -20.34473, z: 0}
+  m_LocalPosition: {x: 44.713997, y: -31.225996, z: 0}
   m_LocalScale: {x: 2.437729, y: 2.437729, z: 2.437729}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -206,9 +206,9 @@ MonoBehaviour:
   chaseDistance: 10
   attackDistance: 7
   retreatDistance: 2
-  bulletPrefab: {fileID: 5774264611300201692, guid: 88909d5ae7373d94aae0eb547ca5897d, type: 3}
+  bulletPrefab: {fileID: 8282301630644044267, guid: aec8d33c2ba1f7a4c9b5316f0cf271af, type: 3}
   firePoint: {fileID: 712356523193425515}
-  bulletsInCircle: 20
+  bulletsInCircle: 10
   fireRate: 10
   attackDuration: 0.4
 --- !u!61 &5749457212928137144

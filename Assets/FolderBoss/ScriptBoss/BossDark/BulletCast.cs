@@ -18,11 +18,8 @@ public class BulletCast : MonoBehaviour
     public BoxCollider2D damageCollider;
 
     private bool warningPhase;
-    private bool movingToMark;
 
     private bool lockedPosition;
-
-    private Vector3 markPosition;
 
     [Header("Animation")]
     public Animator anim;
@@ -73,27 +70,6 @@ public class BulletCast : MonoBehaviour
         if (target == null)
             return;
 
-        if (movingToMark)
-        {
-            Vector2 direction =
-                (markPosition - transform.position)
-                .normalized;
-
-            rb.linearVelocity =
-                direction * speed;
-
-            if (Vector2.Distance(
-                transform.position,
-                markPosition) < 0.1f)
-            {
-                rb.linearVelocity = Vector2.zero;
-
-                movingToMark = false;
-                lockedPosition = true;
-
-                StartCoroutine(WarningPhase());
-            }
-        }
         else if (!lockedPosition)
         {
             Vector2 direction =
@@ -156,6 +132,14 @@ public class BulletCast : MonoBehaviour
 
         if (damageCollider != null)
             damageCollider.enabled = true;
+
+        yield return new WaitForSeconds(0.4f);
+
+        if (damageCollider != null)
+            damageCollider.enabled = false;
+
+        if (detectCollider != null)
+            detectCollider.enabled = false;
     }   
 
     private System.Collections.IEnumerator DestroyAfterCast()

@@ -6,17 +6,17 @@ public class BossDecisionTrigger : MonoBehaviour
     [Header("Hiệu ứng nổ khi biến hình (VFX)")]
     public GameObject deathEffectPrefab;
 
-    [Header("Cấu hình Prefab sau phán quyết")]
-    public GameObject executedSpawnPrefab; // Nhân vật mới khi kết liễu
-    public GameObject nextPhasePrefab;     // Dạng mới khi tha mạng
+    [Header("Cấu hình Prefab sau khi Boss chết")]
+    public GameObject executedSpawnPrefab; // Nhân vật mới sinh ra (Ví dụ: Prefab "End")
 
     [Header("Khác")]
-    public GameObject nextDialogueTriggerZone; // Vùng thoại tiếp theo
+    // Đã đổi kiểu dữ liệu thành NPCTriggerZone để gọi hàm kích hoạt từ xa
+    public NPCTriggerZone nextDialogueTriggerZone;
     public string deathAnimationStateName = "Death Animation";
 
     private bool isTriggered = false;
 
-    // 1. Kích hoạt chuỗi logic khi Boss hết máu
+    // 1. Kích hoạt chuỗi logic khi Boss hết máu (Được gọi từ BossHealth)
     public void ActivateDecisionSequence()
     {
         if (isTriggered) return;
@@ -35,34 +35,15 @@ public class BossDecisionTrigger : MonoBehaviour
         Animator anim = GetComponent<Animator>();
         if (anim != null) anim.Play(deathAnimationStateName);
 
-        // Chờ diễn hoạt ảnh xong
+        // Chờ diễn hoạt ảnh xong (1.5s đúng như code cũ của bạn)
         yield return new WaitForSeconds(1.5f);
 
-        // Gọi UI phán quyết
-        if (BossDecisionUI.Instance != null)
-        {
-            BossDecisionUI.Instance.ShowTriggerDecision(this);
-        }
-        else
-        {
-            Debug.LogError("⚠️ BossDecisionUI không tìm thấy trong scene!");
-        }
+        // CHẠY THẲNG LOGIC SINH PREFAB VÀ MỞ THOẠI (Bỏ qua bước gọi UI phán quyết)
+        yield return StartCoroutine(FinalizeDeathSequence());
     }
 
-    // 2. Nhánh Kết Liễu
-    public void ConfirmExecute()
-    {
-        StartCoroutine(FinalizeChoice(executedSpawnPrefab));
-    }
-
-    // 3. Nhánh Tha Mạng
-    public void ConfirmSpare()
-    {
-        StartCoroutine(FinalizeChoice(nextPhasePrefab));
-    }
-
-    // 4. Hàm xử lý nổ và tạo nhân vật mới (dùng chung cho cả 2 nhánh)
-    private IEnumerator FinalizeChoice(GameObject prefabToSpawn)
+    // Hàm xử lý nổ, tạo nhân vật và kích hoạt Trigger Zone chạy thẳng thoại
+    private IEnumerator FinalizeDeathSequence()
     {
         // Hiệu ứng nổ
         if (deathEffectPrefab != null)
@@ -77,18 +58,34 @@ public class BossDecisionTrigger : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        // Sinh nhân vật mới hoặc dạng mới
-        if (prefabToSpawn != null)
+        GameObject spawnedObject = null;
+
+        // Sinh nhân vật mới từ Prefab
+        if (executedSpawnPrefab != null)
         {
-            Instantiate(prefabToSpawn, transform.position, transform.rotation);
+            spawnedObject = Instantiate(executedSpawnPrefab, transform.position, transform.rotation);
+            spawnedObject.name = executedSpawnPrefab.name + "_Spawned";
+            spawnedObject.SetActive(false); // Ẩn tạm để nhường quyền cho TriggerZone xử lý hiệu ứng hiện hình mượt mà
         }
 
-        // Mở khóa vùng thoại tiếp theo
+        // Mở khóa vùng thoại tiếp theo và ép chạy hội thoại lập tức
         if (nextDialogueTriggerZone != null)
         {
-            nextDialogueTriggerZone.SetActive(true);
+            nextDialogueTriggerZone.gameObject.SetActive(true);
+
+            if (spawnedObject != null)
+            {
+                // Gọi hàm kích hoạt từ xa đã thêm ở NPCTriggerZone để mở hội thoại ngay tại chỗ
+                nextDialogueTriggerZone.TriggerDialogueFromBoss(spawnedObject);
+            }
+        }
+        else
+        {
+            // Dự phòng nếu không gán Trigger Zone, tự bật NPC lên luôn
+            if (spawnedObject != null) spawnedObject.SetActive(true);
         }
 
+        // Tự hủy thực thể Boss
         Destroy(gameObject);
     }
 }

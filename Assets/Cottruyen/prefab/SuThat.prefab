@@ -1,0 +1,194 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4107331024635721052
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6246921478961236663}
+  - component: {fileID: 8491561860256071159}
+  - component: {fileID: 6239059934827463715}
+  - component: {fileID: 9003578624951041791}
+  m_Layer: 0
+  m_Name: SuThat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6246921478961236663
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4107331024635721052}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.870762, y: -25.395596, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &8491561860256071159
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4107331024635721052}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: -8659484256699898645, guid: 6a26b2ba0dd28764f9a0e44eca8c1d03, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.42, y: 0.5}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!95 &6239059934827463715
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4107331024635721052}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1c175b17371d3f44d8c49c5e341e8535, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9003578624951041791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4107331024635721052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 031a55a88dd9c0e4f8308799224d8518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFinished: 0
+  endAction: 1
+  typingSpeed: 0.05
+  npcScript:
+  - nameCharacter1: "Th\u1EA7n ???"
+    avatarCharacter1: {fileID: 3733519124693108528, guid: c268ccf4e97ad9c4e8521a16fb812ee3, type: 3}
+    contentForPanel1: "Ch\xE0o m\u1EEBng nh\xE0 th\xE1m hi\u1EC3m !!\nCu\u1ED1i c\xF9ng
+      ta c\u0169ng \u0111\u1EE3i \u0111\u01B0\u1EE3c c\u1EADu..."
+    nameCharacter2: "Chi\u1EBFn Binh"
+    avatarCharacter2: {fileID: -7570986889122909192, guid: 8a8b5ae2bfa3dcf42b713b953439ad8d, type: 3}
+    contentForPanel2: "Ng\xE0i l\xE0 ai ??\n"
+  - nameCharacter1: "Th\u1EA7n ???"
+    avatarCharacter1: {fileID: 3733519124693108528, guid: c268ccf4e97ad9c4e8521a16fb812ee3, type: 3}
+    contentForPanel1: "Ta l\xE0 m\u1ED9t t\u1ED3n t\u1EA1i \u0111\u01B0\u1EE3c l\u01B0u
+      l\u1EA1i \u1EDF n\u01A1i n\xE0y t\u1EEB l\xE2u l\u1EAFm r\u1ED3i..C\u1EADu
+      c\xF3 th\u1EC3 g\u1ECDi ta l\xE0 g\xEC c\u0169ng \u0111\u01B0\u1EE3c"
+    nameCharacter2: "Chi\u1EBFn Binh"
+    avatarCharacter2: {fileID: -7570986889122909192, guid: 8a8b5ae2bfa3dcf42b713b953439ad8d, type: 3}
+    contentForPanel2: "V\u1EADy... t\u1EA1i sao ng\xE0i l\u1EA1i n\xF3i \u0111\xE3
+      \u0111\u1EE3i t\xF4i t\u1EEB l\xE2u r\u1ED3i"
+  - nameCharacter1: "Th\u1EA7n ???"
+    avatarCharacter1: {fileID: 3733519124693108528, guid: c268ccf4e97ad9c4e8521a16fb812ee3, type: 3}
+    contentForPanel1: "V\xEC ta mu\u1ED1n cho c\u1EADu bi\u1EBFt s\u1EF1 th\u1EADt
+      v\u1EC1 th\u1EBF gi\u1EDBi n\xE0y..R\u1EB1ng n\u1EEF th\u1EA7n \u0111\xE3 l\u1EEBa
+      d\u1ED1i c\u1EADu!!"
+    nameCharacter2: "Chi\u1EBFn Binh"
+    avatarCharacter2: {fileID: -7570986889122909192, guid: 8a8b5ae2bfa3dcf42b713b953439ad8d, type: 3}
+    contentForPanel2: "N\u1EEF Th\u1EA7n....L\u1EEAA D\u1ED0I T\xD4I SAO!!!"
+  - nameCharacter1: "Th\u1EA7n ???"
+    avatarCharacter1: {fileID: 3733519124693108528, guid: c268ccf4e97ad9c4e8521a16fb812ee3, type: 3}
+    contentForPanel1: "T\u1EEB x\u01B0a n\u1EEF th\u1EA7n v\xEC mu\u1ED1n c\xF3 \u0111\u01B0\u1EE3c
+      s\u1EE9c m\u1EA1nh to l\u1EDBn h\u01A1n \u0111\xE3 t\u1EA1o ra c\xE1c con qu\xE1i
+      v\u1EADt \u0111\u1EE9ng \u0111\u1EA7u c\xE1c h\u1EA7m ng\u1EE5c \u0111\u1EC3
+      d\u1EE5 d\u1ED7 c\xE1c sinh linh ti\u1EBFn v\xE0o d\xE2ng hi\u1EBFn sinh m\u1EC7nh
+      c\u1EE7a m\xECnh.. "
+    nameCharacter2: "Th\u1EA7n ???"
+    avatarCharacter2: {fileID: 3733519124693108528, guid: c268ccf4e97ad9c4e8521a16fb812ee3, type: 3}
+    contentForPanel2: "L\xE2u d\u1EA7n c\xE1c sinh linh kh\xE1c v\xE0 c\u1EA3 con
+      ng\u01B0\u1EDDi b\u1ECB ti\xEAu di\u1EC7t kh\xF4ng c\xF2n l\u1EA1i bao nhi\xEAu..C\xE1c
+      con qu\xE1i trong h\u1EA7m ng\u1EE5c \u0111\xE3 c\xF3 \u0111\u01B0\u1EE3c s\u1EE9c
+      m\u1EA1nh to l\u1EDBn v\xE0 tho\xE1t ra \u0111\u01B0\u1EE3c kh\u1ECFi s\u1EF1
+      kh\u1ED1ng ch\u1EBF c\u1EE7a N\u1EEF Th\u1EA7n..!"
+  - nameCharacter1: "Th\u1EA7n ???"
+    avatarCharacter1: {fileID: 3733519124693108528, guid: c268ccf4e97ad9c4e8521a16fb812ee3, type: 3}
+    contentForPanel1: "V\xEC th\u1EBF c\xF4 ta \u0111\xE3 t\xECm \u0111\u1EBFn v\xE0
+      d\u1EABn l\u1ED1i cho c\u1EADu \u0111i ti\xEAu di\u1EC7t t\u1EA5t c\u1EA3 b\u1ECDn
+      ch\xFAng..V\xEC ch\u1EC9 c\xF3 th\u1EBF c\xF4 ta m\u1EDBi c\xF3 l\u1EA1i to\xE0n
+      b\u1ED9 s\u1EE9c m\u1EA1nh \u0111\xF3 ..."
+    nameCharacter2: "Chi\u1EBFn Binh"
+    avatarCharacter2: {fileID: -7570986889122909192, guid: 8a8b5ae2bfa3dcf42b713b953439ad8d, type: 3}
+    contentForPanel2: "Sao t\xF4i ph\u1EA3i tin Ng\xE0i...L\u1EE1 nh\u01B0 ng\xE0i
+      c\u0169ng \u0111\u1EBFn l\u1EEBa g\u1EA1t t\xF4i th\xEC sao!!"
+  - nameCharacter1: "Th\u1EA7n ???"
+    avatarCharacter1: {fileID: 3733519124693108528, guid: c268ccf4e97ad9c4e8521a16fb812ee3, type: 3}
+    contentForPanel1: "\u0110\xF3 l\xE0 l\u1EF1a ch\u1ECDn c\u1EE7a c\u1EADu..T\xF4i
+      kh\xF4ng th\u1EC3 can thi\u1EC7p "
+    nameCharacter2: "Chi\u1EBFn Binh"
+    avatarCharacter2: {fileID: -7570986889122909192, guid: 8a8b5ae2bfa3dcf42b713b953439ad8d, type: 3}
+    contentForPanel2: "V\u1EADy n\u1EBFu ng\xE0i n\xF3i l\xE0 s\u1EF1 th\u1EADt th\xEC
+      t\xF4i c\u1EA7n l\xE0m g\xEC ??"
+  - nameCharacter1: "Th\u1EA7n ???"
+    avatarCharacter1: {fileID: 3733519124693108528, guid: c268ccf4e97ad9c4e8521a16fb812ee3, type: 3}
+    contentForPanel1: "Ta s\u1EBD m\u1EDF cho c\u1EADu m\u1ED9t l\u1ED1i \u0111i
+      \u0111\u1EC3 \u0111\u1EBFn n\u01A1i \u1EDF c\u1EE7a N\u1EEF Th\u1EA7n..Nh\u01B0ng
+      \u0111\u1EC3 m\u1EDF c\xE1nh c\u1ED5ng v\xE0o b\xEAn trong , c\u1EADu ph\u1EA3i
+      t\xECm \u0111\u01B0\u1EE3c 8 vi\xEAn \u0111\xE1 linh h\u1ED3n cho 8 c\u1ED9t..."
+    nameCharacter2: "Chi\u1EBFn Binh"
+    avatarCharacter2: {fileID: -7570986889122909192, guid: 8a8b5ae2bfa3dcf42b713b953439ad8d, type: 3}
+    contentForPanel2: "8 vi\xEAn \u0111\xE1 linh h\u1ED3n sao....."
