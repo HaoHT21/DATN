@@ -1,0 +1,676 @@
+fileFormatVersion: 2
+guid: aa442bc10d343744d94dbe7945960b30
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8314386916230701414
+    second: Palette-Guide_0
+  - first:
+      213: 3496133688279535373
+    second: Palette-Guide_1
+  - first:
+      213: 5191103431119886368
+    second: Palette-Guide_2
+  - first:
+      213: 3582150367023777519
+    second: Palette-Guide_3
+  - first:
+      213: -2561083378486474378
+    second: Palette-Guide_4
+  - first:
+      213: 5757703278513247879
+    second: Palette-Guide_5
+  - first:
+      213: 6155448894841167755
+    second: Palette-Guide_6
+  - first:
+      213: 1949580203796127647
+    second: Palette-Guide_7
+  - first:
+      213: 1034904288744393264
+    second: Palette-Guide_8
+  - first:
+      213: -6048051081318186823
+    second: Palette-Guide_9
+  - first:
+      213: -8551215452512957936
+    second: Palette-Guide_10
+  - first:
+      213: 88429791077479439
+    second: Palette-Guide_11
+  - first:
+      213: -8839758101811911726
+    second: Palette-Guide_12
+  - first:
+      213: 4431055072482902899
+    second: Palette-Guide_13
+  - first:
+      213: -598411329651613693
+    second: Palette-Guide_14
+  - first:
+      213: -619900969208859998
+    second: Palette-Guide_15
+  - first:
+      213: 4239154555119914182
+    second: Palette-Guide_16
+  - first:
+      213: -7376081426323852115
+    second: Palette-Guide_17
+  - first:
+      213: 8584117387255401558
+    second: Palette-Guide_18
+  - first:
+      213: -3625969172900397892
+    second: Palette-Guide_19
+  - first:
+      213: 6556132352406263226
+    second: Palette-Guide_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Palette-Guide_0
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 679
+        width: 222
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9ed9e4b62d5d9c80800000000000000
+      internalID: -8314386916230701414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_1
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 669
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0f8d21f013c48030800000000000000
+      internalID: 3496133688279535373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_2
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 689
+        width: 202
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 028563421118a0840800000000000000
+      internalID: 5191103431119886368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_3
+      rect:
+        serializedVersion: 2
+        x: 999
+        y: 679
+        width: 142
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe6cc7e97ca56b130800000000000000
+      internalID: 3582150367023777519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_4
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 669
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67908298c34357cd0800000000000000
+      internalID: -2561083378486474378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_5
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 519
+        width: 242
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78652ed40a877ef40800000000000000
+      internalID: 5757703278513247879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_6
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 509
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8f141a282c8c6550800000000000000
+      internalID: 6155448894841167755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_7
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 519
+        width: 262
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9fd664bddc4e0b10800000000000000
+      internalID: 1949580203796127647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_8
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 509
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03a432ba7f7bc5e00800000000000000
+      internalID: 1034904288744393264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_9
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 369
+        width: 242
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b0cc92e591011ca0800000000000000
+      internalID: -6048051081318186823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_10
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 349
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01a422b2adaf35980800000000000000
+      internalID: -8551215452512957936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_11
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 369
+        width: 162
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f043cbc2d6a2a3100800000000000000
+      internalID: 88429791077479439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_12
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 349
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d3ae1967ded25580800000000000000
+      internalID: -8839758101811911726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_13
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 199
+        width: 192
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37349879c154e7d30800000000000000
+      internalID: 4431055072482902899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_14
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 189
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 300eb82f01402b7f0800000000000000
+      internalID: -598411329651613693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_15
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 209
+        width: 262
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a2b2665a5ba567f0800000000000000
+      internalID: -619900969208859998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_16
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 189
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ccc6ed9b9084da30800000000000000
+      internalID: 4239154555119914182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_17
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 39
+        width: 242
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da43c9dd505e2a990800000000000000
+      internalID: -7376081426323852115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_18
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 29
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65ccc997849e02770800000000000000
+      internalID: 8584117387255401558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_19
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 39
+        width: 272
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbc31ca9f38fdadc0800000000000000
+      internalID: -3625969172900397892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Palette-Guide_20
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 29
+        width: 342
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab51f9d73af0cfa50800000000000000
+      internalID: 6556132352406263226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Palette-Guide_0: -8314386916230701414
+      Palette-Guide_1: 3496133688279535373
+      Palette-Guide_10: -8551215452512957936
+      Palette-Guide_11: 88429791077479439
+      Palette-Guide_12: -8839758101811911726
+      Palette-Guide_13: 4431055072482902899
+      Palette-Guide_14: -598411329651613693
+      Palette-Guide_15: -619900969208859998
+      Palette-Guide_16: 4239154555119914182
+      Palette-Guide_17: -7376081426323852115
+      Palette-Guide_18: 8584117387255401558
+      Palette-Guide_19: -3625969172900397892
+      Palette-Guide_2: 5191103431119886368
+      Palette-Guide_20: 6556132352406263226
+      Palette-Guide_3: 3582150367023777519
+      Palette-Guide_4: -2561083378486474378
+      Palette-Guide_5: 5757703278513247879
+      Palette-Guide_6: 6155448894841167755
+      Palette-Guide_7: 1949580203796127647
+      Palette-Guide_8: 1034904288744393264
+      Palette-Guide_9: -6048051081318186823
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

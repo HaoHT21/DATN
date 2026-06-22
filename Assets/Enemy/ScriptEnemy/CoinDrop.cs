@@ -5,11 +5,11 @@ public class CoinDrop : MonoBehaviour
     public GameObject coinPrefab;
     public int coinAmount = 5;
 
-    private EnemyHealth health;
+    private EnemyHeath health;
 
     private void Awake()
     {
-        health = GetComponent<EnemyHealth>();
+        health = GetComponent<EnemyHeath>();
 
         if (health != null)
             health.OnDeath += DropCoins;

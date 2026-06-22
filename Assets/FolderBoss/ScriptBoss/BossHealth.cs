@@ -138,7 +138,7 @@ public class BossHealth : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             TakeDamage(50, "Test");
         }

@@ -17,7 +17,7 @@ public class NPCHealth : MonoBehaviour
     private bool isDead = false;
 
     // Chuỗi lưu tên chính xác của trạng thái Chết tương ứng với từng dạng
-    private string deathStateName = "Death Animation";
+    private string deathStateName = "Deatth Animation";
 
     void Start()
     {
@@ -39,7 +39,7 @@ public class NPCHealth : MonoBehaviour
             }
             else
             {
-                deathStateName = "Death Animation";     // Khớp ảnh dạng 1
+                deathStateName = "Deatth Animation";     // Khớp ảnh dạng 1
             }
         }
     }

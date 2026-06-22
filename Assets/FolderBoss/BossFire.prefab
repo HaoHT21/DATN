@@ -62,7 +62,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4506132486580365933
 Transform:
   m_ObjectHideFlags: 0
@@ -293,7 +293,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8635730046770022668
 Transform:
   m_ObjectHideFlags: 0
@@ -474,8 +474,8 @@ Transform:
   m_GameObject: {fileID: 6905772719604878256}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 73.386246, y: -22.614923, z: 0}
-  m_LocalScale: {x: 6.6467175, y: 6.6467175, z: 6.6467175}
+  m_LocalPosition: {x: 419.94608, y: -769.23285, z: 0}
+  m_LocalScale: {x: 4.8943176, y: 4.8943176, z: 4.8943176}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3550328763618252734}
@@ -509,7 +509,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &5442098902367645116
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -579,7 +579,7 @@ MonoBehaviour:
   fireballCount: 30
   fireballInterval: 0.08
   randomAngle: 30
-  spitFireObject: {fileID: 1234896687958638790}
+  spitFireObject: {fileID: 6773916424304130998}
   spitFireCooldown: 12
   spitFireDuration: 1
   fireballCastTime: 1

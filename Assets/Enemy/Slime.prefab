@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -4160357162371704562}
   - component: {fileID: 7044828470053132883}
   - component: {fileID: 3194902973963395187}
-  - component: {fileID: 1548030591742354593}
+  - component: {fileID: -1986909456246232711}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Untagged
@@ -203,7 +203,7 @@ MonoBehaviour:
   stoppingDistance: 1.2
   attackRate: 1.36
   damage: 10
---- !u!114 &1548030591742354593
+--- !u!114 &-1986909456246232711
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -212,9 +212,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 678173421849214333}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a9fcb8db05d7f542a6511cca90d2c61, type: 3}
+  m_Script: {fileID: 11500000, guid: 3e4851d279219164daa38ecc8c8a500d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
-  destroyDelay: 1
+  destroyDelay: 0.2
+  hurtDuration: 0.2

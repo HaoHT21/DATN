@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4299752786526180532
 RectTransform:
   m_ObjectHideFlags: 0
@@ -387,4 +387,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactUI: {fileID: 5598858286053735436}
-  shopPanel: {fileID: 0}
+  shopPanel: {fileID: 861931530683010941, guid: 2b408663336dc0a49b406d9cc3ed7e1f, type: 3}

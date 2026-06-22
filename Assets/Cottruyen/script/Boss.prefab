@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 6731709578465831855}
   - component: {fileID: 32458090412104702}
   - component: {fileID: 6924031626297666499}
-  - component: {fileID: 1578753828173920655}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -207,26 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathEffectPrefab: {fileID: 2941910113360107906, guid: fe76923e6e3f34c40a079b5f105c14a3, type: 3}
-  nextPhasePrefab: {fileID: 0}
   executedSpawnPrefab: {fileID: 6427778196570114290, guid: a3c41dc2f28f1eb48a0ee001456aa08c, type: 3}
-  deathAnimationStateName: Death Animation
+  nextPhasePrefab: {fileID: 0}
   nextDialogueTriggerZone: {fileID: 0}
---- !u!114 &1578753828173920655
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6939015744176650135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a7a697175acf7743b5e08cbde44db36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentHealth: 500
-  maxHealth: 500
-  healthFill: {fileID: 0}
-  armor: 20
-  healthUIRoot: {fileID: 0}
   deathAnimationStateName: Death Animation
-  smoothSpeed: 8
