@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 7044828470053132883}
   - component: {fileID: 3194902973963395187}
   - component: {fileID: -1986909456246232711}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Slime
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -217,5 +217,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
+  expReward: 30
   destroyDelay: 0.2
   hurtDuration: 0.2

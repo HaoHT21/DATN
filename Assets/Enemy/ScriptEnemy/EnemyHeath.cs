@@ -7,6 +7,10 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
     public int maxHealth = 100;
     public int currentHealth = 100;
 
+    [Header("--- PHẦN THƯỞNG KHI CHẾT (MỚI TÍCH HỢP) ---")]
+    [Tooltip("Lượng EXP sẽ thưởng cho Player khi con quái này chết")]
+    public int expReward = 30;
+
     [Header("Death")]
     public float destroyDelay = 0.2f;
 
@@ -42,7 +46,7 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
 
         currentHealth -= damage;
 
-        Debug.Log("Current HP: " + currentHealth);
+        Debug.Log(gameObject.name + " Current HP: " + currentHealth);
 
         if (currentHealth > 0)
         {
@@ -54,6 +58,7 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
             StartCoroutine(DieSequence());
         }
 
+        // Truyền cấu hình rỗng tránh lỗi interface cũ của nhóm
         OnHealthChanged?.Invoke(new HealthChangeInfo());
     }
 
@@ -66,7 +71,11 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
 
         yield return new WaitForSeconds(hurtDuration);
 
-        animator.Play("idle");
+        // Đề phòng quái chết rồi thì không chơi lại animation idle tránh bị khựng xác
+        if (!isDead)
+        {
+            animator.Play("idle");
+        }
     }
 
     private IEnumerator DieSequence()
@@ -75,32 +84,60 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
 
         OnDeath?.Invoke();
 
-        // Tắt collider
+        // ====================================================================
+        // LOGIC THƯỞNG EXP: Tìm Player để bơm điểm kinh nghiệm thăng cấp
+        // ====================================================================
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        if (playerObj != null)
+        {
+            PlayerHealth playerHealth = playerObj.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.AddEXP(expReward); // Gọi hàm cộng EXP và check lên cấp của mày
+                Debug.Log($"<color=cyan>[Hệ thống]</color> Đã thưởng {expReward} EXP từ {gameObject.name} cho Player!");
+            }
+        }
+
+        // ====================================================================
+        // LOGIC RƠI XU (COIN DROP): Gọi script rớt tiền của nhóm nếu có gán trên quái
+        // ====================================================================
+        CoinDrop coinScript = GetComponent<CoinDrop>();
+        if (coinScript != null)
+        {
+            // Mày kiểm tra xem script CoinDrop của nhóm dùng hàm gì để rơi xu 
+            // Thường là hàm DropCoin() hoặc Drop(), tao gõ sẵn lệnh chạy ở đây:
+            coinScript.enabled = true;
+            // Nếu nhóm viết hàm tự động rơi trong Start/OnDestroy thì không cần gọi, 
+            // còn nếu gọi bằng tay thì mở comment dòng dưới ra:
+            // coinScript.DropCoin(); 
+        }
+
+        // Tắt hoàn toàn các collider vật lý để đạn súng và Player đi xuyên qua xác
         foreach (Collider2D col in colliders)
         {
             if (col != null)
                 col.enabled = false;
         }
 
-        // Dừng vật lý
+        // Dừng hoàn toàn chuyển động vật lý 2D
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero;
             rb.simulated = false;
         }
 
-        // Gọi animation death
+        // Gọi animation death nằm xuống nổ xác
         if (animator != null)
         {
             animator.Play("death");
         }
 
-        // Tắt AI
-
+        // Tắt AI di chuyển và bắn đạn của quái để nó không cắn lén lúc chết
         EnemyShooterAI shooterAI = GetComponent<EnemyShooterAI>();
         if (shooterAI != null)
             shooterAI.enabled = false;
 
+        // Chờ chơi xong animation chết rồi xóa sổ khỏi game
         yield return new WaitForSeconds(destroyDelay);
 
         Destroy(gameObject);
