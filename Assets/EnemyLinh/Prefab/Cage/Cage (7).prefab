@@ -561,7 +561,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3006572540194001375}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.44444, y: -1.2134901, z: 0}
   m_LocalScale: {x: 2.4849, y: 2.4849, z: 2.4849}
   m_ConstrainProportionsScale: 0
@@ -2284,14 +2284,10 @@ MonoBehaviour:
   rescueDialogue:
   - nameCharacter1: 
     avatarCharacter1: {fileID: 0}
-    contentForPanel1: 'Fk
-
-'
+    contentForPanel1: "B\u1EA1n \u0111\xE3 \u0111\u01B0\u1EE3c gi\u1EA3i c\u1EE9u "
     nameCharacter2: 
     avatarCharacter2: {fileID: 0}
-    contentForPanel2: 'CC
-
-'
+    contentForPanel2: "C\u1EA3m \u01A1n d\u0169ng s"
   dialogueTypingSpeed: 0.05
   postDialogueDelay: 0.5
   rescueMode: 0
@@ -2303,6 +2299,10 @@ MonoBehaviour:
   stoppingDistance: 0.2
   followDistance: 1.5
   disappearDelay: 0.5
+  giveGemReward: 1
+  rewardGem: {fileID: 11400000, guid: 227e8683af904224bbae0ffb0b2b61f4, type: 2}
+  gemGiftPrefab: {fileID: 3512392026558123006, guid: 97b8d684c527848448f3904b50533947, type: 3}
+  gemGiftSound: {fileID: 0}
 --- !u!210 &6119162413998861411
 SortingGroup:
   m_ObjectHideFlags: 0

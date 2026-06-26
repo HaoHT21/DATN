@@ -146,7 +146,7 @@ public class DialogueManager : MonoBehaviour
 
     void Update()
     {
-        if (currentNPC == null || fullScript == null || fullScript.Length == 0 || !dialoguePanelObject.activeSelf)
+        if (fullScript == null || fullScript.Length == 0 || dialoguePanelObject == null || !dialoguePanelObject.activeSelf)
             return;
 
         // Bấm phím hoặc chuột để đi tiếp
