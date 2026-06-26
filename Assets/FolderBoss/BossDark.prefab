@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1644364692530888133}
   - component: {fileID: 2885012254561249394}
   - component: {fileID: 3795099687825122570}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,9 +155,9 @@ GameObject:
   - component: {fileID: 3659546913121818091}
   - component: {fileID: 1746591329620361043}
   - component: {fileID: 90994562717640253}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BossDark
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -283,7 +283,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8583973896195866896}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}

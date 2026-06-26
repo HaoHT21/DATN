@@ -57,7 +57,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private float _attackTimer;
-    private float gunScaleValue = 0.5f;
 
     [Header("Ép vị trí đầu nòng")]
     [SerializeField] private float firePointXOffset = 0.355f;
@@ -82,9 +81,16 @@ public class PlayerController : MonoBehaviour
             _sprite.flipX = moveInput.x < 0;
             if (weaponHolder != null)
             {
-                float s = gunScaleValue;
+                // XOAY VŨ KHÍ THEO HƯỚNG NHÂN VẬT
                 weaponHolder.localRotation = Quaternion.Euler(0, 0, !_sprite.flipX ? weaponRotationOffset : 180f - weaponRotationOffset);
-                weaponHolder.localScale = new Vector3(s, !_sprite.flipX ? s : -s, s);
+
+                // SỬA TẠI ĐÂY: Lấy đúng Scale hiện tại mày cấu hình tay ngoài Inspector để lật mặt, ĐÉO ÉP VỀ 0.5 NỮA!
+                Vector3 currentScale = weaponHolder.localScale;
+                float absX = Mathf.Abs(currentScale.x);
+                float absY = Mathf.Abs(currentScale.y);
+                float absZ = Mathf.Abs(currentScale.z);
+
+                weaponHolder.localScale = new Vector3(absX, !_sprite.flipX ? absY : -absY, absZ);
             }
             FixFirePointPosition();
         }
@@ -136,7 +142,6 @@ public class PlayerController : MonoBehaviour
         {
             if (inventory[i].visualPrefab != null)
             {
-                // Chỉ bật vũ khí đang cầm (trùng index), tắt toàn bộ vũ khí ẩn còn lại
                 inventory[i].visualPrefab.SetActive(i == currentWeaponIndex);
             }
         }
@@ -160,9 +165,10 @@ public class PlayerController : MonoBehaviour
             spawned = Instantiate(visualPrefab, weaponHolder);
             spawned.transform.localPosition = Vector3.zero;
             spawned.transform.localRotation = Quaternion.identity;
-            spawned.transform.localScale = Vector3.one;
 
-            // SỬA TẠI ĐÂY: Mặc định để false, hàm UpdateWeaponVisuals() bên dưới sẽ tự động kích hoạt lại nếu được chọn
+            // Giữ nguyên Scale của cây súng lúc tạo ra
+            spawned.transform.localScale = visualPrefab.transform.localScale;
+
             spawned.SetActive(false);
         }
 
@@ -179,8 +185,6 @@ public class PlayerController : MonoBehaviour
         });
 
         currentWeaponIndex = inventory.Count - 1;
-
-        // Gọi hàm này để cập nhật trạng thái SetActive(true) cho vũ khí vừa nhặt!
         UpdateWeaponVisuals();
     }
 

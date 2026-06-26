@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: 6647382969609407136}
   - component: {fileID: 4313215253566040633}
   - component: {fileID: 4611297001967481571}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FlyingEye
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -224,6 +224,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
+  expReward: 30
   destroyDelay: 0.3
   hurtDuration: 0.4
 --- !u!114 &4611297001967481571
@@ -250,7 +251,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6844038010962383278}
   - component: {fileID: 5835492037459317846}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
