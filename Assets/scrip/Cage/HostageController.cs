@@ -35,6 +35,12 @@ public class HostageController : MonoBehaviour
     [Header("Disappear")]
     public float disappearDelay = 0.5f;
 
+    [Header("Phần thưởng gem")]
+    public bool giveGemReward = true;
+    public ItemData rewardGem;
+    public GameObject gemGiftPrefab;
+    public AudioClip gemGiftSound;
+
     private Rigidbody2D _rb;
     private Animator _animator;
     private SpriteRenderer _sprite;
@@ -59,6 +65,7 @@ public class HostageController : MonoBehaviour
 
         _isRescued = true;
         SetMovementLocked(false);
+        TryGiveGemReward();
 
         switch (rescueMode)
         {
@@ -91,6 +98,37 @@ public class HostageController : MonoBehaviour
                 UpdateFollowPlayer();
                 break;
         }
+    }
+
+    private void TryGiveGemReward()
+    {
+        if (!giveGemReward || rewardGem == null)
+            return;
+
+        GameObject prefab = gemGiftPrefab != null ? gemGiftPrefab : rewardGem.itemPrefab;
+        if (prefab != null)
+        {
+            GameObject gift = Instantiate(prefab, transform.position, Quaternion.identity);
+
+            GemPickup pickup = gift.GetComponent<GemPickup>();
+            if (pickup != null)
+                Destroy(pickup);
+
+            HostageGemGift giftBehaviour = gift.GetComponent<HostageGemGift>();
+            if (giftBehaviour == null)
+                giftBehaviour = gift.AddComponent<HostageGemGift>();
+
+            giftBehaviour.gemData = rewardGem;
+            giftBehaviour.pickupSound = gemGiftSound;
+
+            if (gift.GetComponent<ChestLootPop>() == null)
+                gift.AddComponent<ChestLootPop>();
+
+            return;
+        }
+
+        if (GemInventoryHelper.TryGiveGem(rewardGem))
+            PlaySound(gemGiftSound);
     }
 
     private void StartDisappear()
@@ -195,6 +233,14 @@ public class HostageController : MonoBehaviour
     {
         RegisterTransferIfNeeded();
         Destroy(gameObject);
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip == null || AudioManager.Instance == null)
+            return;
+
+        AudioManager.Instance.PlaySound(clip);
     }
 
     private void RegisterTransferIfNeeded()

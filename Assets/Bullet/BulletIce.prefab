@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4869117615605591366}
   - component: {fileID: 1108892751663517230}
   - component: {fileID: 4543496275382703082}
-  - component: {fileID: 3875329823715562977}
   - component: {fileID: -8684342668625516858}
+  - component: {fileID: -1416218261448774585}
   m_Layer: 0
   m_Name: BulletIce
   m_TagString: Untagged
@@ -159,21 +159,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.26, y: 0.1}
   m_EdgeRadius: 0
---- !u!114 &3875329823715562977
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9035861995818589019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 5
-  speed: 8
-  lifeTime: 5
 --- !u!50 &-8684342668625516858
 Rigidbody2D:
   serializedVersion: 5
@@ -201,3 +186,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-1416218261448774585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9035861995818589019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e765d776ecf26004ebdbd345c33b3bc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10
+  damage: 10
+  freezeDuration: 2
+  hitEffectPrefab: {fileID: 0}

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1372174690690143580}
   - component: {fileID: 8729292966050954060}
   - component: {fileID: 8524918325433554930}
+  - component: {fileID: 8095991071707376748}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -128,7 +129,6 @@ MonoBehaviour:
   currentHeath: 500
   maxHeath: 500
   healthFill: {fileID: 0}
-  armor: 20
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
 --- !u!58 &8729292966050954060
@@ -181,6 +181,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalTags:
   - PortalGreen
+--- !u!61 &8095991071707376748
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270194797944991374}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.57, y: 0.4}
+    newSize: {x: 0.55, y: 0.48}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.57, y: 0.4}
+  m_EdgeRadius: 0
 --- !u!1 &2993470402891544032
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,7 +268,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3236165864425022088}
   - component: {fileID: 5385509058379210578}
-  - component: {fileID: 1334867101219954292}
   - component: {fileID: 9030698952213860846}
   m_Layer: 0
   m_Name: 'BossSlime '
@@ -240,7 +285,7 @@ Transform:
   m_GameObject: {fileID: 8399829915083563723}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 491.7, y: -649.53, z: 0}
+  m_LocalPosition: {x: 12.935162, y: -8.607073, z: 0}
   m_LocalScale: {x: 6.321091, y: 6.321091, z: 6.321091}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -275,52 +320,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &1334867101219954292
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8399829915083563723}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.006257117, y: -0.0031290352}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.5806991, y: 0.3929559}
-  m_EdgeRadius: 0
 --- !u!114 &9030698952213860846
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 1644364692530888133}
   - component: {fileID: 2885012254561249394}
   - component: {fileID: 3795099687825122570}
+  - component: {fileID: 4830906287854357009}
+  - component: {fileID: 1962954388394684697}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -105,7 +107,6 @@ MonoBehaviour:
   currentHeath: 500
   maxHeath: 500
   healthFill: {fileID: 0}
-  armor: 20
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
 --- !u!114 &2885012254561249394
@@ -120,7 +121,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9ad4441405524d48b45a9ae7ff76f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  portalTags: []
+  portalTags:
+  - PortalPurple
 --- !u!95 &3795099687825122570
 Animator:
   serializedVersion: 7
@@ -143,6 +145,88 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!61 &4830906287854357009
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137719909907162588}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.3269676, y: -0.17294137}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.4, y: 0.93}
+    newSize: {x: 0.56, y: 0.56}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.52988803, y: 0.5841172}
+  m_EdgeRadius: 0
+--- !u!58 &1962954388394684697
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137719909907162588}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.32310075, y: 0}
+  m_Radius: 1.6195936
 --- !u!1 &3023948101480405388
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,11 +237,10 @@ GameObject:
   m_Component:
   - component: {fileID: 7504817822580109076}
   - component: {fileID: 3659546913121818091}
-  - component: {fileID: 1746591329620361043}
   - component: {fileID: 90994562717640253}
   m_Layer: 0
   m_Name: BossDark
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -171,7 +254,7 @@ Transform:
   m_GameObject: {fileID: 3023948101480405388}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 381.95, y: -888.98, z: 0}
+  m_LocalPosition: {x: 21.322063, y: 1.0468192, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -206,52 +289,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &1746591329620361043
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3023948101480405388}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.07798767, y: -2.1610107}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1.7797546, y: 2.069336}
-  m_EdgeRadius: 0
 --- !u!114 &90994562717640253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +308,14 @@ MonoBehaviour:
   bossVisual: {fileID: 7504817822580109076}
   bulletCastPrefab: {fileID: 6035235758144762600, guid: f42d48a105179454984001d98e702654, type: 3}
   castPoint: {fileID: 8583973896195866896}
+  invisibleCooldown: 12
+  invisibleDuration: 4
+  bodyCollider: {fileID: 0}
+  randomMoveRadius: 6
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  invisibleMoveSpeed: 10
   castCooldown: 6
   castCount: 3
   castInterval: 0.5

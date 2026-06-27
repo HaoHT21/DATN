@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 5766127669246433485}
   - component: {fileID: 4234342352988662784}
   - component: {fileID: 291947406110064290}
+  - component: {fileID: 4803232801265080791}
+  - component: {fileID: 3970965153950407493}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -127,7 +129,6 @@ MonoBehaviour:
   currentHeath: 500
   maxHeath: 500
   healthFill: {fileID: 0}
-  armor: 20
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
 --- !u!58 &291947406110064290
@@ -166,50 +167,27 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: -0.08136703, y: 0}
   m_Radius: 2.990484
---- !u!1 &2225764924664185720
-GameObject:
+--- !u!114 &4803232801265080791
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3738450169026145763}
-  - component: {fileID: 2136755313708547756}
-  - component: {fileID: 4286626260386019110}
-  - component: {fileID: 7536416907198798687}
-  m_Layer: 0
-  m_Name: BossMino
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3738450169026145763
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225764924664185720}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 338.71, y: -744.01, z: 0}
-  m_LocalScale: {x: 3.7339547, y: 3.7339547, z: 3.7339547}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4850473318197736222}
-  - {fileID: 8750951643560353769}
-  - {fileID: 7521452434692661269}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &2136755313708547756
+  m_GameObject: {fileID: 739870469439768684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9ad4441405524d48b45a9ae7ff76f54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalTags:
+  - PortalYellow
+--- !u!61 &3970965153950407493
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225764924664185720}
+  m_GameObject: {fileID: 739870469439768684}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -237,18 +215,54 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.037149966, y: -0.23529798}
+  m_Offset: {x: -0.079725936, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.97, y: 0.9}
+    newSize: {x: 1.16, y: 0.85}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7399212, y: 0.52940404}
+  m_Size: {x: 0.75426996, y: 0.9}
   m_EdgeRadius: 0
+--- !u!1 &2225764924664185720
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3738450169026145763}
+  - component: {fileID: 4286626260386019110}
+  - component: {fileID: 7536416907198798687}
+  m_Layer: 0
+  m_Name: BossMino
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3738450169026145763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2225764924664185720}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8.052011, y: -6.1917453, z: 0}
+  m_LocalScale: {x: 3.7339547, y: 3.7339547, z: 3.7339547}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4850473318197736222}
+  - {fileID: 8750951643560353769}
+  - {fileID: 7521452434692661269}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &4286626260386019110
 Rigidbody2D:
   serializedVersion: 5

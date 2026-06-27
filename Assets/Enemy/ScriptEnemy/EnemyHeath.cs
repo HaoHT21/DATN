@@ -7,12 +7,18 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
     public int maxHealth = 100;
     public int currentHealth = 100;
 
+    [Header("--- PHẦN THƯỞNG KHI CHẾT (MỚI TÍCH HỢP) ---")]
+    [Tooltip("Lượng EXP sẽ thưởng cho Player khi con quái này chết")]
+    public int expReward = 30;
+
     [Header("Death")]
     public float destroyDelay = 0.2f;
 
     private Animator animator;
     private Collider2D[] colliders;
     private Rigidbody2D rb;
+
+    private Coroutine hurtCoroutine;
 
     [Header("Animation")]
     public float hurtDuration = 0.2f;
@@ -24,7 +30,8 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
     public bool IsDead => isDead;
 
     public event System.Action<HealthChangeInfo> OnHealthChanged;
-    public System.Action OnDeath;
+    public event System.Action OnDamaged;
+    public event System.Action OnDeath;
 
     private void Awake()
     {
@@ -42,11 +49,16 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
 
         currentHealth -= damage;
 
+        OnDamaged?.Invoke();
+
         Debug.Log("Current HP: " + currentHealth);
 
         if (currentHealth > 0)
         {
-            StartCoroutine(HurtRoutine());
+            if (hurtCoroutine != null)
+                StopCoroutine(hurtCoroutine);
+
+            hurtCoroutine = StartCoroutine(HurtRoutine());
         }
         else
         {
@@ -59,14 +71,17 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
 
     private IEnumerator HurtRoutine()
     {
-        if (animator == null)
+        if (animator == null || isDead)
             yield break;
 
         animator.Play("hurt");
 
         yield return new WaitForSeconds(hurtDuration);
 
-        animator.Play("idle");
+        if (!isDead)
+            animator.Play("idle");
+
+        hurtCoroutine = null;
     }
 
     private IEnumerator DieSequence()
@@ -74,6 +89,25 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
         isDead = true;
 
         OnDeath?.Invoke();
+
+        // ========================
+        // THÊM HỆ THỐNG EXP
+        // =======================
+
+        // Thưởng EXP cho Player khi quái chết
+        GameObject playerObj = GameObject.FindWithTag("Player");
+
+        if (playerObj != null)
+        {
+            PlayerHealth playerHealth = playerObj.GetComponent<PlayerHealth>();
+
+            if (playerHealth != null)
+            {
+                playerHealth.AddEXP(expReward);
+
+                Debug.Log($"Player nhận {expReward} EXP");
+            }
+        }
 
         // Tắt collider
         foreach (Collider2D col in colliders)
@@ -96,11 +130,6 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
         }
 
         // Tắt AI
-
-        EnemyShooterAI shooterAI = GetComponent<EnemyShooterAI>();
-        if (shooterAI != null)
-            shooterAI.enabled = false;
-
         yield return new WaitForSeconds(destroyDelay);
 
         Destroy(gameObject);

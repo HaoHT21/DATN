@@ -26,6 +26,9 @@ public class Barrier : MonoBehaviour
 
     private int currentWaveIndex = 0;
 
+    private Coroutine waveRoutine;
+    private bool battleCompleted = false;
+
     private void Start()
     {
         // Ẩn barrier
@@ -75,7 +78,7 @@ public class Barrier : MonoBehaviour
                 Debug.Log("Barrier đã đóng!");
 
                 // Bắt đầu wave
-                StartCoroutine(StartWaveRoutine());
+                waveRoutine = StartCoroutine(StartWaveRoutine());
             }
         }
     }
@@ -141,6 +144,41 @@ public class Barrier : MonoBehaviour
         }
     }
 
+    public bool IsBattleCompleted()
+    {
+        return battleCompleted;
+    }
+
+    public void ResetBattle()
+    {
+        if (battleCompleted)
+            return;
+
+        Debug.Log("Reset Battle");
+
+        if (waveRoutine != null)
+            StopCoroutine(waveRoutine);
+
+        foreach (GameObject enemy in aliveEnemies)
+        {
+            if (enemy != null)
+                Destroy(enemy);
+        }
+
+        aliveEnemies.Clear();
+
+        currentWaveIndex = 0;
+
+        if (tilemapRenderer != null)
+            tilemapRenderer.enabled = false;
+
+        if (tilemapCollider != null)
+            tilemapCollider.isTrigger = true;
+
+        activated = false;
+        currentPlayer = null;
+    }
+
     // =========================
     // RANDOM VỊ TRÍ TRONG TILEMAP
     // =========================
@@ -195,6 +233,8 @@ public class Barrier : MonoBehaviour
             tilemapCollider.isTrigger = true;
 
         activated = false;
+
+        battleCompleted = true;
     }
 }
 

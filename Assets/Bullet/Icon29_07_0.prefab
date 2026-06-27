@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2727116828910805189}
   - component: {fileID: 2815750109193817594}
-  - component: {fileID: 1130017097623367}
   - component: {fileID: 967676610135588565}
+  - component: {fileID: 5061870587352260618}
   m_Layer: 0
   m_Name: Icon29_07_0
   m_TagString: Untagged
@@ -89,24 +89,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1130017097623367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1924345360029090095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaa22e86789148844932553c6f544ab1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemIcon: {fileID: 3667769333055924957, guid: f7b368cdf5123ce47a5605d3c7b79d9e, type: 3}
-  weaponVisualPrefab: {fileID: 1924345360029090095}
-  weaponPickupPrefab: {fileID: 1924345360029090095}
-  bulletPrefab: {fileID: 8190952228073736206, guid: b3a51b91cbe25d648881917a721e688e, type: 3}
-  isGun: 1
-  damage: 50
 --- !u!58 &967676610135588565
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -143,3 +125,21 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.16
+--- !u!114 &5061870587352260618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924345360029090095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaa22e86789148844932553c6f544ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemIcon: {fileID: 0}
+  weaponVisualPrefab: {fileID: 0}
+  weaponPickupPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 0}
+  isGun: 0
+  damage: 25

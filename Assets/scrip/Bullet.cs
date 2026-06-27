@@ -26,27 +26,72 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        // 1. Bỏ qua nếu chạm Player hoặc các vùng Trigger (như vùng đổi nhạc)
         if (col.CompareTag("Player") || col.isTrigger)
+            return;
+
+        if (col.TryGetComponent<BreakableTile>(out var breakable))
         {
+            breakable.TakeDamage(damage);
+            HitEffect();
             return;
         }
 
-        // 2. TẠO HIỆU ỨNG NỔ (Cái này Trung đang thiếu nè)
+        if (col.TryGetComponent<Bomb>(out var bomb))
+        {
+            bomb.TakeDamage(damage);
+            HitEffect();
+            return;
+        }
+
+        if (col.TryGetComponent<PoisonSpawner>(out var poison))
+        {
+            poison.TakeDamage(damage);
+            HitEffect();
+            return;
+        }
+
+        if (col.TryGetComponent<BulletSpawnerIce>(out var ice))
+        {
+            ice.TakeDamage(damage);
+            HitEffect();
+            return;
+        }
+
+        // Enemy thường
+        if (col.TryGetComponent<EnemyHeath>(out var enemy))
+        {
+            enemy.TakeDamage(damage);
+
+            HitEffect();
+            return;
+        }
+
+        // Boss
+        if (col.TryGetComponent<BossHeath>(out var boss))
+        {
+            boss.TakeDamage(
+                damage,
+                gameObject.tag
+            );
+
+            HitEffect();
+            return;
+        }
+
+        HitEffect();
+    }
+
+    private void HitEffect()
+    {
         if (hitEffectPrefab != null)
         {
-            // Tạo hiệu ứng tại đúng vị trí viên đạn đang đứng
-            Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
+            Instantiate(
+                hitEffectPrefab,
+                transform.position,
+                Quaternion.identity
+            );
         }
 
-        // 3. Xử lý gây sát thương cho Enemy
-        if (col.TryGetComponent<EnemyHeath>(out var e))
-        {
-            e.TakeDamage(damage);
-            Debug.Log($"<color=red>[Bullet]</color> Gây {damage} sát thương cho {col.name}");
-        }
-
-        // 4. Hủy viên đạn sau khi nổ
         Destroy(gameObject);
     }
 }

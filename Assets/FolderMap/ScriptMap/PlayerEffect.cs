@@ -54,4 +54,22 @@ public class PlayerEffect : MonoBehaviour
         currentMoveSpeed -= amount;
         ApplyStats();
     }
+
+    public void Freeze(float duration)
+    {
+        StartCoroutine(FreezeRoutine(duration));
+    }
+
+    private IEnumerator FreezeRoutine(float duration)
+    {
+        float oldSpeed = currentMoveSpeed;
+
+        currentMoveSpeed = 0;
+        ApplyStats();
+
+        yield return new WaitForSeconds(duration);
+
+        currentMoveSpeed = oldSpeed;
+        ApplyStats();
+    }
 }

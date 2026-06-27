@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -11,7 +11,7 @@ public class BossIceController : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 2f;
-
+    
     [Header("Visual")]
     public Transform bossVisual;
 
@@ -149,9 +149,14 @@ public class BossIceController : MonoBehaviour
 
     public void PlayAttack()
     {
-        if (isDead) return;
+        if (isDead)
+            return;
 
-        anim.Play("attack");
+        anim.Play(
+            "attack",
+            0,
+            0f
+        );
     }
 
     public void PlayIce()
@@ -224,17 +229,26 @@ public class BossIceController : MonoBehaviour
     {
         isCastingSkill = true;
 
-        rb.linearVelocity = Vector2.zero;
+        rb.linearVelocity =
+            Vector2.zero;
 
         for (int i = 0; i < attackIceCount; i++)
         {
+            // reset animation mỗi viên
             PlayAttack();
 
-            yield return new WaitForSeconds(0.3f);
+            // đợi tới lúc tay vung
+            yield return new WaitForSeconds(
+                0.3f
+            );
 
+            // bắn đạn
             SpawnAttackIce();
 
-            yield return new WaitForSeconds(attackIceInterval);
+            // khoảng cách giữa viên
+            yield return new WaitForSeconds(
+                attackIceInterval
+            );
         }
 
         PlayIdle();

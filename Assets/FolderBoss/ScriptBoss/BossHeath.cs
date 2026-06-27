@@ -10,9 +10,6 @@ public class BossHeath : MonoBehaviour
     [Header("UI Health Bar")]
     public Image healthFill;
 
-    [Header("Armor")]
-    public int armor = 20; // giáp giảm damage
-
     [Header("UI Root (Panel chứa thanh máu)")]
     public Image healthUIRoot;
 
@@ -54,6 +51,8 @@ public class BossHeath : MonoBehaviour
 
     void Start()
     {
+        currentHeath = maxHeath;
+
         targetFill = 1f;
 
         if (healthFill != null)
@@ -82,19 +81,7 @@ public class BossHeath : MonoBehaviour
     {
         if (isDead) return;
 
-        // =========================
-        // GIÁP GIẢM DAMAGE
-        // =========================
-        int finalDamage = damage - armor;
-
-        // không cho damage âm
-        if (finalDamage < 1)
-            finalDamage = 1;
-
-        currentHeath -= finalDamage;
-
-        // Debug để test
-        Debug.Log($"Boss bị đánh: {damage} | Giáp: {armor} | Damage thực: {finalDamage} | HP còn: {currentHeath}");
+        currentHeath -= damage;
 
         // =========================
         // CHẾT
@@ -112,7 +99,7 @@ public class BossHeath : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             TakeDamage(50, "Test");
         }

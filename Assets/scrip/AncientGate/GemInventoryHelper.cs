@@ -1,5 +1,13 @@
 public static class GemInventoryHelper
 {
+    public static bool TryGiveGem(ItemData gem)
+    {
+        if (gem == null || InventoryManager.Instance == null)
+            return false;
+
+        return InventoryManager.Instance.AddItem(gem);
+    }
+
     public static bool HasGem(ItemData gem)
     {
         if (gem == null || InventoryManager.Instance == null)

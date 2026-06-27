@@ -22,10 +22,14 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
 
     [Header("--- Level & EXP Settings ---")]
     public int currentLevel = 1;
-    public int maxLevel = 5;
+    [Tooltip("Player 1 điền số 5, các Player khác điền số 8 ngoài Inspector")]
+    public int maxLevel = 8;
     public int currentEXP = 0;
-    // Mảng chứa định mức EXP cần để thăng cấp (Cấp 1 cần 100, Cấp 2 cần 250, Cấp 3 cần 500, Cấp 4 cần 1000 để lên Cấp 5)
-    public int[] expToNextLevel = new int[] { 100, 250, 500, 1000 };
+
+    // MỞ RỘNG MẢNG EXP ĐẾN CẤP 8 THEO YÊU CẦU ĐỂ TRÁNH LỖI VĂNG MẢNG:
+    // Cấp 1 cần 100, Cấp 2 cần 250, Cấp 3 cần 500, Cấp 4 cần 1000 để lên Cấp 5
+    // Cấp 5 cần 1500, Cấp 6 cần 2200, Cấp 7 cần 3000 để lên Cấp 8 tối đa
+    public int[] expToNextLevel = new int[] { 100, 250, 500, 1000, 1500, 2200, 3000 };
 
     [Header("--- Health Settings ---")]
     public int currentHealth = 100;
@@ -49,9 +53,6 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     [Header("Respawn Settings")]
     public Vector3 spawnPosition; // Vị trí điểm hồi sinh ở Sảnh
 
-    // =================================================================
-    // ĐOẠN THÊM VÀO: Biến quản lý trạng thái Bad Ending nhận từ Zone 2
-    // =================================================================
     private bool isInBadEndZone = false;
     private GameObject badEndUI;
 
@@ -75,9 +76,7 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         // Cập nhật giao diện UI góc trái ngay khi vừa vào game
         UpdateUI();
     }
-    // =================================================================
-    // ĐOẠN THÊM VÀO: Hàm công tắc nhận cấu hình từ xa của NPCTriggerZone gửi sang
-    // =================================================================
+
     public void SetInBadEndZone(bool state, GameObject uiCanvas)
     {
         isInBadEndZone = state;
@@ -108,13 +107,15 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     // --- LOGIC QUẢN LÝ CẤP ĐỘ (LEVEL) VÀ KINH NGHIỆM (EXP) ---
     public void AddEXP(int amount)
     {
+        // Nếu chạm mốc maxLevel của riêng con đó hoặc đã chết thì ngắt luôn, đéo nhận thêm EXP
         if (IsDead || currentLevel >= maxLevel) return;
 
         currentEXP += amount;
-        Debug.Log($"Nhận được {amount} EXP! Tiến trình hiện tại: {currentEXP}/{expToNextLevel[currentLevel - 1]}");
 
-        // Vòng lặp check thăng cấp (Đề phòng trường hợp gõ chết Boss nhận lượng EXP khổng lồ nhảy vọt liền nhiều cấp)
-        while (currentLevel < maxLevel && currentEXP >= expToNextLevel[currentLevel - 1])
+        // ĐÃ FIX: Thêm điều kiện (currentLevel - 1 < expToNextLevel.Length) để bảo vệ mảng tuyệt đối ngoài Editor
+        while (currentLevel < maxLevel
+               && (currentLevel - 1) < expToNextLevel.Length
+               && currentEXP >= expToNextLevel[currentLevel - 1])
         {
             LevelUp();
         }
@@ -136,7 +137,33 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
 
         UpdateUI(); // Đồng bộ lại tỉ lệ thanh Slider mới lên giao diện góc trái
 
+        // CHÈN ĐOẠN HIỆN TEXT CHÚC MỪNG LÊN GIAO DIỆN GAME:
+        if (SkillNotification.Instance != null)
+        {
+            SkillNotification.Instance.ShowMessage($"LEVEL UP! ĐẠT CẤP {currentLevel}", Color.green);
+
+            // Tự động phân tích mốc mở khóa chiêu để nhắc nhở người chơi sau 1.2 giây
+            if (currentLevel == 4)
+            {
+                StartCoroutine(ShowUnlockNoticeDelayed("ĐÃ MỞ KHÓA SKILL MỚI (PHÍM L)!", Color.yellow));
+            }
+            else if (currentLevel == 7)
+            {
+                StartCoroutine(ShowUnlockNoticeDelayed("TUYỆT CHIÊU CUỐI ĐÃ SẴN SÀNG (PHÍM M)!", Color.cyan));
+            }
+        }
+
         Debug.LogWarning($"CHÚC MỪNG ĐẠI CA! BẠN ĐÃ LÊN CẤP {currentLevel}!!! MaxHP: {maxHealth} | MaxMP: {maxMana}");
+    }
+
+    // Hàm bổ trợ gọi thông báo trễ giúp các hiệu ứng text không bị chèn lên nhau gạt mắt
+    private IEnumerator ShowUnlockNoticeDelayed(string message, Color textColor)
+    {
+        yield return new WaitForSeconds(1.2f);
+        if (SkillNotification.Instance != null && !IsDead)
+        {
+            SkillNotification.Instance.ShowMessage(message, textColor);
+        }
     }
 
     // --- LOGIC QUẢN LÝ MÁU (HP) ---
@@ -144,8 +171,7 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     {
         if (IsDead) return;
 
-        // ==================================================================
-        // --- ĐOẠN ĐỒNG BỘ MỚI: Gọi con khiên ra hấp thụ damage bằng ref ---
+        // --- ĐỒNG BỘ MỚI: Gọi con khiên ra hấp thụ damage bằng ref ---
         PlayerShield shield = GetComponent<PlayerShield>();
         if (shield != null)
         {
@@ -154,7 +180,6 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
 
         // Nếu khiên đã nuốt hết sát thương (damage giảm về 0), ngắt luôn đéo trừ máu gốc!
         if (damage <= 0) return;
-        // ==================================================================
 
         int before = currentHealth;
         currentHealth -= damage;
@@ -295,9 +320,6 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
             _rb.simulated = false;
         }
 
-        // =================================================================
-        // ĐOẠN THÊM VÀO ĐỂ KHÓA HỒI SINH TRONG ZONE 2 VÀ BẬT UI BAD ENDING
-        // =================================================================
         if (isInBadEndZone && badEndUI != null)
         {
             Debug.Log("<color=red>[BAD ENDING]</color> Player chết tại khu vực Boss! Chặn đứng chuỗi hồi sinh.");
