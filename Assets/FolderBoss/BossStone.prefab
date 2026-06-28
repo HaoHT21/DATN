@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 494972067599882905}
   - component: {fileID: 4014082992486776673}
-  - component: {fileID: 2829666763796374606}
   - component: {fileID: 6985650586161289274}
   m_Layer: 6
   m_Name: Laser
@@ -51,42 +50,6 @@ MonoBehaviour:
   laserObject: {fileID: 5843340687540868253}
   boss: {fileID: 1437756781338978572}
   isUsingLaser: 0
---- !u!58 &2829666763796374606
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 713027970598856566}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: -0.07245897, y: -0.0012141688}
-  m_Radius: 1.7046251
 --- !u!114 &6985650586161289274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,9 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2166141072918886224}
-  - component: {fileID: 3054043059665305128}
   - component: {fileID: 4006682435007002086}
-  - component: {fileID: 8765477852870046472}
   m_Layer: 6
   m_Name: Shoot
   m_TagString: Untagged
@@ -135,42 +96,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6056916006279979147}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &3054043059665305128
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1796472394452489427}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.0698199, y: -0.077432975}
-  m_Radius: 0.7045428
 --- !u!114 &4006682435007002086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,22 +110,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   rotateSpeed: 5
---- !u!114 &8765477852870046472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1796472394452489427}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f5d5e3acb8d16943bd912a508b4e074, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 7003757456173169599, guid: 6e713be34df268d49a9aaf887fba2d78, type: 3}
-  firePoint: {fileID: 2166141072918886224}
-  boss: {fileID: 1437756781338978572}
-  isUsingShoot: 0
 --- !u!1 &4127300441386205223
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,9 +121,6 @@ GameObject:
   - component: {fileID: 6835805489388448769}
   - component: {fileID: 9007294344065586052}
   - component: {fileID: 487178922970641307}
-  - component: {fileID: 4593769013889614044}
-  - component: {fileID: 2434472294187871546}
-  - component: {fileID: 1350145719632372208}
   - component: {fileID: 6963373424535549483}
   - component: {fileID: 2017366247982543837}
   - component: {fileID: 1697641274032919246}
@@ -318,45 +224,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4593769013889614044
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4127300441386205223}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cff4b7697875ee048a78a92b2ae43561, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackObject: {fileID: 4816430067411843155}
---- !u!114 &2434472294187871546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4127300441386205223}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c1d289e013870f4d8b2782e0bc2e0d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  laser: {fileID: 4014082992486776673}
---- !u!114 &1350145719632372208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4127300441386205223}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf45b9f004e335e47b6f19d008a49e86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shoot: {fileID: 8765477852870046472}
 --- !u!58 &6963373424535549483
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -479,7 +346,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3861432893391011144}
-  - component: {fileID: 511155669563922574}
   - component: {fileID: 889814414318506880}
   m_Layer: 6
   m_Name: MeleeHitbox
@@ -503,42 +369,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6056916006279979147}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &511155669563922574
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4816430067411843155}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.004892774, y: -0.026154438}
-  m_Radius: 0.53104734
 --- !u!114 &889814414318506880
 MonoBehaviour:
   m_ObjectHideFlags: 0

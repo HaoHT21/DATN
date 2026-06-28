@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class BossSlimeController : MonoBehaviour
@@ -11,30 +12,40 @@ public class BossSlimeController : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 2f;
 
-    [Header("Skill Shoot")]
+    public float detectRange = 10f;
+    public float keepDistance = 4f;
+
+    public float randomMoveRadius = 3f;
+    public float randomMoveInterval = 2f;
+
+    [Header("Shoot Skill")]
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public float skillCooldown = 10f;
     public int bulletCount = 8;
 
-    [Header("Summon Enemy")]
+    public int jumpAttackCount = 2;
+
+    [Header("Summon Skill")]
     public GameObject enemyPrefab;
     public int summonCount = 5;
     public float summonRadius = 3f;
-    public float summonCooldown = 10f;
 
-    private float summonTimer;
+    [Header("Skill AI")]
+    public float skillInterval = 5f;
 
     private float skillTimer;
+    private float moveTimer;
+
+    private Vector2 randomTarget;
+
     private bool isCastingSkill;
+    private bool isDead;
+    private bool phase2;
 
     private Transform target;
     private Rigidbody2D rb;
 
-    private bool isAttacking;
-    private bool isDead;
-
-    private void Awake()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
 
@@ -48,47 +59,111 @@ public class BossSlimeController : MonoBehaviour
             bossHeath = GetComponent<BossHeath>();
     }
 
-    private void Start()
+    void Start()
     {
         GameObject player =
-            GameObject.FindGameObjectWithTag("Player");
+            GameObject.FindGameObjectWithTag(
+                "Player"
+            );
 
         if (player != null)
             target = player.transform;
     }
 
-    private void Update()
+    void Update()
     {
-        // ===== DEATH =====
+        //--------------------------------
+        // DEATH
+        //--------------------------------
+
         if (!isDead &&
-            bossHeath != null &&
             bossHeath.currentHeath <= 0)
         {
             isDead = true;
 
+            StopAllCoroutines();
+            isCastingSkill = false;
+
+            // dừng di chuyển
             rb.linearVelocity = Vector2.zero;
             rb.simulated = false;
 
+            // tắt collider để không nhận đạn nữa
+            Collider2D col =
+                GetComponent<Collider2D>();
+
+            if (col != null)
+                col.enabled = false;
+
             PlayDeath();
 
-            Debug.Log("Boss Slime chết!");
+            StartCoroutine(
+                DeathRoutine()
+            );
 
             return;
         }
 
-        if (isDead)
+        if (isDead || target == null)
             return;
 
-        skillTimer += Time.deltaTime;
+        //--------------------------------
+        // PHASE 2
+        //--------------------------------
 
-        if (skillTimer >= skillCooldown && !isCastingSkill)
+        if (!phase2 &&
+        bossHeath.currentHeath <=
+        bossHeath.maxHeath * 0.5f)
         {
-            skillTimer = 0f;
-            StartCoroutine(ShootSkill());
+            phase2 = true;
+
+            skillInterval = 3f;
+
+            bulletCount += 6;
+
+            summonCount += 5;
+
+            jumpAttackCount += 2;
+
+            moveSpeed += 1f;
         }
 
-        if (target == null || isCastingSkill)
+        //--------------------------------
+        // SKILL TIMER
+        //--------------------------------
+
+        if (!isCastingSkill)
+        {
+            skillTimer += Time.deltaTime;
+
+            if (skillTimer >= skillInterval)
+            {
+                skillTimer = 0f;
+
+                int randomSkill =
+                    Random.Range(0, 2);
+
+                if (randomSkill == 0)
+                {
+                    StartCoroutine(
+                        ShootSkill()
+                    );
+                }
+                else
+                {
+                    StartCoroutine(
+                        SummonSkill()
+                    );
+                }
+            }
+        }
+
+        if (isCastingSkill)
             return;
+
+        //--------------------------------
+        // DETECT PLAYER
+        //--------------------------------
 
         float distance =
             Vector2.Distance(
@@ -96,126 +171,215 @@ public class BossSlimeController : MonoBehaviour
                 target.position
             );
 
-        summonTimer += Time.deltaTime;
-
-        if (summonTimer >= summonCooldown && !isCastingSkill)
+        if (distance > detectRange)
         {
-            summonTimer = 0f;
-            StartCoroutine(SummonSkill());
+            PlayIdle();
+            return;
         }
 
-        // Lật hướng
+        //--------------------------------
+        // RANDOM MOVE
+        //--------------------------------
+
+        moveTimer -= Time.deltaTime;
+
+        if (moveTimer <= 0)
+        {
+            moveTimer =
+                randomMoveInterval;
+
+            PickRandomPosition();
+        }
+
+        MoveBoss();
+
+        PlayIdle();
+
         sprite.flipX =
-            target.position.x < transform.position.x;
+            target.position.x <
+            transform.position.x;
+    }
 
-        isAttacking = false;
+    void PickRandomPosition()
+    {
+        Vector2 offset =
+            Random.insideUnitCircle *
+            randomMoveRadius;
 
-        // Move
+        Vector2 playerPos =
+            target.position;
+
+        randomTarget =
+            playerPos +
+            offset;
+
+        float distance =
+            Vector2.Distance(
+                randomTarget,
+                target.position
+            );
+
+        if (distance < keepDistance)
+        {
+            Vector2 dir =
+                (randomTarget - playerPos)
+                .normalized;
+
+            randomTarget =
+                playerPos +
+                dir *
+                keepDistance;
+        }
+    }
+
+    void MoveBoss()
+    {
         Vector2 direction =
-            (target.position - transform.position)
-            .normalized;
+            (
+            randomTarget -
+            (Vector2)transform.position
+            ).normalized;
 
         rb.MovePosition(
             rb.position +
-            direction * moveSpeed * Time.deltaTime
+            direction *
+            moveSpeed *
+            Time.deltaTime
         );
-
-        PlayIdle();
     }
 
-    public void PlayIdle()
+    IEnumerator ShootSkill()
     {
-        if (isDead) return;
+        isCastingSkill = true;
 
+        for (int wave = 0;
+             wave < jumpAttackCount;
+             wave++)
+        {
+            if (isDead)
+            {
+                isCastingSkill = false;
+                yield break;
+            }
+
+            PlayAttack();
+
+            yield return new WaitForSeconds(.5f);
+
+            if (isDead)
+                yield break;
+
+            float angleStep =
+                360f / bulletCount;
+
+            for (int i = 0;
+                 i < bulletCount;
+                 i++)
+            {
+                Instantiate(
+                    bulletPrefab,
+                    firePoint.position,
+                    Quaternion.Euler(
+                        0,
+                        0,
+                        i * angleStep
+                    )
+                );
+            }
+
+            yield return new WaitForSeconds(.4f);
+        }
+
+        isCastingSkill = false;
+    }
+
+    IEnumerator SummonSkill()
+    {
+        isCastingSkill = true;
+
+        PlayAttack();
+
+        yield return new WaitForSeconds(.5f);
+
+        if (isDead)
+        {
+            isCastingSkill = false;
+            yield break;
+        }
+
+        for (int i = 0;
+             i < summonCount;
+             i++)
+        {
+            Vector2 pos =
+                (Vector2)transform.position +
+                Random.insideUnitCircle *
+                summonRadius;
+
+            GameObject enemy =
+                Instantiate(
+                    enemyPrefab,
+                    pos,
+                    Quaternion.identity
+                );
+
+            Destroy(enemy, 10f);
+        }
+
+        yield return new WaitForSeconds(.5f);
+
+        isCastingSkill = false;
+    }
+
+    void PlayIdle()
+    {
         anim.Play("idle");
     }
 
-    public void PlayAttack()
+    void PlayAttack()
     {
-        if (isDead) return;
-
-        anim.Play("attack");
+        anim.Play("attack", 0, 0f);
     }
 
-    public void PlayDeath()
+    void PlayDeath()
     {
-        if (anim == null)
-            return;
-
         anim.Play("death");
     }
 
-    private System.Collections.IEnumerator ShootSkill()
+    IEnumerator DeathRoutine()
     {
-        isCastingSkill = true;
+        // lấy độ dài animation death
+        AnimatorStateInfo state =
+            anim.GetCurrentAnimatorStateInfo(0);
 
-        anim.Play("attack");
+        yield return new WaitForSeconds(
+            state.length
+        );
 
-        yield return new WaitForSeconds(0.5f);
-
-        FireBullets();
-
-        yield return new WaitForSeconds(0.5f);
-
-        isCastingSkill = false;
+        Destroy(gameObject);
     }
 
-    private void FireBullets()
+    private void OnDrawGizmosSelected()
     {
-        if (bulletPrefab == null || firePoint == null)
-            return;
+        // Detect range
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(
+            transform.position,
+            detectRange
+        );
 
-        float angleStep = 360f / bulletCount;
+        // Keep distance
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(
+            transform.position,
+            keepDistance
+        );
 
-        for (int i = 0; i < bulletCount; i++)
-        {
-            float angle = i * angleStep;
-
-            Quaternion rot =
-                Quaternion.Euler(0, 0, angle);
-
-            Instantiate(
-                bulletPrefab,
-                firePoint.position,
-                rot
-            );
-        }
-    }
-
-    private System.Collections.IEnumerator SummonSkill()
-    {
-        isCastingSkill = true;
-
-        // Chạy animation attack
-        anim.Play("attack");
-
-        // Chờ animation chạy một chút
-        yield return new WaitForSeconds(0.5f);
-
-        SummonEnemies();
-
-        // Đợi animation kết thúc
-        yield return new WaitForSeconds(0.5f);
-
-        isCastingSkill = false;
-    }
-
-    private void SummonEnemies()
-    {
-        if (enemyPrefab == null)
-            return;
-
-        for (int i = 0; i < summonCount; i++)
-        {
-            Vector2 randomPos =
-                (Vector2)transform.position +
-                Random.insideUnitCircle * summonRadius;
-
-            Instantiate(
-                enemyPrefab,
-                randomPos,
-                Quaternion.identity
-            );
-        }
+        // Random move radius
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(
+            transform.position,
+            randomMoveRadius
+        );
     }
 }

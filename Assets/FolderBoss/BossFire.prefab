@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1046357675855748038}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.236, y: 0.249, z: 0}
+  m_LocalPosition: {x: 0.204, y: 0.26, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -72,7 +72,7 @@ Transform:
   m_GameObject: {fileID: 1234896687958638790}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.169, y: 0.061, z: 0}
+  m_LocalPosition: {x: 0.169, y: 0.188, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -272,8 +272,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.04652441, y: 0.5349997}
-  m_Radius: 1.8346955
+  m_Offset: {x: -0.037604555, y: 0.5349997}
+  m_Radius: 2.7003582
 --- !u!61 &2145800433613339440
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -349,8 +349,8 @@ Transform:
   m_GameObject: {fileID: 6773916424304130998}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.634, y: 0.266, z: 0}
-  m_LocalScale: {x: 2.5110223, y: 1.5693889, z: 1.5693889}
+  m_LocalPosition: {x: 1.592, y: 0.347, z: 0}
+  m_LocalScale: {x: 6.1268945, y: 1.5693889, z: 1.5693889}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4506132486580365933}
@@ -470,7 +470,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.48, y: 0.4}
+    oldSize: {x: 0.53, y: 0.47}
     newSize: {x: 0.48, y: 0.4}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -519,7 +519,7 @@ Transform:
   m_GameObject: {fileID: 6905772719604878256}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 26.29, y: -2.47, z: 0}
+  m_LocalPosition: {x: 1.06, y: -3.1, z: 0}
   m_LocalScale: {x: 4.8943176, y: 4.8943176, z: 4.8943176}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -571,16 +571,16 @@ MonoBehaviour:
   sprite: {fileID: 973053089727750152}
   bossHeath: {fileID: 8264079799232386199}
   moveSpeed: 2
-  bossVisual: {fileID: 598610014296102893}
+  detectRange: 15
+  keepDistance: 4
+  randomMoveRadius: 7
+  randomMoveInterval: 0.3
   fireballPrefab: {fileID: 7884107102201911381, guid: b713bf347cfaca945aa96ad5f355b487, type: 3}
   fireballPoint: {fileID: 6769144706933277675}
-  fireballCooldown: 8
   fireballCount: 30
   fireballInterval: 0.08
   randomAngle: 30
   spitFireObject: {fileID: 6773916424304130998}
-  spitFireCooldown: 12
   spitFireDuration: 1
-  fireballCastTime: 1
-  bulletsPerBurst: 3
-  burstInterval: 0.08
+  skillInterval: 4
+  bossVisual: {fileID: 598610014296102893}

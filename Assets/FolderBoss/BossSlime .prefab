@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 1270194797944991374}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.069, y: 0.279, z: 0}
+  m_LocalPosition: {x: -0.006, y: -0.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -165,8 +165,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.011668088, y: 0}
-  m_Radius: 1.202942
+  m_Offset: {x: -0.006034117, y: 0}
+  m_Radius: 1.8833761
 --- !u!114 &8524918325433554930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,7 +285,7 @@ Transform:
   m_GameObject: {fileID: 8399829915083563723}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 12.935162, y: -8.607073, z: 0}
+  m_LocalPosition: {x: 0.72, y: -0.19, z: 0}
   m_LocalScale: {x: 6.321091, y: 6.321091, z: 6.321091}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -336,11 +336,15 @@ MonoBehaviour:
   sprite: {fileID: 8907642469822718442}
   bossHeath: {fileID: 1372174690690143580}
   moveSpeed: 2
+  detectRange: 15
+  keepDistance: 4
+  randomMoveRadius: 7
+  randomMoveInterval: 0.3
   bulletPrefab: {fileID: 8282301630644044267, guid: aec8d33c2ba1f7a4c9b5316f0cf271af, type: 3}
   firePoint: {fileID: 8461028234699971491}
-  skillCooldown: 5
   bulletCount: 30
+  jumpAttackCount: 2
   enemyPrefab: {fileID: 678173421849214333, guid: 9989cea162b643f40bf76064f711e63d, type: 3}
   summonCount: 5
   summonRadius: 5
-  summonCooldown: 10
+  skillInterval: 4

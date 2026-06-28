@@ -6,247 +6,371 @@ public class BossIceController : MonoBehaviour
 {
     [Header("References")]
     public Animator anim;
-    public SpriteRenderer sprite;
     public BossHeath bossHeath;
 
-    [Header("Movement")]
-    public float moveSpeed = 2f;
-    
+
     [Header("Visual")]
     public Transform bossVisual;
 
-    [Header("Ice Skill")]
-    public GameObject icePrefab;
-    public Transform icePoint;
-    public float iceCooldown = 8f;
+    [Header("Movement")]
+    public float moveSpeed = 2f;
+
+    public float detectRange = 10f;
+    public float keepDistance = 4f;
+
+    public float randomMoveRadius = 3f;
+    public float randomMoveInterval = 2f;
 
     [Header("Ice Burst")]
+    public GameObject icePrefab;
+    public Transform icePoint;
+
     public int iceCount = 20;
+
+    [Header("Ice Skill")]
+    public int iceBurstCount = 1;
 
     [Header("Attack Ice")]
     public GameObject attackIcePrefab;
     public Transform attackIcePoint;
-    public float attackIceCooldown = 5f;
 
     public int attackIceCount = 3;
-    public float attackIceInterval = 0.3f;
+    public float attackIceInterval = .3f;
 
-    private float attackIceTimer;
+    [Header("Skill AI")]
+    public float skillInterval = 5f;
 
-    private float iceTimer;
+    private float skillTimer;
+    private float moveTimer;
+
+    private Vector2 randomTarget;
 
     private bool isCastingSkill;
     private bool isDead;
+    private bool phase2;
 
     private Transform target;
     private Rigidbody2D rb;
 
-    private void Awake()
+    //--------------------------------
+    // SETUP
+    //--------------------------------
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
 
         if (anim == null)
             anim = GetComponent<Animator>();
 
-        if (sprite == null)
-            sprite = GetComponent<SpriteRenderer>();
-
         if (bossHeath == null)
-            bossHeath = GetComponent<BossHeath>();
+            bossHeath =
+            GetComponent<BossHeath>();
     }
 
-    private void Start()
+    void Start()
     {
         GameObject player =
-            GameObject.FindGameObjectWithTag("Player");
+            GameObject.FindGameObjectWithTag(
+                "Player"
+            );
 
         if (player != null)
-            target = player.transform;
+            target =
+            player.transform;
     }
 
-    private void Update()
+    //--------------------------------
+    // UPDATE
+    //--------------------------------
+
+    void Update()
     {
-        // ===== DEATH =====
+        //--------------------------------
+        // DEATH
+        //--------------------------------
+
         if (!isDead &&
-            bossHeath != null &&
-            bossHeath.currentHeath <= 0)
+           bossHeath.currentHeath <= 0)
         {
             isDead = true;
 
-            rb.linearVelocity = Vector2.zero;
+            StopAllCoroutines();
+
+            isCastingSkill = false;
+
+            rb.linearVelocity =
+            Vector2.zero;
+
             rb.simulated = false;
 
+            foreach (
+                Collider2D col
+                in GetComponents<Collider2D>())
+            {
+                col.enabled = false;
+            }
+
             PlayDeath();
+
+            StartCoroutine(
+                DeathRoutine()
+            );
 
             return;
         }
 
-        if (isDead)
+        if (isDead ||
+           target == null)
             return;
 
-        if (target == null)
-            return;
+        //--------------------------------
+        // PHASE 2
+        //--------------------------------
 
-        // ===== SKILL TIMER =====
-        iceTimer += Time.deltaTime;
-
-        if (iceTimer >= iceCooldown &&
-            !isCastingSkill)
+        if (!phase2 &&
+           bossHeath.currentHeath <=
+           bossHeath.maxHeath * .5f)
         {
-            iceTimer = 0f;
-            StartCoroutine(IceSkill());
-            return;
+            phase2 = true;
+
+            skillInterval = 3f;
+
+            iceBurstCount += 1;
+
+            iceCount += 10;
+
+            attackIceCount += 5;
+
+            moveSpeed += 1f;
+        }
+
+        //--------------------------------
+        // SKILL TIMER
+        //--------------------------------
+
+        if (!isCastingSkill)
+        {
+            skillTimer += Time.deltaTime;
+
+            if (skillTimer >= skillInterval)
+            {
+                skillTimer = 0f;
+
+                int randomSkill =
+                    Random.Range(0, 2);
+
+                if (randomSkill == 0)
+                {
+                    StartCoroutine(
+                        IceSkill()
+                    );
+                }
+                else
+                {
+                    StartCoroutine(
+                        AttackIceSkill()
+                    );
+                }
+            }
         }
 
         if (isCastingSkill)
             return;
 
-        attackIceTimer += Time.deltaTime;
+        //--------------------------------
+        // PLAYER RANGE
+        //--------------------------------
 
-        if (attackIceTimer >= attackIceCooldown &&
-            !isCastingSkill)
+        float distance =
+            Vector2.Distance(
+                transform.position,
+                target.position
+            );
+
+        if (distance >
+           detectRange)
         {
-            attackIceTimer = 0f;
-
-            StartCoroutine(AttackIceSkill());
-
+            PlayIdle();
             return;
         }
 
-        // ===== LOOK PLAYER =====
-        Vector3 rot = bossVisual.localEulerAngles;
+        //--------------------------------
+        // RANDOM MOVE
+        //--------------------------------
 
-        if (target.position.x > transform.position.x)
-            rot.y = 0f;
+        moveTimer -=
+        Time.deltaTime;
+
+        if (moveTimer <= 0)
+        {
+            moveTimer =
+            randomMoveInterval;
+
+            PickRandomPosition();
+        }
+
+        //--------------------------------
+        // LOOK PLAYER
+        //--------------------------------
+
+        Vector3 rot =
+        bossVisual.localEulerAngles;
+
+        if (target.position.x >
+           transform.position.x)
+        {
+            rot.y = 0;
+        }
         else
-            rot.y = 180f;
+        {
+            rot.y = 180;
+        }
 
-        bossVisual.localEulerAngles = rot;
+        bossVisual.localEulerAngles =
+        rot;
 
-        // ===== MOVE =====
-        Vector2 direction =
-            (target.position - transform.position)
-            .normalized;
-
-        rb.MovePosition(
-            rb.position +
-            direction * moveSpeed * Time.deltaTime
-        );
+        MoveBoss();
 
         PlayIdle();
     }
 
-    // =========================
-    // ANIMATION
-    // =========================
+    //--------------------------------
+    // MOVE
+    //--------------------------------
 
-    public void PlayIdle()
+    void PickRandomPosition()
     {
-        if (isDead) return;
+        Vector2 offset =
+            Random.insideUnitCircle *
+            randomMoveRadius;
 
-        anim.Play("idle");
+        Vector2 playerPos =
+            target.position;
+
+        randomTarget =
+            playerPos +
+            offset;
+
+        float distance =
+            Vector2.Distance(
+                randomTarget,
+                playerPos
+            );
+
+        if (distance <
+           keepDistance)
+        {
+            Vector2 dir =
+                (randomTarget -
+                playerPos)
+                .normalized;
+
+            randomTarget =
+                playerPos +
+                dir *
+                keepDistance;
+        }
     }
 
-    public void PlayAttack()
+    void MoveBoss()
     {
-        if (isDead)
-            return;
+        Vector2 dir =
+        (
+        randomTarget -
+        (Vector2)
+        transform.position
+        ).normalized;
 
-        anim.Play(
-            "attack",
-            0,
-            0f
+        rb.MovePosition(
+            rb.position +
+            dir *
+            moveSpeed *
+            Time.deltaTime
         );
     }
 
-    public void PlayIce()
-    {
-        if (isDead) return;
+    //--------------------------------
+    // SKILLS
+    //--------------------------------
 
-        anim.Play("ice");
-    }
-
-    public void PlayDeath()
-    {
-        if (anim == null)
-            return;
-
-        anim.Play("death");
-    }
-
-    // =========================
-    // ICE SKILL
-    // =========================
-
-    private IEnumerator IceSkill()
+    IEnumerator IceSkill()
     {
         isCastingSkill = true;
 
-        rb.linearVelocity = Vector2.zero;
+        for (int wave = 0;
+             wave < iceBurstCount;
+             wave++)
+        {
+            if (isDead)
+            {
+                isCastingSkill = false;
+                yield break;
+            }
 
-        PlayIce();
+            // chạy animation mỗi lần
+            PlayIce();
 
-        yield return new WaitForSeconds(0.5f);
+            yield return
+            new WaitForSeconds(.5f);
 
-        SpawnIce();
+            if (isDead)
+            {
+                isCastingSkill = false;
+                yield break;
+            }
 
-        yield return new WaitForSeconds(0.5f);
+            float angleStep =
+                360f / iceCount;
+
+            for (int i = 0;
+                 i < iceCount;
+                 i++)
+            {
+                float angle =
+                    i * angleStep;
+
+                Instantiate(
+                    icePrefab,
+                    icePoint.position,
+                    Quaternion.Euler(
+                        0,
+                        0,
+                        angle
+                    )
+                );
+            }
+
+            // nghỉ giữa các lần bắn
+            yield return
+            new WaitForSeconds(.4f);
+        }
 
         PlayIdle();
 
         isCastingSkill = false;
     }
 
-    private void SpawnIce()
-    {
-        if (icePrefab == null ||
-            icePoint == null)
-            return;
-
-        float angleStep =
-            360f / iceCount;
-
-        for (int i = 0; i < iceCount; i++)
-        {
-            float angle =
-                i * angleStep;
-
-            Quaternion rot =
-                Quaternion.Euler(
-                    0,
-                    0,
-                    angle
-                );
-
-            Instantiate(
-                icePrefab,
-                icePoint.position,
-                rot
-            );
-        }
-    }
-    private IEnumerator AttackIceSkill()
+    IEnumerator AttackIceSkill()
     {
         isCastingSkill = true;
 
-        rb.linearVelocity =
-            Vector2.zero;
-
-        for (int i = 0; i < attackIceCount; i++)
+        for (int i = 0;
+            i < attackIceCount;
+            i++)
         {
-            // reset animation mỗi viên
+            if (isDead)
+                yield break;
+
             PlayAttack();
 
-            // đợi tới lúc tay vung
-            yield return new WaitForSeconds(
-                0.3f
-            );
+            yield return
+            new WaitForSeconds(.3f);
 
-            // bắn đạn
             SpawnAttackIce();
 
-            // khoảng cách giữa viên
-            yield return new WaitForSeconds(
+            yield return
+            new WaitForSeconds(
                 attackIceInterval
             );
         }
@@ -256,27 +380,109 @@ public class BossIceController : MonoBehaviour
         isCastingSkill = false;
     }
 
-    private void SpawnAttackIce()
+    void SpawnAttackIce()
     {
-        if (attackIcePrefab == null ||
-            attackIcePoint == null ||
-            target == null)
-            return;
-
-        Vector2 direction =
-            (target.position - attackIcePoint.position)
-            .normalized;
+        Vector2 dir =
+            (
+            target.position -
+            attackIcePoint.position
+            ).normalized;
 
         float angle =
             Mathf.Atan2(
-                direction.y,
-                direction.x
-            ) * Mathf.Rad2Deg;
+                dir.y,
+                dir.x
+            ) *
+            Mathf.Rad2Deg;
 
         Instantiate(
             attackIcePrefab,
             attackIcePoint.position,
-            Quaternion.Euler(0, 0, angle)
+            Quaternion.Euler(
+                0,
+                0,
+                angle
+            )
+        );
+    }
+
+    //--------------------------------
+    // ANIMATION
+    //--------------------------------
+
+    void PlayIdle()
+    {
+        anim.Play("idle");
+    }
+
+    void PlayAttack()
+    {
+        anim.Play(
+            "attack",
+            0,
+            0
+        );
+    }
+
+    void PlayIce()
+    {
+        anim.Play(
+            "ice",
+            0,
+            0
+        );
+    }
+
+    void PlayDeath()
+    {
+        anim.Play(
+            "death"
+        );
+    }
+
+    //--------------------------------
+    // DESTROY
+    //--------------------------------
+
+    IEnumerator DeathRoutine()
+    {
+        yield return
+        new WaitForSeconds(
+            anim.GetCurrentAnimatorStateInfo(0)
+            .length
+        );
+
+        Destroy(gameObject);
+    }
+
+    //--------------------------------
+    // GIZMOS
+    //--------------------------------
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color =
+        Color.yellow;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            detectRange
+        );
+
+        Gizmos.color =
+        Color.red;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            keepDistance
+        );
+
+        Gizmos.color =
+        Color.cyan;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            randomMoveRadius
         );
     }
 }

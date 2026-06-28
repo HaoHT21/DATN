@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class BossAnimatorController : MonoBehaviour
+public class BossRockController : MonoBehaviour
 {
     [Header("Renderer")]
     public SpriteRenderer sprite;
