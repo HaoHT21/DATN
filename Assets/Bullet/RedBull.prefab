@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 129408479053081934}
   - component: {fileID: 1115806120020689038}
   - component: {fileID: 4691856104381013172}
-  - component: {fileID: 6371612167530001969}
+  - component: {fileID: -8124289710556837217}
   m_Layer: 0
   m_Name: RedBull
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 191531707892350666}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 339.12265, y: -746.45337, z: 0}
+  m_LocalPosition: {x: 0.60747623, y: -4.542208, z: 0}
   m_LocalScale: {x: 9.779329, y: 9.779329, z: 9.779329}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -167,7 +167,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.23, y: 0.17683694}
   m_EdgeRadius: 0
---- !u!114 &6371612167530001969
+--- !u!114 &-8124289710556837217
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

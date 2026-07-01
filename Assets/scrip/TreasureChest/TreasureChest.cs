@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider2D))]
 public class TreasureChest : MonoBehaviour
@@ -11,7 +12,7 @@ public class TreasureChest : MonoBehaviour
     public ChestInteractionUI interactionUI;
 
     [Header("Vật phẩm")]
-    public GameObject lootPrefab;
+    public List<GameObject> lootPrefabs = new List<GameObject>();
     public bool applyLootPop = true;
 
     [Header("Animation")]
@@ -126,13 +127,16 @@ public class TreasureChest : MonoBehaviour
 
     private void SpawnLoot()
     {
-        if (_lootSpawned || lootPrefab == null)
+        if (_lootSpawned || lootPrefabs.Count == 0)
             return;
 
         _lootSpawned = true;
 
+        GameObject randomLoot = lootPrefabs[Random.Range(0, lootPrefabs.Count)];
+
         Vector3 spawnPos = lootSpawnPoint != null ? lootSpawnPoint.position : transform.position;
-        GameObject loot = Instantiate(lootPrefab, spawnPos, Quaternion.identity);
+
+        GameObject loot = Instantiate(randomLoot, spawnPos, Quaternion.identity);
 
         if (applyLootPop && loot.GetComponent<ChestLootPop>() == null)
             loot.AddComponent<ChestLootPop>();

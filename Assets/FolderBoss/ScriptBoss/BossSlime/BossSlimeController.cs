@@ -125,7 +125,7 @@ public class BossSlimeController : MonoBehaviour
 
             jumpAttackCount += 2;
 
-            moveSpeed += 1f;
+            moveSpeed += 5f;
         }
 
         //--------------------------------

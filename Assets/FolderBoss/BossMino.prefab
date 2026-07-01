@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3970965153950407493}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -254,7 +254,7 @@ Transform:
   m_GameObject: {fileID: 2225764924664185720}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8.052011, y: -6.1917453, z: 0}
+  m_LocalPosition: {x: 46.67478, y: -17.503906, z: 0}
   m_LocalScale: {x: 3.7339547, y: 3.7339547, z: 3.7339547}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -305,16 +305,26 @@ MonoBehaviour:
   anim: {fileID: 5766127669246433485}
   sprite: {fileID: 2100691227286080874}
   bossHeath: {fileID: 4234342352988662784}
-  moveSpeed: 2
-  bossVisual: {fileID: 3738450169026145763}
-  redBullCooldown: 10
-  chargeSpeed: 30
-  chargeDuration: 2
-  redBullEffect: {fileID: 2782156223162760465}
+  moveSpeed: 5
+  detectRange: 25
+  keepDistance: 4
+  randomMoveRadius: 7
+  randomMoveInterval: 1
   bulletPrefab: {fileID: 191531707892350666, guid: e4fcfcb52871e594da549d36db919bcf, type: 3}
   firePoint: {fileID: 7521452434692661269}
-  shootCooldown: 5
-  bulletCount: 1
+  bulletCount: 3
+  shootCount: 3
+  shootInterval: 0.3
+  redBullEffect: {fileID: 2782156223162760465}
+  chargeSpeed: 30
+  chargeDuration: 2
+  redBullCount: 1
+  redBullInterval: 2
+  retreatDistance: 6
+  retreatSpeed: 4
+  skillInterval: 3
+  bossVisual: {fileID: 3738450169026145763}
+  deathDuration: 1.5
 --- !u!1 &2718002989624314576
 GameObject:
   m_ObjectHideFlags: 0
@@ -498,7 +508,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b714333bb551d484086a638ae85ce077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
+  damage: 10
 --- !u!1 &2806839985980690187
 GameObject:
   m_ObjectHideFlags: 0
@@ -874,7 +884,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  rotateSpeed: 5
+  rotateSpeed: 100
 --- !u!1 &9104085667617431930
 GameObject:
   m_ObjectHideFlags: 0

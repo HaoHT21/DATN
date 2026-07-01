@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 5335242874942195778}
   - component: {fileID: 6558708864249700265}
   - component: {fileID: 8674557160359346065}
-  - component: {fileID: 9064068196828864583}
   - component: {fileID: 490247686830378988}
+  - component: {fileID: 9064068196828864583}
   m_Layer: 0
   m_Name: BulletAttackIce
   m_TagString: Untagged
@@ -159,21 +159,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.26, y: 0.26}
   m_EdgeRadius: 0
---- !u!114 &9064068196828864583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2253353001783897143}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 15
-  speed: 8
-  lifeTime: 5
 --- !u!50 &490247686830378988
 Rigidbody2D:
   serializedVersion: 5
@@ -200,4 +185,19 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
+--- !u!114 &9064068196828864583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253353001783897143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 5
+  speed: 10
+  lifeTime: 5

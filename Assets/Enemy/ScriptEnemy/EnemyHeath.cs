@@ -7,21 +7,14 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
     public int maxHealth = 100;
     public int currentHealth = 100;
 
-    [Header("--- PHẦN THƯỞNG KHI CHẾT (MỚI TÍCH HỢP) ---")]
-    [Tooltip("Lượng EXP sẽ thưởng cho Player khi con quái này chết")]
+    [Header("EXP")]
     public int expReward = 30;
 
     [Header("Death")]
-    public float destroyDelay = 0.2f;
+    public float destroyDelay = 0.5f;
 
-    private Animator animator;
-    private Collider2D[] colliders;
     private Rigidbody2D rb;
-
-    private Coroutine hurtCoroutine;
-
-    [Header("Animation")]
-    public float hurtDuration = 0.2f;
+    private Collider2D[] colliders;
 
     private bool isDead;
 
@@ -30,16 +23,19 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
     public bool IsDead => isDead;
 
     public event System.Action<HealthChangeInfo> OnHealthChanged;
-    public event System.Action OnDamaged;
+    public event System.Action OnHurt;
     public event System.Action OnDeath;
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         colliders = GetComponents<Collider2D>();
 
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        currentHealth =
+            Mathf.Clamp(
+                currentHealth,
+                0,
+                maxHealth);
     }
 
     public void TakeDamage(int damage)
@@ -49,16 +45,9 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
 
         currentHealth -= damage;
 
-        OnDamaged?.Invoke();
-
-        Debug.Log("Current HP: " + currentHealth);
-
         if (currentHealth > 0)
         {
-            if (hurtCoroutine != null)
-                StopCoroutine(hurtCoroutine);
-
-            hurtCoroutine = StartCoroutine(HurtRoutine());
+            OnHurt?.Invoke();
         }
         else
         {
@@ -66,71 +55,42 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
             StartCoroutine(DieSequence());
         }
 
-        OnHealthChanged?.Invoke(new HealthChangeInfo());
+        OnHealthChanged?.Invoke(
+            new HealthChangeInfo());
     }
 
-    private IEnumerator HurtRoutine()
-    {
-        if (animator == null || isDead)
-            yield break;
-
-        animator.Play("hurt");
-
-        yield return new WaitForSeconds(hurtDuration);
-
-        if (!isDead)
-            animator.Play("idle");
-
-        hurtCoroutine = null;
-    }
-
-    private IEnumerator DieSequence()
+    IEnumerator DieSequence()
     {
         isDead = true;
 
         OnDeath?.Invoke();
 
-        // ========================
-        // THÊM HỆ THỐNG EXP
-        // =======================
+        GameObject player =
+            GameObject.FindWithTag("Player");
 
-        // Thưởng EXP cho Player khi quái chết
-        GameObject playerObj = GameObject.FindWithTag("Player");
-
-        if (playerObj != null)
+        if (player != null)
         {
-            PlayerHealth playerHealth = playerObj.GetComponent<PlayerHealth>();
+            PlayerHealth hp =
+                player.GetComponent<PlayerHealth>();
 
-            if (playerHealth != null)
+            if (hp != null)
             {
-                playerHealth.AddEXP(expReward);
-
-                Debug.Log($"Player nhận {expReward} EXP");
+                hp.AddEXP(expReward);
             }
         }
 
-        // Tắt collider
-        foreach (Collider2D col in colliders)
+        foreach (Collider2D c in colliders)
         {
-            if (col != null)
-                col.enabled = false;
+            c.enabled = false;
         }
 
-        // Dừng vật lý
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero;
-            rb.simulated = false;
-        }
+        rb.linearVelocity =
+            Vector2.zero;
 
-        // Gọi animation death
-        if (animator != null)
-        {
-            animator.Play("death");
-        }
+        rb.simulated = false;
 
-        // Tắt AI
-        yield return new WaitForSeconds(destroyDelay);
+        yield return new WaitForSeconds(
+            destroyDelay);
 
         Destroy(gameObject);
     }
@@ -141,8 +101,13 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
             return;
 
         currentHealth += amount;
-        currentHealth = Mathf.Min(currentHealth, maxHealth);
 
-        OnHealthChanged?.Invoke(new HealthChangeInfo());
+        currentHealth =
+            Mathf.Min(
+                currentHealth,
+                maxHealth);
+
+        OnHealthChanged?.Invoke(
+            new HealthChangeInfo());
     }
 }

@@ -134,15 +134,15 @@ public class BossIceController : MonoBehaviour
         {
             phase2 = true;
 
-            skillInterval = 3f;
+            skillInterval = 2f;
 
             iceBurstCount += 1;
 
-            iceCount += 10;
+            iceCount += 20;
 
-            attackIceCount += 5;
+            attackIceCount += 10;
 
-            moveSpeed += 1f;
+            moveSpeed += 5f;
         }
 
         //--------------------------------

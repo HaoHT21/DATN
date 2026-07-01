@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Unity.Burst.Intrinsics;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class BossBloodController : MonoBehaviour
@@ -9,37 +10,55 @@ public class BossBloodController : MonoBehaviour
     public SpriteRenderer sprite;
     public BossHeath bossHeath;
 
+    [Header("Visual")]
+    public Transform bossVisual;
+
     [Header("Movement")]
     public float moveSpeed = 2f;
 
-    [Header("Visual")]
-    public Transform bossVisual;
+    public float detectRange = 10f;
+    public float keepDistance = 3f;
+
+    public float randomMoveRadius = 3f;
+    public float randomMoveInterval = 2f;
 
     [Header("Attack")]
     public GameObject bulletPrefab;
     public Transform firePoint;
 
-    public float attackCooldown = 4f;
-    public int bulletCount = 3;
-    public float bulletInterval = 0.3f;
+    public int bulletCount = 2;
+    public float bulletInterval = .5f;
 
     [Header("Summon")]
     public GameObject summonPrefab;
     public Transform summonPoint;
 
-    public float summonCooldown = 10f;
     public int summonCount = 3;
+    public float summonLifeTime = 3f;
 
-    private float attackTimer;
-    private float summonTimer;
+    [Header("Skill AI")]
+    public float skillInterval = 5f;
+
+    [Header("Death")]
+    public float deathDuration = 1.5f;
+
+    private float skillTimer;
+    private float moveTimer;
+
+    private Vector2 randomTarget;
 
     private bool isCastingSkill;
     private bool isDead;
+    private bool phase2;
 
     private Transform target;
     private Rigidbody2D rb;
 
-    private void Awake()
+    //--------------------------------
+    // SETUP
+    //--------------------------------
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
 
@@ -50,207 +69,290 @@ public class BossBloodController : MonoBehaviour
             sprite = GetComponent<SpriteRenderer>();
 
         if (bossHeath == null)
-            bossHeath = GetComponent<BossHeath>();
+            bossHeath =
+            GetComponent<BossHeath>();
     }
 
-    private void Start()
+    void Start()
     {
         GameObject player =
-            GameObject.FindGameObjectWithTag(
-                "Player"
-            );
+        GameObject.FindGameObjectWithTag(
+            "Player"
+        );
 
         if (player != null)
-            target = player.transform;
+            target =
+            player.transform;
     }
 
-    private void Update()
-    {
-        // ===== DEATH =====
+    //--------------------------------
+    // UPDATE
+    //--------------------------------
 
-        if (!isDead &&
-            bossHeath != null &&
-            bossHeath.currentHeath <= 0)
+    void Update()
+    {
+        //--------------------------------
+        // DEATH
+        //--------------------------------
+
+        if (
+            !isDead &&
+            bossHeath.currentHeath <= 0
+        )
         {
             isDead = true;
 
+            StopAllCoroutines();
+
             rb.linearVelocity =
-                Vector2.zero;
+            Vector2.zero;
 
             rb.simulated = false;
 
+            foreach (
+                Collider2D col
+                in GetComponents<Collider2D>()
+            )
+            {
+                col.enabled = false;
+            }
+
             PlayDeath();
+
+            StartCoroutine(
+                DeathRoutine()
+            );
 
             return;
         }
 
-        if (isDead)
+        if (
+            isDead ||
+            target == null
+        )
             return;
 
-        if (target == null)
-            return;
+        //--------------------------------
+        // PHASE2
+        //--------------------------------
+
+        if (
+            !phase2 &&
+            bossHeath.currentHeath <=
+            bossHeath.maxHeath * .5f
+        )
+        {
+            phase2 = true;
+
+            skillInterval = 2f;
+
+            bulletCount += 2;
+
+            summonCount += 3;
+
+            moveSpeed += 5f;
+        }
+
+        //--------------------------------
+        // SKILL
+        //--------------------------------
+
+        if (!isCastingSkill)
+        {
+            skillTimer +=
+            Time.deltaTime;
+
+            if (skillTimer >=
+               skillInterval)
+            {
+                skillTimer = 0;
+
+                int skill =
+                Random.Range(0, 2);
+
+                if (skill == 0)
+                {
+                    StartCoroutine(
+                        AttackSkill()
+                    );
+                }
+                else
+                {
+                    StartCoroutine(
+                        SummonSkill()
+                    );
+                }
+            }
+        }
 
         if (isCastingSkill)
             return;
 
-        // ===== SUMMON =====
+        //--------------------------------
+        // RANGE
+        //--------------------------------
 
-        summonTimer += Time.deltaTime;
+        float distance =
+        Vector2.Distance(
+            transform.position,
+            target.position
+        );
 
-        if (summonTimer >= summonCooldown)
+        if (distance >
+           detectRange)
         {
-            summonTimer = 0f;
-
-            StartCoroutine(
-                SummonSkill()
-            );
-
+            PlayIdle();
             return;
         }
 
-        // ===== ATTACK =====
+        //--------------------------------
+        // RANDOM MOVE
+        //--------------------------------
 
-        attackTimer += Time.deltaTime;
+        moveTimer -=
+        Time.deltaTime;
 
-        if (attackTimer >= attackCooldown)
+        if (moveTimer <= 0)
         {
-            attackTimer = 0f;
+            moveTimer =
+            randomMoveInterval;
 
-            StartCoroutine(
-                AttackSkill()
-            );
-
-            return;
+            PickRandomPosition();
         }
 
-        // ===== LOOK PLAYER =====
+        //--------------------------------
+        // LOOK PLAYER
+        //--------------------------------
 
         Vector3 rot =
-            bossVisual.localEulerAngles;
+        bossVisual.localEulerAngles;
 
-        if (target.position.x >
-            transform.position.x)
+        if (
+            target.position.x >
+            transform.position.x
+        )
         {
-            rot.y = 0f;
+            rot.y = 0;
         }
         else
         {
-            rot.y = 180f;
+            rot.y = 180;
         }
 
         bossVisual.localEulerAngles =
-            rot;
+        rot;
 
-        // ===== MOVE =====
-
-        Vector2 direction =
-            (
-            target.position -
-            transform.position
-            ).normalized;
-
-        rb.MovePosition(
-            rb.position +
-            direction *
-            moveSpeed *
-            Time.deltaTime
-        );
+        MoveBoss();
 
         PlayIdle();
     }
 
-    // ==================
-    // ANIMATION
-    // ==================
+    //--------------------------------
+    // MOVE
+    //--------------------------------
 
-    public void PlayIdle()
+    void PickRandomPosition()
     {
-        if (isDead)
-            return;
+        Vector2 offset =
+        Random.insideUnitCircle *
+        randomMoveRadius;
 
-        anim.Play("idle");
+        Vector2 playerPos =
+        target.position;
+
+        randomTarget =
+        playerPos +
+        offset;
+
+        float distance =
+        Vector2.Distance(
+            randomTarget,
+            playerPos
+        );
+
+        if (distance <
+           keepDistance)
+        {
+            Vector2 dir =
+            (
+                randomTarget -
+                playerPos
+            ).normalized;
+
+            randomTarget =
+            playerPos +
+            dir *
+            keepDistance;
+        }
     }
 
-    public void PlayAttack()
+    void MoveBoss()
     {
-        if (isDead)
-            return;
+        Vector2 dir =
+        (
+            randomTarget -
+            (Vector2)
+            transform.position
+        ).normalized;
 
-        anim.Play(
-            "attack",
-            0,
-            0f
+        rb.MovePosition(
+            rb.position +
+            dir *
+            moveSpeed *
+            Time.deltaTime
         );
     }
 
-    public void PlaySummon()
-    {
-        if (isDead)
-            return;
+    //--------------------------------
+    // ATTACK
+    //--------------------------------
 
-        anim.Play(
-            "summon",
-            0,
-            0f
-        );
-    }
-
-    public void PlayDeath()
-    {
-        if (anim == null)
-            return;
-
-        anim.Play("death");
-    }
-
-    // ==================
-    // ATTACK SKILL
-    // ==================
-
-    private IEnumerator AttackSkill()
+    IEnumerator AttackSkill()
     {
         isCastingSkill = true;
 
-        rb.linearVelocity = Vector2.zero;
+        for (
+            int i = 0;
+            i < bulletCount;
+            i++
+        )
+        {
+            PlayAttack();
 
-        // chạy animation attack 1 lần
-        PlayAttack();
+            yield return
+            new WaitForSeconds(.3f);
 
-        // lần vung tay thứ nhất
-        yield return new WaitForSeconds(0.3f);
-        SpawnBullet();
+            SpawnBullet();
 
-        // lần vung tay thứ hai
-        yield return new WaitForSeconds(1f);
-        SpawnBullet();
+            yield return
+            new WaitForSeconds(1f);
 
-        // đợi animation kết thúc
-        yield return new WaitForSeconds(0.45f);
+            SpawnBullet();
+
+            yield return
+            new WaitForSeconds(
+                bulletInterval
+            );
+        }
 
         PlayIdle();
 
         isCastingSkill = false;
     }
 
-    private void SpawnBullet()
+    void SpawnBullet()
     {
-        if (bulletPrefab == null ||
-            firePoint == null ||
-            target == null)
-            return;
-
-        Vector2 direction =
-            (
-            target.position -
-            firePoint.position
-            ).normalized;
+        Vector2 dir =
+        (
+        target.position -
+        firePoint.position
+        ).normalized;
 
         float angle =
-             Mathf.Atan2(
-                direction.y,
-                direction.x
-            ) *
-            Mathf.Rad2Deg;
+        Mathf.Atan2(
+            dir.y,
+            dir.x
+        ) * Mathf.Rad2Deg;
 
         Instantiate(
             bulletPrefab,
@@ -263,46 +365,175 @@ public class BossBloodController : MonoBehaviour
         );
     }
 
-    // ==================
-    // SUMMON SKILL
-    // ==================
+    //--------------------------------
+    // SUMMON
+    //--------------------------------
 
-    private IEnumerator SummonSkill()
+    IEnumerator SummonSkill()
     {
         isCastingSkill = true;
 
-        rb.linearVelocity =
-            Vector2.zero;
-
         PlaySummon();
 
-        yield return new WaitForSeconds(
-            0.7f
-        );
+        yield return
+        new WaitForSeconds(.5f);
 
-        for (int i = 0;
+        for (
+            int i = 0;
             i < summonCount;
-            i++)
+            i++
+        )
         {
             Vector2 randomPos =
-                (Vector2)
-                summonPoint.position +
-                Random.insideUnitCircle
-                * 2f;
+            (Vector2)
+            summonPoint.position
+            +
+            Random.insideUnitCircle
+            * 2f;
 
+            GameObject summon =
             Instantiate(
                 summonPrefab,
                 randomPos,
                 Quaternion.identity
             );
+
+            // hủy object vừa sinh
+            Destroy(
+                summon,
+                summonLifeTime
+            );
         }
 
-        yield return new WaitForSeconds(
-            0.5f
-        );
+        yield return
+        new WaitForSeconds(.5f);
 
         PlayIdle();
 
         isCastingSkill = false;
+    }
+
+    //--------------------------------
+    // ANIMATION
+    //--------------------------------
+
+    void PlayIdle()
+    {
+        anim.Play("idle");
+    }
+
+    void PlayAttack()
+    {
+        anim.Play(
+            "attack",
+            0,
+            0
+        );
+    }
+
+    void PlaySummon()
+    {
+        anim.Play(
+            "summon",
+            0,
+            0
+        );
+    }
+
+    void PlayDeath()
+    {
+        anim.Play("death");
+    }
+
+    //--------------------------------
+    // DESTROY
+    //--------------------------------
+
+    IEnumerator DeathRoutine()
+    {
+        yield return
+        new WaitForSeconds(
+            deathDuration
+        );
+
+        Destroy(gameObject);
+    }
+
+    //--------------------------------
+    // GIZMOS
+    //--------------------------------
+
+    void OnDrawGizmosSelected()
+    {
+        // Detect Range
+        Gizmos.color =
+        Color.yellow;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            detectRange
+        );
+
+        // Keep Distance
+        Gizmos.color =
+        Color.red;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            keepDistance
+        );
+
+        // Random Move Radius
+        Gizmos.color =
+        Color.cyan;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            randomMoveRadius
+        );
+
+        // Điểm boss muốn đi tới
+        Gizmos.color =
+        Color.green;
+
+        Gizmos.DrawSphere(
+            randomTarget,
+            .2f
+        );
+
+        // Đường nối tới điểm di chuyển
+        Gizmos.color =
+        Color.magenta;
+
+        Gizmos.DrawLine(
+            transform.position,
+            randomTarget
+        );
+
+        // Vùng summon
+        if (summonPoint != null)
+        {
+            Gizmos.color =
+            Color.blue;
+
+            Gizmos.DrawWireSphere(
+                summonPoint.position,
+                2f
+            );
+        }
+
+        // Điểm bắn đạn
+        if (
+            firePoint != null
+        )
+        {
+            Gizmos.color =
+            Color.white;
+
+            Gizmos.DrawSphere(
+                firePoint.position,
+                .15f
+            );
+        }
     }
 }

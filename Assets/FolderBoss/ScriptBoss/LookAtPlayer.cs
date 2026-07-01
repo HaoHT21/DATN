@@ -26,8 +26,18 @@ public class LookAtPlayer : MonoBehaviour
         // tính góc quay (2D)
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
+        Quaternion targetRotation;
+
         // xoay object theo hướng player
-        Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
+        // nhìn sang trái
+        if (direction.x < 0)
+        {
+            targetRotation = Quaternion.Euler(180f, 0f, -angle);
+        }
+        else
+        {
+            targetRotation = Quaternion.Euler(0f, 0f, angle);
+        }
 
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
     }

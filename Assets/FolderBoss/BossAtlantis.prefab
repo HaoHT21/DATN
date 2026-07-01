@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 4089782976979320059}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.06, y: -0.01, z: 0}
   m_LocalScale: {x: 8.556321, y: 8.556321, z: 8.556321}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  rotateSpeed: 5
+  rotateSpeed: 100
 --- !u!1 &5922061935708019749
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,7 +300,7 @@ Transform:
   m_GameObject: {fileID: 5922061935708019749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.414424, y: -0.5987271, z: 0}
+  m_LocalPosition: {x: 45.538925, y: -17.470062, z: 0}
   m_LocalScale: {x: 0.78787, y: 0.78787, z: 0.78787}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -334,7 +334,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &8860160237936456546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,10 +350,19 @@ MonoBehaviour:
   anim: {fileID: 4801181886052171027}
   sprite: {fileID: 6565258463793625397}
   bossHeath: {fileID: 1328154370370441818}
-  moveSpeed: 2
-  bossVisual: {fileID: 3633283288196985582}
+  moveSpeed: 5
+  detectRange: 20
+  keepDistance: 4
+  randomMoveRadius: 7
+  randomMoveInterval: 1
   bulletPrefab: {fileID: 4554662268799726002, guid: 652691a15305cb04da23b23b2f97874b, type: 3}
   firePoint: {fileID: 4481129972615789737}
-  attackCooldown: 5
-  bulletCount: 3
+  bulletCount: 5
   bulletInterval: 0.3
+  flyBulletPrefab: {fileID: 3417836176469242662, guid: 1fd4f84cdf192d04685c8df7459a62ab, type: 3}
+  flyBulletCount: 15
+  flyDuration: 10
+  flyRadius: 10
+  flySpawnInterval: 0.3
+  skillInterval: 3
+  bossVisual: {fileID: 3633283288196985582}

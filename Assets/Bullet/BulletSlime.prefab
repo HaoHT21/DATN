@@ -126,8 +126,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 2
-  speed: 8
-  lifeTime: 5
+  speed: 10
+  lifeTime: 10
 --- !u!50 &1541295569496444857
 Rigidbody2D:
   serializedVersion: 5
@@ -154,7 +154,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &-6254560467767682936
 CircleCollider2D:
   m_ObjectHideFlags: 0

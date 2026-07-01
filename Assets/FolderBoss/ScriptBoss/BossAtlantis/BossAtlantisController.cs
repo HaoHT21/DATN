@@ -9,29 +9,53 @@ public class BossAtlantisController : MonoBehaviour
     public SpriteRenderer sprite;
     public BossHeath bossHeath;
 
-    [Header("Movement")]
+[Header("Movement")]
     public float moveSpeed = 2f;
 
-    [Header("Visual")]
-    public Transform bossVisual;
+    public float detectRange = 10f;
+    public float keepDistance = 4f;
+
+    public float randomMoveRadius = 3f;
+    public float randomMoveInterval = 2f;
 
     [Header("Attack")]
     public GameObject bulletPrefab;
     public Transform firePoint;
 
-    public float attackCooldown = 3f;
     public int bulletCount = 3;
-    public float bulletInterval = 0.3f;
+    public float bulletInterval = .3f;
 
-    private float attackTimer;
+    [Header("Fly Skill")]
+    public GameObject flyBulletPrefab;
 
-    private bool isAttacking;
+    public int flyBulletCount = 10;
+    public float flyDuration = 3f;
+    public float flyRadius = 6f;
+    public float flySpawnInterval = .3f;
+
+    [Header("Skill AI")]
+    public float skillInterval = 5f;
+
+    [Header("Visual")]
+    public Transform bossVisual;
+
+    private float skillTimer;
+    private float moveTimer;
+
+    private Vector2 randomTarget;
+
+    private bool isCastingSkill;
     private bool isDead;
+    private bool phase2;
 
     private Transform target;
     private Rigidbody2D rb;
 
-    private void Awake()
+    //--------------------------------
+    // SETUP
+    //--------------------------------
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
 
@@ -43,189 +67,276 @@ public class BossAtlantisController : MonoBehaviour
 
         if (bossHeath == null)
             bossHeath =
-                GetComponent<BossHeath>();
+            GetComponent<BossHeath>();
     }
 
-    private void Start()
+    void Start()
     {
         GameObject player =
-            GameObject.FindGameObjectWithTag(
-                "Player"
-            );
+        GameObject.FindGameObjectWithTag(
+            "Player"
+        );
 
         if (player != null)
             target =
-                player.transform;
+            player.transform;
     }
 
-    private void Update()
+    //--------------------------------
+    // UPDATE
+    //--------------------------------
+
+    void Update()
     {
-        // ===== DEATH =====
+        //--------------------------------
+        // DEATH
+        //--------------------------------
 
         if (!isDead &&
-            bossHeath != null &&
-            bossHeath.currentHeath <= 0)
+           bossHeath.currentHeath <= 0)
         {
             isDead = true;
 
-            rb.linearVelocity =
-                Vector2.zero;
+            StopAllCoroutines();
 
-            rb.simulated =
-                false;
+            rb.linearVelocity =
+            Vector2.zero;
+
+            rb.simulated = false;
+
+            foreach (
+                Collider2D col
+                in GetComponents<Collider2D>())
+            {
+                col.enabled = false;
+            }
 
             PlayDeath();
 
-            return;
-        }
-
-        if (isDead)
-            return;
-
-        if (target == null)
-            return;
-
-        if (isAttacking)
-            return;
-
-        // ===== ATTACK TIMER =====
-
-        attackTimer += Time.deltaTime;
-
-        if (attackTimer >= attackCooldown)
-        {
-            attackTimer = 0f;
-
             StartCoroutine(
-                AttackSkill()
+                DeathRoutine()
             );
 
             return;
         }
 
-        // ===== LOOK PLAYER =====
+        if (isDead ||
+           target == null)
+            return;
+
+        //--------------------------------
+        // PHASE 2
+        //--------------------------------
+
+        if (!phase2 &&
+           bossHeath.currentHeath <=
+           bossHeath.maxHeath * .5f)
+        {
+            phase2 = true;
+
+            skillInterval = 2f;
+
+            bulletCount += 5;
+
+            moveSpeed += 2f;
+
+            flyBulletCount += 25;
+        }
+
+        //--------------------------------
+        // SKILL
+        //--------------------------------
+
+        if (!isCastingSkill)
+        {
+            skillTimer +=
+            Time.deltaTime;
+
+            if (skillTimer >=
+               skillInterval)
+            {
+                skillTimer = 0f;
+
+                int randomSkill =
+                Random.Range(0, 2);
+
+                if (randomSkill == 0)
+                {
+                    StartCoroutine(
+                        AttackSkill()
+                    );
+                }
+                else
+                {
+                    StartCoroutine(
+                        FlySkill()
+                    );
+                }
+            }
+        }
+
+        if (isCastingSkill)
+            return;
+
+        //--------------------------------
+        // RANGE
+        //--------------------------------
+
+        float distance =
+        Vector2.Distance(
+            transform.position,
+            target.position
+        );
+
+        if (distance >
+           detectRange)
+        {
+            PlayIdle();
+            return;
+        }
+
+        //--------------------------------
+        // RANDOM MOVE
+        //--------------------------------
+
+        moveTimer -=
+        Time.deltaTime;
+
+        if (moveTimer <= 0)
+        {
+            moveTimer =
+            randomMoveInterval;
+
+            PickRandomPosition();
+        }
+
+        //--------------------------------
+        // LOOK PLAYER
+        //--------------------------------
 
         Vector3 rot =
-            bossVisual.localEulerAngles;
+        bossVisual.localEulerAngles;
 
-        if (
-            target.position.x >
-            transform.position.x
-        )
+        if (target.position.x >
+           transform.position.x)
         {
-            rot.y = 0f;
+            rot.y = 0;
         }
         else
         {
-            rot.y = 180f;
+            rot.y = 180;
         }
 
         bossVisual.localEulerAngles =
-            rot;
+        rot;
 
-        // ===== MOVE =====
-
-        Vector2 direction =
-            (
-            target.position -
-            transform.position
-            ).normalized;
-
-        rb.MovePosition(
-            rb.position +
-            direction *
-            moveSpeed *
-            Time.deltaTime
-        );
+        MoveBoss();
 
         PlayIdle();
     }
 
-    // ==================
-    // ANIMATION
-    // ==================
+    //--------------------------------
+    // MOVE
+    //--------------------------------
 
-    public void PlayIdle()
+    void PickRandomPosition()
     {
-        if (isDead)
-            return;
+        Vector2 offset =
+        Random.insideUnitCircle *
+        randomMoveRadius;
 
-        anim.Play("idle");
+        Vector2 playerPos =
+        target.position;
+
+        randomTarget =
+        playerPos +
+        offset;
+
+        float distance =
+        Vector2.Distance(
+            randomTarget,
+            playerPos
+        );
+
+        if (distance <
+           keepDistance)
+        {
+            Vector2 dir =
+            (
+                randomTarget -
+                playerPos
+            ).normalized;
+
+            randomTarget =
+            playerPos +
+            dir *
+            keepDistance;
+        }
     }
 
-    public void PlayAttack()
+    void MoveBoss()
     {
-        if (isDead)
-            return;
+        Vector2 dir =
+        (
+        randomTarget -
+        (Vector2)
+        transform.position
+        ).normalized;
 
-        anim.Play(
-            "attack",
-            0,
-            0f
+        rb.MovePosition(
+            rb.position +
+            dir *
+            moveSpeed *
+            Time.deltaTime
         );
     }
 
-    public void PlayDeath()
+    //--------------------------------
+    // ATTACK
+    //--------------------------------
+
+    IEnumerator AttackSkill()
     {
-        if (anim == null)
-            return;
+        isCastingSkill = true;
 
-        anim.Play("death");
-    }
-
-    // ==================
-    // ATTACK SKILL
-    // ==================
-
-    private IEnumerator AttackSkill()
-    {
-        isAttacking = true;
-
-        rb.linearVelocity =
-            Vector2.zero;
-
-        for (int i = 0; i < bulletCount; i++)
+        for (int i = 0;
+             i < bulletCount;
+             i++)
         {
-            // reset animation
+            // reset animation mỗi lần bắn
             PlayAttack();
 
-            // đợi boss vung tay
-            yield return new WaitForSeconds(
-                0.3f
-            );
+            // chờ tới frame bắn
+            yield return
+            new WaitForSeconds(.3f);
 
-            // bắn
             SpawnBullet();
 
-            // đợi trước viên tiếp theo
-            yield return new WaitForSeconds(
+            // nghỉ giữa các viên
+            yield return
+            new WaitForSeconds(
                 bulletInterval
             );
         }
 
         PlayIdle();
 
-        isAttacking = false;
+        isCastingSkill = false;
     }
 
-    private void SpawnBullet()
+    void SpawnBullet()
     {
-        if (bulletPrefab == null ||
-            firePoint == null ||
-            target == null)
-            return;
-
-        Vector2 direction =
-            (
-            target.position -
-            firePoint.position
-            ).normalized;
+        Vector2 dir =
+        (
+        target.position -
+        firePoint.position
+        ).normalized;
 
         float angle =
-            Mathf.Atan2(
-                direction.y,
-                direction.x
-            ) * Mathf.Rad2Deg;
+        Mathf.Atan2(
+            dir.y,
+            dir.x
+        ) * Mathf.Rad2Deg;
 
         Instantiate(
             bulletPrefab,
@@ -235,6 +346,179 @@ public class BossAtlantisController : MonoBehaviour
                 0,
                 angle
             )
+        );
+    }
+
+    //--------------------------------
+    // FLY SKILL
+    //--------------------------------
+
+    IEnumerator FlySkill()
+    {
+        isCastingSkill = true;
+
+        PlayFly();
+
+        float timer = 0f;
+        int spawned = 0;
+
+        PickFlyPosition();
+
+        while (
+            timer < flyDuration
+            &&
+            spawned < flyBulletCount
+        )
+        {
+            SpawnFlyBullet();
+
+            spawned++;
+
+            timer +=
+            flySpawnInterval;
+
+            yield return
+            new WaitForSeconds(
+                flySpawnInterval
+            );
+        }
+
+        PlayIdle();
+
+        isCastingSkill = false;
+    }
+
+    void SpawnFlyBullet()
+    {
+        if (flyBulletPrefab == null)
+            return;
+
+        Vector2 pos =
+        (Vector2)transform.position
+        +
+        Random.insideUnitCircle
+        * flyRadius;
+
+        Instantiate(
+            flyBulletPrefab,
+            pos,
+            Quaternion.identity
+        );
+    }
+
+    void PickFlyPosition()
+    {
+        Vector2 offset =
+        Random.insideUnitCircle *
+        randomMoveRadius;
+
+        randomTarget =
+        (Vector2)transform.position
+        +
+        offset;
+    }
+
+    //--------------------------------
+    // ANIMATION
+    //--------------------------------
+
+    void PlayIdle()
+    {
+        anim.Play("idle");
+    }
+
+    void PlayAttack()
+    {
+        anim.Play(
+            "attack",
+            0,
+            0
+        );
+    }
+
+    void PlayFly()
+    {
+        anim.Play(
+            "fly",
+            0,
+            0
+        );
+    }
+
+    void PlayDeath()
+    {
+        anim.Play(
+            "death"
+        );
+    }
+
+    //--------------------------------
+    // DESTROY
+    //--------------------------------
+
+    IEnumerator DeathRoutine()
+    {
+        yield return
+        new WaitForSeconds(
+            anim.GetCurrentAnimatorStateInfo(0)
+            .length
+        );
+
+        Destroy(gameObject);
+    }
+
+    //--------------------------------
+    // GIZMOS
+    //--------------------------------
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color =
+        Color.yellow;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            detectRange
+        );
+
+        Gizmos.color =
+        Color.red;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            keepDistance
+        );
+
+        Gizmos.color =
+        Color.cyan;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            randomMoveRadius
+        );
+
+        Gizmos.color =
+        Color.green;
+
+        Gizmos.DrawSphere(
+            randomTarget,
+            .2f
+        );
+
+        Gizmos.color =
+        Color.magenta;
+
+        Gizmos.DrawLine(
+            transform.position,
+            randomTarget
+        );
+
+        Gizmos.color =
+        Color.blue;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            flyRadius
         );
     }
 }

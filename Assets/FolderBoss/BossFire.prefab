@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  rotateSpeed: 3
+  rotateSpeed: 100
 --- !u!1 &1234896687958638790
 GameObject:
   m_ObjectHideFlags: 0
@@ -72,7 +72,7 @@ Transform:
   m_GameObject: {fileID: 1234896687958638790}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.169, y: 0.188, z: 0}
+  m_LocalPosition: {x: 0.169, y: 0.487, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  rotateSpeed: 3
+  rotateSpeed: 100
 --- !u!1 &5087906397338590667
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,8 +272,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.037604555, y: 0.5349997}
-  m_Radius: 2.7003582
+  m_Offset: {x: -0.044030625, y: 0.5349968}
+  m_Radius: 2.9382272
 --- !u!61 &2145800433613339440
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -349,7 +349,7 @@ Transform:
   m_GameObject: {fileID: 6773916424304130998}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 1.592, y: 0.347, z: 0}
+  m_LocalPosition: {x: 1.592, y: 0.04, z: 0}
   m_LocalScale: {x: 6.1268945, y: 1.5693889, z: 1.5693889}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -466,7 +466,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.032912888, y: -0.018273264}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -476,7 +476,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.48, y: 0.4}
+  m_Size: {x: 0.46339387, y: 0.4365465}
   m_EdgeRadius: 0
 --- !u!114 &4254192975192264746
 MonoBehaviour:
@@ -519,7 +519,7 @@ Transform:
   m_GameObject: {fileID: 6905772719604878256}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.06, y: -3.1, z: 0}
+  m_LocalPosition: {x: 45.951324, y: -17.845196, z: 0}
   m_LocalScale: {x: 4.8943176, y: 4.8943176, z: 4.8943176}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -570,17 +570,19 @@ MonoBehaviour:
   anim: {fileID: 3435580394554462609}
   sprite: {fileID: 973053089727750152}
   bossHeath: {fileID: 8264079799232386199}
-  moveSpeed: 2
-  detectRange: 15
+  moveSpeed: 5
+  detectRange: 20
   keepDistance: 4
   randomMoveRadius: 7
-  randomMoveInterval: 0.3
+  randomMoveInterval: 1
   fireballPrefab: {fileID: 7884107102201911381, guid: b713bf347cfaca945aa96ad5f355b487, type: 3}
   fireballPoint: {fileID: 6769144706933277675}
-  fireballCount: 30
+  fireballCount: 70
   fireballInterval: 0.08
   randomAngle: 30
   spitFireObject: {fileID: 6773916424304130998}
   spitFireDuration: 1
-  skillInterval: 4
+  spitFireCount: 1
+  spitFireInterval: 0.5
+  skillInterval: 3
   bossVisual: {fileID: 598610014296102893}

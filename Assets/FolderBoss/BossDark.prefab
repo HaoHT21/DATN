@@ -254,12 +254,13 @@ Transform:
   m_GameObject: {fileID: 3023948101480405388}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 21.322063, y: 1.0468192, z: 0}
+  m_LocalPosition: {x: 1.1459913, y: -0.49500775, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3842581589112344710}
   - {fileID: 8583973896195866896}
+  - {fileID: 5182542988469131853}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &3659546913121818091
@@ -304,21 +305,26 @@ MonoBehaviour:
   anim: {fileID: 3795099687825122570}
   sprite: {fileID: 7269354682807966676}
   bossHeath: {fileID: 1644364692530888133}
-  moveSpeed: 2
-  bossVisual: {fileID: 7504817822580109076}
+  bodyCollider: {fileID: 4830906287854357009}
+  moveSpeed: 5
+  detectRange: 20
+  keepDistance: 4
+  randomMoveRadius: 7
+  randomMoveInterval: 1
   bulletCastPrefab: {fileID: 6035235758144762600, guid: f42d48a105179454984001d98e702654, type: 3}
   castPoint: {fileID: 8583973896195866896}
-  invisibleCooldown: 12
+  castCount: 5
+  castInterval: 0.5
   invisibleDuration: 4
-  bodyCollider: {fileID: 0}
-  randomMoveRadius: 6
+  invisibleMoveSpeed: 20
+  spawnBulletPrefab: {fileID: 467079513599447265, guid: c87e57c2b61430b4e908070ebcf73e60, type: 3}
+  spawnPoint: {fileID: 5182542988469131853}
+  spawnBulletCount: 15
+  skillInterval: 3
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
-  invisibleMoveSpeed: 10
-  castCooldown: 6
-  castCount: 3
-  castInterval: 0.5
+  bossVisual: {fileID: 7504817822580109076}
 --- !u!1 &3611413556769118090
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +351,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.69, y: 2.69, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7504817822580109076}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5523948977084032275
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5182542988469131853}
+  m_Layer: 0
+  m_Name: FireBullet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5182542988469131853
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5523948977084032275}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

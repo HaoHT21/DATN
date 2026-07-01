@@ -28,7 +28,11 @@ public class BossFireController : MonoBehaviour
 
     [Header("Spit Fire Skill")]
     public GameObject spitFireObject;
+
     public float spitFireDuration = 1f;
+
+    public int spitFireCount = 1; // số lần phun
+    public float spitFireInterval = .5f; // nghỉ giữa các lần
 
     [Header("Skill AI")]
     public float skillInterval = 5f;
@@ -119,18 +123,20 @@ public class BossFireController : MonoBehaviour
         //--------------------------------
 
         if (!phase2 &&
-            bossHeath.currentHeath <=
-            bossHeath.maxHeath * .5f)
+    bossHeath.currentHeath <=
+    bossHeath.maxHeath * .5f)
         {
             phase2 = true;
 
-            skillInterval = 3f;
+            skillInterval = 2f;
 
-            fireballCount += 20;
+            fireballCount += 30;
 
-            spitFireDuration += 1f;
+            //spitFireDuration += 1f;
 
-            moveSpeed += 1f;
+            spitFireCount += 1; // 1 -> 2 lần
+
+            moveSpeed += 5f;
 
             randomAngle -= 10f;
         }
@@ -333,29 +339,54 @@ public class BossFireController : MonoBehaviour
         rb.linearVelocity =
             Vector2.zero;
 
-        PlaySpitFire();
+        for (int i = 0;
+             i < spitFireCount;
+             i++)
+        {
+            if (isDead)
+            {
+                isCastingSkill = false;
+                yield break;
+            }
 
-        yield return
+            // chạy animation mỗi lần
+            PlaySpitFire();
+
+            yield return
             new WaitForSeconds(.5f);
 
-        if (spitFireObject != null)
-            spitFireObject
-            .SetActive(true);
+            // bật lửa
+            if (spitFireObject != null)
+                spitFireObject.SetActive(
+                    true
+                );
 
-        yield return
+            // thời gian tồn tại
+            yield return
             new WaitForSeconds(
                 spitFireDuration
             );
 
-        if (spitFireObject != null)
-            spitFireObject
-            .SetActive(false);
+            // tắt lửa
+            if (spitFireObject != null)
+                spitFireObject.SetActive(
+                    false
+                );
+
+            // nghỉ giữa các lần
+            if (i < spitFireCount - 1)
+            {
+                yield return
+                new WaitForSeconds(
+                    spitFireInterval
+                );
+            }
+        }
 
         PlayIdle();
 
         isCastingSkill = false;
     }
-
     void PlayIdle()
     {
         anim.Play("idle");
@@ -421,6 +452,24 @@ public class BossFireController : MonoBehaviour
         Gizmos.DrawWireSphere(
             transform.position,
             randomMoveRadius
+        );
+
+        // Điểm boss muốn đi tới
+        Gizmos.color =
+            Color.green;
+
+        Gizmos.DrawSphere(
+            randomTarget,
+            .2f
+        );
+
+        // Đường nối boss -> mục tiêu
+        Gizmos.color =
+            Color.magenta;
+
+        Gizmos.DrawLine(
+            transform.position,
+            randomTarget
         );
     }
 }

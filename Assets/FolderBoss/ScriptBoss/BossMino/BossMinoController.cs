@@ -12,39 +12,60 @@ public class BossMinoController : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 2f;
 
-    [Header("Visual")]
-    public Transform bossVisual;
+    public float detectRange = 10f;
+    public float keepDistance = 4f;
 
-    [Header("RedBull Skill")]
-    public float redBullCooldown = 10f;
-    public float chargeSpeed = 10f;
-    public float chargeDuration = 2f;
-
-    [Header("RedBull Effect")]
-    public GameObject redBullEffect;
+    public float randomMoveRadius = 3f;
+    public float randomMoveInterval = 2f;
 
     [Header("Shoot Skill")]
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public float shootCooldown = 5f;
+
     public int bulletCount = 5;
+    public int shootCount = 2;
+    public float shootInterval = .5f;
 
-    private float shootTimer;
+    [Header("RedBull Skill")]
+    public GameObject redBullEffect;
 
+    public float chargeSpeed = 10f;
+    public float chargeDuration = 2f;
+
+    public int redBullCount = 1;
+    public float redBullInterval = .5f;
+
+    [Header("Retreat")]
+    public float retreatDistance = 6f;
+    public float retreatSpeed = 4f;
+
+    [Header("Skill AI")]
+    public float skillInterval = 5f;
+
+    [Header("Visual")]
+    public Transform bossVisual;
+
+    [Header("Death")]
+    public float deathDuration = 1.5f;
+
+    private float skillTimer;
+    private float moveTimer;
+
+    private Vector2 randomTarget;
     private Vector2 chargeDirection;
-
-    private float redBullTimer;
 
     private bool isCastingSkill;
     private bool isDead;
-    private bool isBuffed;
-
-    private float originalSpeed;
+    private bool phase2;
 
     private Transform target;
     private Rigidbody2D rb;
 
-    private void Awake()
+    //--------------------------------
+    // SETUP
+    //--------------------------------
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
 
@@ -55,202 +76,268 @@ public class BossMinoController : MonoBehaviour
             sprite = GetComponent<SpriteRenderer>();
 
         if (bossHeath == null)
-            bossHeath = GetComponent<BossHeath>();
-
-        originalSpeed = moveSpeed;
+            bossHeath =
+                GetComponent<BossHeath>();
     }
 
-    private void Start()
+    void Start()
     {
         GameObject player =
-            GameObject.FindGameObjectWithTag("Player");
+            GameObject.FindGameObjectWithTag(
+                "Player"
+            );
 
         if (player != null)
-            target = player.transform;
+            target =
+                player.transform;
 
         if (redBullEffect != null)
             redBullEffect.SetActive(false);
     }
 
-    private void Update()
+    //--------------------------------
+    // UPDATE
+    //--------------------------------
+
+    void Update()
     {
-        // ===== DEATH =====
+        //--------------------------------
+        // DEATH
+        //--------------------------------
+
         if (!isDead &&
-            bossHeath != null &&
-            bossHeath.currentHeath <= 0)
+    bossHeath.currentHeath <= 0)
         {
             isDead = true;
 
-            rb.linearVelocity = Vector2.zero;
+            StopAllCoroutines();
+
+            if (redBullEffect != null)
+                redBullEffect.SetActive(false);
+
+            rb.linearVelocity =
+                Vector2.zero;
+
             rb.simulated = false;
 
+            foreach (
+                Collider2D col
+                in GetComponents<Collider2D>())
+            {
+                col.enabled = false;
+            }
+
             PlayDeath();
+
+            StartCoroutine(
+                DeathRoutine()
+            );
+
             return;
         }
 
-        if (isDead)
+        if (isDead ||
+            target == null)
             return;
 
-        if (target == null)
-            return;
+        //--------------------------------
+        // PHASE 2
+        //--------------------------------
 
-        // ===== SKILL TIMER =====
-        redBullTimer += Time.deltaTime;
-
-        if (redBullTimer >= redBullCooldown &&
-            !isCastingSkill &&
-            !isBuffed)
+        if (!phase2 &&
+            bossHeath.currentHeath <=
+            bossHeath.maxHeath * .5f)
         {
-            redBullTimer = 0f;
-            StartCoroutine(RedBullSkill());
-            return;
+            phase2 = true;
+
+            skillInterval = 2f;
+
+            bulletCount += 5;
+            shootCount += 2;
+
+            redBullCount += 1;
+
+            moveSpeed += 5f;
         }
 
-        shootTimer += Time.deltaTime;
+        //--------------------------------
+        // SKILL
+        //--------------------------------
 
-        if (shootTimer >= shootCooldown &&
-            !isCastingSkill &&
-            !isBuffed)
+        if (!isCastingSkill)
         {
-            shootTimer = 0f;
+            skillTimer +=
+                Time.deltaTime;
 
-            StartCoroutine(ShootSkill());
+            if (skillTimer >=
+                skillInterval)
+            {
+                skillTimer = 0;
 
+                int skill =
+                    Random.Range(0, 2);
+
+                if (skill == 0)
+                {
+                    StartCoroutine(
+                        ShootSkill()
+                    );
+                }
+                else
+                {
+                    StartCoroutine(
+                        RedBullSkill()
+                    );
+                }
+            }
+        }
+
+        if (isCastingSkill)
+            return;
+
+        //--------------------------------
+        // PLAYER RANGE
+        //--------------------------------
+
+        float distance =
+            Vector2.Distance(
+                transform.position,
+                target.position
+            );
+
+        if (distance > detectRange)
+        {
+            PlayIdle();
             return;
         }
 
-        if (isCastingSkill || isBuffed)
-            return;
+        //--------------------------------
+        // RANDOM MOVE
+        //--------------------------------
 
-        // ===== LOOK PLAYER =====
-        Vector3 rot = bossVisual.localEulerAngles;
+        moveTimer -=
+            Time.deltaTime;
 
-        if (target.position.x > transform.position.x)
-            rot.y = 0f;
+        if (moveTimer <= 0)
+        {
+            moveTimer =
+                randomMoveInterval;
+
+            PickRandomPosition();
+        }
+
+        //--------------------------------
+        // LOOK PLAYER
+        //--------------------------------
+
+        Vector3 rot =
+            bossVisual.localEulerAngles;
+
+        if (target.position.x >
+            transform.position.x)
+        {
+            rot.y = 0;
+        }
         else
-            rot.y = 180f;
+        {
+            rot.y = 180;
+        }
 
-        bossVisual.localEulerAngles = rot;
+        bossVisual.localEulerAngles =
+            rot;
 
-        // ===== MOVE =====
-        Vector2 direction =
-            (target.position - transform.position)
-            .normalized;
+        MoveBoss();
+
+        PlayIdle();
+    }
+
+    //--------------------------------
+    // MOVE
+    //--------------------------------
+
+    void PickRandomPosition()
+    {
+        Vector2 offset =
+            Random.insideUnitCircle *
+            randomMoveRadius;
+
+        Vector2 playerPos =
+            target.position;
+
+        randomTarget =
+            playerPos +
+            offset;
+
+        float distance =
+            Vector2.Distance(
+                randomTarget,
+                playerPos
+            );
+
+        if (distance <
+            keepDistance)
+        {
+            Vector2 dir =
+                (
+                randomTarget -
+                playerPos
+                ).normalized;
+
+            randomTarget =
+                playerPos +
+                dir *
+                keepDistance;
+        }
+    }
+
+    void MoveBoss()
+    {
+        Vector2 dir =
+            (
+            randomTarget -
+            (Vector2)
+            transform.position
+            ).normalized;
 
         rb.MovePosition(
             rb.position +
-            direction * moveSpeed * Time.deltaTime
+            dir *
+            moveSpeed *
+            Time.deltaTime
         );
-
-        PlayIdle();
     }
 
-    // ==========================
-    // ANIMATION
-    // ==========================
+    //--------------------------------
+    // SHOOT
+    //--------------------------------
 
-    public void PlayIdle()
-    {
-        if (isDead) return;
-
-        anim.Play("idle");
-    }
-
-    public void PlayAttack()
-    {
-        if (isDead) return;
-
-        anim.Play("attack");
-    }
-
-    public void PlayRedBull()
-    {
-        if (isDead) return;
-
-        anim.Play("redbull");
-    }
-
-    public void PlayDeath()
-    {
-        if (anim == null)
-            return;
-
-        anim.Play("death");
-    }
-
-    // ==========================
-    // REDBULL SKILL
-    // ==========================
-
-    private IEnumerator RedBullSkill()
+    IEnumerator ShootSkill()
     {
         isCastingSkill = true;
 
-        rb.linearVelocity = Vector2.zero;
-
-        chargeDirection =
-            (target.position - transform.position)
-            .normalized;
-
-        PlayRedBull();
-
-        // Đợi 0.2 giây rồi hiện effect
-        yield return new WaitForSeconds(0.2f);
-
-        // Hiện effect
-        if (redBullEffect != null)
-            redBullEffect.SetActive(true);
-
-        yield return new WaitForSeconds(1f);
-
-        isBuffed = true;
-
-        float timer = 0f;
-
-        while (timer < chargeDuration)
+        for (int i = 0; i < shootCount; i++)
         {
-            rb.MovePosition(
-                rb.position +
-                chargeDirection *
-                chargeSpeed *
-                Time.fixedDeltaTime
+            // chạy animation 1 lần
+            PlayAttack();
+
+            // đợi tới thời điểm đòn 1
+            yield return
+            new WaitForSeconds(.3f);
+
+            FireBullets();
+
+            // đợi tới thời điểm đòn 2
+            yield return
+            new WaitForSeconds(.5f);
+
+            FireBullets();
+
+            // nghỉ trước combo tiếp theo
+            yield return
+            new WaitForSeconds(
+                shootInterval
             );
-
-            timer += Time.fixedDeltaTime;
-
-            yield return new WaitForFixedUpdate();
         }
-
-        rb.linearVelocity = Vector2.zero;
-
-        isBuffed = false;
-
-        // Tắt effect
-        if (redBullEffect != null)
-            redBullEffect.SetActive(false);
-
-        PlayIdle();
-
-        isCastingSkill = false;
-    }
-
-    private IEnumerator ShootSkill()
-    {
-        isCastingSkill = true;
-
-        rb.linearVelocity = Vector2.zero;
-
-        PlayAttack();
-
-        // đợi animation attack
-        yield return new WaitForSeconds(0.3f);
-        FireBullets();
-
-
-        yield return new WaitForSeconds(0.55f);
-        FireBullets();
-
-        yield return new WaitForSeconds(0.3f);
 
         PlayIdle();
 
@@ -260,41 +347,291 @@ public class BossMinoController : MonoBehaviour
     private void FireBullets()
     {
         if (bulletPrefab == null ||
-            firePoint == null ||
-            target == null)
+            firePoint == null)
             return;
-
-        Vector2 direction =
-            (target.position - firePoint.position).normalized;
-
-        float centerAngle =
-            Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         float spread = 45f;
 
+        // nếu chỉ có 1 viên
         if (bulletCount <= 1)
         {
             Instantiate(
                 bulletPrefab,
                 firePoint.position,
-                Quaternion.Euler(0, 0, centerAngle)
+                firePoint.rotation
             );
 
             return;
         }
 
+        // nhiều viên tỏa hình quạt
         for (int i = 0; i < bulletCount; i++)
         {
             float angle =
-                centerAngle -
-                spread / 2f +
+                -spread / 2f +
                 (spread / (bulletCount - 1)) * i;
+
+            Quaternion rot =
+                firePoint.rotation *
+                Quaternion.Euler(
+                    0,
+                    0,
+                    angle
+                );
 
             Instantiate(
                 bulletPrefab,
                 firePoint.position,
-                Quaternion.Euler(0, 0, angle)
+                rot
             );
         }
     }
-} 
+
+    //--------------------------------
+    // REDBULL
+    //--------------------------------
+
+    IEnumerator RedBullSkill()
+    {
+        isCastingSkill = true;
+
+        for (int i = 0;
+             i < redBullCount;
+             i++)
+        {
+            // cập nhật hướng nhìn mới
+            Vector3 rot =
+                bossVisual.localEulerAngles;
+
+            if (target.position.x >
+                transform.position.x)
+            {
+                rot.y = 0f;
+            }
+            else
+            {
+                rot.y = 180f;
+            }
+
+            bossVisual.localEulerAngles =
+                rot;
+
+            // lấy hướng mới tới player
+            chargeDirection =
+            (
+            target.position -
+            transform.position
+            ).normalized;
+
+            PlayRedBull();
+
+            yield return
+            new WaitForSeconds(.3f);
+
+            if (redBullEffect != null)
+                redBullEffect.SetActive(
+                    true
+                );
+
+            float timer = 0;
+
+            while (
+                timer <
+                chargeDuration)
+            {
+                rb.MovePosition(
+                    rb.position +
+                    chargeDirection *
+                    chargeSpeed *
+                    Time.fixedDeltaTime
+                );
+
+                timer +=
+                    Time.fixedDeltaTime;
+
+                yield return
+                new WaitForFixedUpdate();
+            }
+
+            rb.linearVelocity =
+            Vector2.zero;
+
+            if (redBullEffect != null)
+                redBullEffect.SetActive(false);
+
+            // lùi ra sau khi húc
+            yield return
+            StartCoroutine(
+                RetreatAfterCharge()
+            );
+
+            // nghỉ giữa các lần
+            if (i < redBullCount - 1)
+            {
+                yield return
+                new WaitForSeconds(
+                    redBullInterval
+                );
+            }
+        }
+
+        PlayIdle();
+
+        isCastingSkill = false;
+    }
+
+    IEnumerator RetreatAfterCharge()
+    {
+        float distance =
+            Vector2.Distance(
+                transform.position,
+                target.position
+            );
+
+        // nếu đủ xa thì thôi
+        if (distance >= retreatDistance)
+            yield break;
+
+        while (distance < retreatDistance)
+        {
+            if (target == null)
+                yield break;
+
+            // hướng ngược player
+            Vector2 dir =
+            (
+            transform.position -
+            target.position
+            ).normalized;
+
+            // flip theo hướng lùi
+            Vector3 rot =
+                bossVisual.localEulerAngles;
+
+            if (dir.x > 0)
+                rot.y = 0f;
+            else
+                rot.y = 180f;
+
+            bossVisual.localEulerAngles =
+                rot;
+
+            rb.MovePosition(
+                rb.position +
+                dir *
+                retreatSpeed *
+                Time.fixedDeltaTime
+            );
+
+            distance =
+                Vector2.Distance(
+                    transform.position,
+                    target.position
+                );
+
+            yield return
+                new WaitForFixedUpdate();
+        }
+
+        rb.linearVelocity =
+            Vector2.zero;
+    }
+
+    //--------------------------------
+    // ANIMATION
+    //--------------------------------
+
+    void PlayIdle()
+    {
+        anim.Play("idle");
+    }
+
+    void PlayAttack()
+    {
+        anim.Play(
+            "attack",
+            0,
+            0
+        );
+    }
+
+    void PlayRedBull()
+    {
+        anim.Play(
+            "redbull",
+            0,
+            0
+        );
+    }
+
+    void PlayDeath()
+    {
+        anim.Play("death");
+    }
+
+    IEnumerator DeathRoutine()
+    {
+        yield return
+            new WaitForSeconds(
+                deathDuration
+            );
+
+        Destroy(gameObject);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        // Detect Range
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(
+            transform.position,
+            detectRange
+        );
+
+        // Keep Distance
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(
+            transform.position,
+            keepDistance
+        );
+
+        // Random Move Radius
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(
+            transform.position,
+            randomMoveRadius
+        );
+
+        // Điểm boss đang muốn di chuyển tới
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(
+            randomTarget,
+            .2f
+        );
+
+        // Đường nối tới mục tiêu di chuyển
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawLine(
+            transform.position,
+            randomTarget
+        );
+
+        // Khi đang charge RedBull
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.blue;
+
+            Gizmos.DrawRay(
+                transform.position,
+                chargeDirection * 3f
+            );
+        }
+
+        Gizmos.color = Color.green;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            retreatDistance
+        );
+    }
+}

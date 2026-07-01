@@ -1,211 +1,295 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class EnemyCircleShoot : MonoBehaviour
 {
-    [Header("Movement")]
-    public float moveSpeed = 3f;
+    [Header("Distance")]
 
-    [Header("Ranges")]
-    public float chaseDistance = 8f;
+    [Tooltip("Khoảng cách đứng bắn")]
     public float attackDistance = 4f;
+
+    [Tooltip("Quá gần thì lùi")]
     public float retreatDistance = 2f;
 
-    [Header("Circle Shot")]
+    [Tooltip("Tốc độ lùi")]
+    public float retreatSpeed = 2f;
+
+    [Tooltip("Lùi tối đa")]
+    public float retreatDuration = 1.5f;
+
+
+    [Header("Circle Shoot")]
+
+    [Tooltip("Số đạn bắn vòng")]
+    public int bulletsInCircle = 12;
+
+    [Tooltip("Thời gian giữa mỗi lần bắn")]
+    public float fireRate = 3f;
+
+    public float attackDuration = 0.3f;
+
+
+    [Header("Bullet")]
     public GameObject bulletPrefab;
     public Transform firePoint;
 
-    [Tooltip("S? �?n b?n ra xung quanh")]
-    public int bulletsInCircle = 12;
 
-    [Tooltip("10 gi�y b?n 1 l?n")]
-    public float fireRate = 10f;
-
-    [Header("Attack")]
-    public float attackDuration = 1f;
-
+    private EnemyController controller;
     private Rigidbody2D rb;
-    private SpriteRenderer sprite;
-    private Animator anim;
-
-    private Transform target;
 
     private bool isAttacking;
-    private bool isDead;
+    private bool isRetreating;
 
+    private float retreatTimer;
     private float fireTimer;
+
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        sprite = GetComponent<SpriteRenderer>();
-        anim = GetComponent<Animator>();
+        controller =
+            GetComponent<EnemyController>();
 
-        rb.gravityScale = 0;
-        rb.freezeRotation = true;
+        rb =
+            GetComponent<Rigidbody2D>();
     }
+
 
     private void Update()
     {
-        if (isDead)
-            return;
+        fireTimer -=
+            Time.deltaTime;
 
         if (isAttacking)
-        {
-            rb.linearVelocity = Vector2.zero;
             return;
-        }
 
-        FindClosestPlayer();
-
-        if (target == null)
-        {
-            rb.linearVelocity = Vector2.zero;
-            PlayAnimation("idle");
+        if (!controller.HasTarget)
             return;
-        }
+
+
+        Transform target =
+            controller.Target;
+
+        Vector2 dir =
+            target.position -
+            transform.position;
 
         float distance =
-            Vector2.Distance(transform.position,
-                             target.position);
+            dir.magnitude;
 
-        Vector2 direction =
-            (target.position - transform.position)
-            .normalized;
 
-        sprite.flipX = direction.x < 0;
+        controller.LookAt(
+            target.position
+        );
 
-        if (fireTimer > 0)
-            fireTimer -= Time.deltaTime;
 
-        // Ngo�i t?m ph�t hi?n
-        if (distance > chaseDistance)
+        //--------------------------------
+        // Quá gần -> lùi
+        //--------------------------------
+
+        if (
+            distance <
+            retreatDistance
+        )
         {
-            rb.linearVelocity = Vector2.zero;
-            PlayAnimation("idle");
+            controller.LockMovement(
+                true);
+
+            Retreat(dir);
+
             return;
         }
 
-        // Qu� g?n => l�i
-        if (distance < retreatDistance)
-        {
-            rb.linearVelocity =
-                -direction * moveSpeed;
 
-            PlayAnimation("idle");
+        //--------------------------------
+        // Trong vùng bắn
+        //--------------------------------
+
+        if (
+            distance <=
+            attackDistance
+        )
+        {
+            controller.LockMovement(
+                true);
+
+            Attack();
+
             return;
         }
 
-        // �u?i theo
-        if (distance > attackDistance)
+
+        //--------------------------------
+        // Ngoài vùng bắn
+        //--------------------------------
+
+        controller.LockMovement(
+            false);
+
+        isRetreating =
+            false;
+
+        retreatTimer =
+            0;
+    }
+
+
+
+    void Retreat(
+        Vector2 dir
+    )
+    {
+        isRetreating =
+            true;
+
+        retreatTimer +=
+            Time.deltaTime;
+
+        Vector2 moveDir =
+            -dir.normalized;
+
+        rb.linearVelocity =
+            moveDir *
+            retreatSpeed;
+
+        controller.PlayAnimation(
+            "run"
+        );
+
+
+        if (
+            retreatTimer >=
+            retreatDuration
+        )
         {
-            rb.linearVelocity =
-                direction * moveSpeed;
+            retreatTimer =
+                0;
 
-            PlayAnimation("idle");
-            return;
+            isRetreating =
+                false;
+
+            controller.StopMovement();
+
+            Attack();
         }
+    }
 
-        // Trong t?m b?n
-        rb.linearVelocity = Vector2.zero;
+
+
+    void Attack()
+    {
+        if (isAttacking)
+            return;
 
         if (fireTimer <= 0)
         {
-            fireTimer = fireRate;
-            StartCoroutine(AttackRoutine());
-        }
-    }
+            fireTimer =
+                fireRate;
 
-    private IEnumerator AttackRoutine()
-    {
-        isAttacking = true;
-
-        rb.linearVelocity = Vector2.zero;
-
-        PlayAnimation("attack");
-
-        yield return new WaitForSeconds(attackDuration);
-
-        CircleShoot();
-
-        PlayAnimation("idle");
-
-        isAttacking = false;
-    }
-
-    private void CircleShoot()
-    {
-        if (bulletPrefab == null || firePoint == null)
-            return;
-
-        float angleStep =
-            360f / bulletsInCircle;
-
-        for (int i = 0; i < bulletsInCircle; i++)
-        {
-            float angle =
-                i * angleStep;
-
-            Quaternion rotation =
-                Quaternion.Euler(0, 0, angle);
-
-            Instantiate(
-                bulletPrefab,
-                firePoint.position,
-                rotation
+            StartCoroutine(
+                AttackRoutine()
             );
         }
     }
 
-    private void FindClosestPlayer()
+
+
+    IEnumerator AttackRoutine()
     {
-        GameObject[] players =
-            GameObject.FindGameObjectsWithTag("Player");
+        isAttacking =
+            true;
 
-        float minDistance = float.MaxValue;
-        Transform closest = null;
+        controller.LockMovement(
+            true);
 
-        foreach (GameObject player in players)
-        {
-            float distance =
-                Vector2.Distance(
-                    transform.position,
-                    player.transform.position);
+        controller.StopMovement();
 
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                closest = player.transform;
-            }
-        }
+        controller.PlayAnimation(
+            "attack"
+        );
 
-        target = closest;
+
+        yield return
+            new WaitForSeconds(
+                attackDuration
+            );
+
+
+        CircleShoot();
+
+
+        controller.PlayAnimation(
+            "idle"
+        );
+
+        controller.LockMovement(
+            false);
+
+        isAttacking =
+            false;
     }
 
-    private void PlayAnimation(string animName)
+
+
+    void CircleShoot()
     {
-        if (anim == null)
+        if (
+            bulletPrefab == null ||
+            firePoint == null
+        )
             return;
 
-        anim.Play(animName);
+
+        float angleStep =
+            360f /
+            bulletsInCircle;
+
+
+        for (
+            int i = 0;
+            i < bulletsInCircle;
+            i++
+        )
+        {
+            float angle =
+                i *
+                angleStep;
+
+
+            Quaternion rot =
+                Quaternion.Euler(
+                    0,
+                    0,
+                    angle
+                );
+
+
+            Instantiate(
+                bulletPrefab,
+                firePoint.position,
+                rot
+            );
+        }
     }
+
+
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            chaseDistance);
+        Gizmos.color =
+            Color.red;
 
-        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(
             transform.position,
-            attackDistance);
+            attackDistance
+        );
 
-        Gizmos.color = Color.blue;
+
+        Gizmos.color =
+            Color.magenta;
+
         Gizmos.DrawWireSphere(
             transform.position,
-            retreatDistance);
+            retreatDistance
+        );
     }
 }

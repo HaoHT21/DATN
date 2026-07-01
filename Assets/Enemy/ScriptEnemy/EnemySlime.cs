@@ -1,6 +1,7 @@
 ﻿using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemySlime : MonoBehaviour
@@ -75,7 +76,9 @@ public class EnemySlime : MonoBehaviour
 
         if (health != null)
         {
-            health.OnDamaged += AlertNearestPlayer;
+            health.OnHurt += HandleHurt;
+            health.OnHurt += AlertNearestPlayer;
+            health.OnDeath += HandleDeath;
         }
 
     }
@@ -93,12 +96,20 @@ public class EnemySlime : MonoBehaviour
     {
         if (health != null)
         {
-            health.OnDamaged -= AlertNearestPlayer;
+            health.OnHurt -= HandleHurt;
+            health.OnHurt -= AlertNearestPlayer;
+            health.OnDeath -= HandleDeath;
         }
     }
 
     private void Update()
     {
+        if (isDead)
+            return;
+
+        if (isHurt)
+            return;
+
         if (isDead)
         {
             rb.linearVelocity = Vector2.zero;
@@ -166,7 +177,7 @@ public class EnemySlime : MonoBehaviour
                     attackHitbox.SetActive(false);
 
                 if (!isHurt)
-                    PlayAnimation("idle");
+                    PlayAnimation("run");
             }
 
             return;
@@ -294,43 +305,6 @@ public class EnemySlime : MonoBehaviour
             (Vector2)transform.position + randomDirection;
     }
 
-    public void PlayHurt(float duration)
-    {
-        if (isDead)
-            return;
-
-        StopCoroutine(nameof(HurtRoutine));
-        StartCoroutine(HurtRoutine(duration));
-    }
-
-    private System.Collections.IEnumerator HurtRoutine(float duration)
-    {
-        isHurt = true;
-
-        PlayAnimation("hurt");
-
-        yield return new WaitForSeconds(duration);
-
-        isHurt = false;
-
-        PlayAnimation("idle");
-    }
-
-    public void PlayDeath()
-    {
-        if (isDead)
-            return;
-
-        isDead = true;
-
-        rb.linearVelocity = Vector2.zero;
-
-        if (attackHitbox != null)
-            attackHitbox.SetActive(false);
-
-        PlayAnimation("death");
-    }
-
     private void Wander()
     {
         wanderTimer -= Time.deltaTime;
@@ -374,7 +348,7 @@ public class EnemySlime : MonoBehaviour
             direction * (moveSpeed * 0.5f);
 
         if (!isHurt)
-            PlayAnimation("idle");
+            PlayAnimation("run");
 
         if (direction.x > 0.05f)
             spriteRenderer.flipX = false;
@@ -430,6 +404,53 @@ public class EnemySlime : MonoBehaviour
         target = player.transform;
         lastKnownPlayerPosition = player.transform.position;
         searchingPlayer = false;
+    }
+
+    private Coroutine hurtCoroutine;
+
+    void HandleHurt()
+    {
+        if (isDead)
+            return;
+
+        if (hurtCoroutine != null)
+            StopCoroutine(hurtCoroutine);
+
+        hurtCoroutine =
+            StartCoroutine(HurtRoutine());
+    }
+
+    IEnumerator HurtRoutine()
+    {
+        isHurt = true;
+
+        rb.linearVelocity = Vector2.zero;
+
+        PlayAnimation("hurt");
+
+        yield return new WaitForSeconds(0.2f);
+
+        isHurt = false;
+
+        hurtCoroutine = null;
+    }
+
+    void HandleDeath()
+    {
+        if (isDead)
+            return;
+
+        isDead = true;
+
+        rb.linearVelocity = Vector2.zero;
+
+        isAttacking = false;
+        isPreparingAttack = false;
+
+        if (attackHitbox != null)
+            attackHitbox.SetActive(false);
+
+        PlayAnimation("death");
     }
 
     private void OnDrawGizmosSelected()

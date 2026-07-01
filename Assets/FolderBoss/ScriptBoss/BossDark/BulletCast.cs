@@ -123,7 +123,7 @@ public class BulletCast : MonoBehaviour
     private IEnumerator WarningPhase()
     {
         // Thời gian cảnh báo
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         anim.Play("bulletcast");
 
@@ -144,7 +144,7 @@ public class BulletCast : MonoBehaviour
 
     private System.Collections.IEnumerator DestroyAfterCast()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
         Destroy(gameObject);
     }
 

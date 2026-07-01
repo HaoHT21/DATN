@@ -1,220 +1,190 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class BossRockController : MonoBehaviour
 {
-    [Header("Renderer")]
-    public SpriteRenderer sprite;
-
-    [Header("Animator")]
+    [Header("References")]
     public Animator anim;
-
-    [Header("Boss Health")]
     public BossHeath bossHeath;
 
-    [Header("Boss Move")]
-    public float moveSpeed = 3f;
-
-    [Header("Detect Player")]
-    public float detectRange = 10f;
-
-    [Header("Attack Range")]
-    public float attackRange = 2f;
-
-    [Header("Melee Attack")]
-    public GameObject meleeObject;
-
-    [Header("Máu kích hoạt Glow (%)")]
-    [Range(0f, 1f)]
-    public float glowThreshold = 0.1f;
-
-    [Header("Boss Visual")]
+    [Header("Visual")]
     public Transform bossVisual;
 
-    [HideInInspector]
-    public bool isCastingLaser;
+    [Header("Movement")]
+    public float moveSpeed = 2f;
 
+    public float detectRange = 10f;
+    public float keepDistance = 4f;
+
+    public float randomMoveRadius = 3f;
+    public float randomMoveInterval = 2f;
+
+    [Header("Laser Skill")]
+    public GameObject laserObject;
+
+    public float laserDuration = 2f;
+
+    public int laserCastCount = 1; // số lần laser xuất hiện
+    public float laserInterval = .5f; // nghỉ giữa mỗi lần
+
+    [Header("Shoot Skill")]
+    public GameObject bulletPrefab;
+
+    public Transform shootPoint;
+
+    public int shootCount = 3;
+
+    public float shootInterval = .3f;
+
+    [Header("Skill AI")]
+    public float skillInterval = 5f;
+
+    private float skillTimer;
+    private float moveTimer;
+
+    private Vector2 randomTarget;
+
+    private bool isCastingSkill;
     private bool isDead;
-    private bool glowActivated;
+    private bool phase2;
 
     private Transform target;
-
     private Rigidbody2D rb;
 
-    private float loseTargetTimer;
-    private bool isImmuneState;
+    //--------------------------------
+    // SETUP
+    //--------------------------------
 
-    private void Start()
+    void Awake()
     {
-        CheckRenderer();
-    }
-
-    // =========================
-    // AUTO FIND
-    // =========================
-    private void Reset()
-    {
-        anim = GetComponent<Animator>();
-
         rb = GetComponent<Rigidbody2D>();
 
-        sprite = GetComponent<SpriteRenderer>();
-
-        if (bossHeath == null)
-            bossHeath = GetComponent<BossHeath>();
-    }
-
-    private void Awake()
-    {
         if (anim == null)
-            anim = GetComponent<Animator>();
-
-        if (rb == null)
-            rb = GetComponent<Rigidbody2D>();
-
-        if (sprite == null)
-            sprite = GetComponent<SpriteRenderer>();
+            anim =
+            GetComponent<Animator>();
 
         if (bossHeath == null)
-            bossHeath = GetComponent<BossHeath>();
+            bossHeath =
+            GetComponent<BossHeath>();
     }
 
-    private void Update()
+    void Start()
     {
-        if (bossHeath == null)
-            return;
+        GameObject player =
+            GameObject.FindGameObjectWithTag(
+                "Player"
+            );
 
-        // =========================
+        if (player != null)
+            target =
+            player.transform;
+    }
+
+    //--------------------------------
+    // UPDATE
+    //--------------------------------
+
+    void Update()
+    {
+        //--------------------------------
         // DEATH
-        // =========================
+        //--------------------------------
+
         if (!isDead &&
-    bossHeath.currentHeath <= 0)
+            bossHeath.currentHeath <= 0)
         {
             isDead = true;
 
-            // Khóa toàn bộ hoạt động
-            isCastingLaser = true;
-            isImmuneState = true;
+            StopAllCoroutines();
 
-            // Dừng di chuyển
-            if (rb != null)
+            isCastingSkill = false;
+
+            if (laserObject != null)
+                laserObject.SetActive(false);
+
+            rb.linearVelocity =
+            Vector2.zero;
+
+            rb.simulated = false;
+
+            foreach (
+                Collider2D col
+                in GetComponents<Collider2D>())
             {
-                rb.linearVelocity = Vector2.zero;
-                rb.simulated = false;
+                col.enabled = false;
             }
 
             PlayDeath();
 
-            // Tắt script sau khi chạy animation chết
-            enabled = false;
+            StartCoroutine(
+                DeathRoutine()
+            );
 
             return;
         }
 
-        // =========================
-        // GLOW PHASE
-        // =========================
-        if (!glowActivated)
-        {
-            float hpPercent =
-                (float)bossHeath.currentHeath /
-                bossHeath.maxHeath;
-
-            if (hpPercent <= glowThreshold)
-            {
-                glowActivated = true;
-
-                PlayGlow();
-            }
-        }
-
-        // =========================
-        // TÌM PLAYER
-        // =========================
-        FindPlayer();
-
-        // =========================
-        // DI CHUYỂN
-        // =========================
-        BossMove();
-
-        // =========================
-        // IMMUNE STATE LOGIC
-        // =========================
-        if (target == null)
-        {
-            loseTargetTimer += Time.deltaTime;
-
-            if (loseTargetTimer >= 10f && !isImmuneState)
-            {
-                isImmuneState = true;
-                PlayImmune();
-            }
-        }
-        else
-        {
-            // có player lại → reset
-            loseTargetTimer = 0f;
-
-            if (isImmuneState)
-            {
-                isImmuneState = false;
-                PlayIdle();
-            }
-        }
-
-        if (isImmuneState && bossHeath.currentHeath < bossHeath.maxHeath)
-        {
-            bossHeath.Heal(1); // chỉnh tốc độ hồi máu
-
-            // chống vượt max HP
-            if (bossHeath.currentHeath > bossHeath.maxHeath)
-                bossHeath.currentHeath = bossHeath.maxHeath;
-        }
-    }
-
-    // =====================================
-    // FIND PLAYER
-    // =====================================
-    void FindPlayer()
-    {
-        GameObject player =
-            GameObject.FindGameObjectWithTag("Player");
-
-        if (player != null)
-        {
-            float distance =
-                Vector2.Distance(
-                    transform.position,
-                    player.transform.position
-                );
-
-            if (distance <= detectRange)
-            {
-                target = player.transform;
-            }
-            else
-            {
-                target = null;
-            }
-        }
-    }
-
-
-    // =====================================
-    // MOVE TO PLAYER
-    // =====================================
-    void BossMove()
-    {
-        if (isCastingLaser || isImmuneState)
+        if (isDead ||
+            target == null)
             return;
-        if (isCastingLaser)
-            return;
-        if (target == null)
+
+        //--------------------------------
+        // PHASE 2
+        //--------------------------------
+
+        if (!phase2 &&
+        bossHeath.currentHeath <=
+        bossHeath.maxHeath * .5f)
         {
-            PlayIdle();
-            return;
+            phase2 = true;
+
+            skillInterval = 2f;
+
+            shootCount += 10;
+
+            laserDuration += 1f;
+
+            laserCastCount += 1; // từ 1 -> 2 lần
+
+            moveSpeed += 5f;
         }
+
+        //--------------------------------
+        // SKILL TIMER
+        //--------------------------------
+
+        if (!isCastingSkill)
+        {
+            skillTimer += Time.deltaTime;
+
+            if (skillTimer >= skillInterval)
+            {
+                skillTimer = 0f;
+
+                int skill =
+                    Random.Range(0, 2);
+
+                if (skill == 0)
+                {
+                    StartCoroutine(
+                        LaserSkill()
+                    );
+                }
+                else
+                {
+                    StartCoroutine(
+                        ShootSkill()
+                    );
+                }
+            }
+        }
+
+        if (isCastingSkill)
+            return;
+
+        //--------------------------------
+        // PLAYER RANGE
+        //--------------------------------
 
         float distance =
             Vector2.Distance(
@@ -222,151 +192,297 @@ public class BossRockController : MonoBehaviour
                 target.position
             );
 
-        // Nếu gần player thì đứng lại
-        if (distance <= attackRange)
+        if (distance >
+            detectRange)
         {
-            PlayMelee();
-
+            PlayIdle();
             return;
+        }
+
+        //--------------------------------
+        // RANDOM MOVE
+        //--------------------------------
+
+        moveTimer -=
+            Time.deltaTime;
+
+        if (moveTimer <= 0)
+        {
+            moveTimer =
+                randomMoveInterval;
+
+            PickRandomPosition();
+        }
+
+        //--------------------------------
+        // LOOK PLAYER
+        //--------------------------------
+
+        Vector3 rot =
+            bossVisual.localEulerAngles;
+
+        if (target.position.x >
+            transform.position.x)
+        {
+            rot.y = 0;
         }
         else
         {
-            PlayIdle();
+            rot.y = 180;
         }
 
-        // Di chuyển tới player
-        Vector2 direction =
-            (target.position - transform.position)
-            .normalized;
+        bossVisual.localEulerAngles =
+            rot;
+
+        MoveBoss();
+
+        PlayIdle();
+    }
+
+    //--------------------------------
+    // MOVE
+    //--------------------------------
+
+    void PickRandomPosition()
+    {
+        Vector2 offset =
+            Random.insideUnitCircle *
+            randomMoveRadius;
+
+        Vector2 playerPos =
+            target.position;
+
+        randomTarget =
+            playerPos + offset;
+
+        float distance =
+            Vector2.Distance(
+                randomTarget,
+                playerPos
+            );
+
+        if (distance <
+            keepDistance)
+        {
+            Vector2 dir =
+                (randomTarget -
+                playerPos)
+                .normalized;
+
+            randomTarget =
+                playerPos +
+                dir *
+                keepDistance;
+        }
+    }
+
+    void MoveBoss()
+    {
+        Vector2 dir =
+        (
+        randomTarget -
+        (Vector2)
+        transform.position
+        ).normalized;
 
         rb.MovePosition(
             rb.position +
-            direction * moveSpeed * Time.deltaTime
+            dir *
+            moveSpeed *
+            Time.deltaTime
         );
-
-        Vector3 rot = bossVisual.localEulerAngles;
-
-        // nhìn phải
-        if (direction.x > 0.1f)
-        {
-            rot.y = 0f;
-        }
-        // nhìn trái
-        else if (direction.x < -0.1f)
-        {
-            rot.y = 180f;
-        }
-
-        bossVisual.localEulerAngles = rot;
     }
 
-    // =====================================
-    // IDLE
-    // =====================================
-    public void PlayIdle()
-    {
-        if (isDead) return;
+    //--------------------------------
+    // LASER
+    //--------------------------------
 
+    IEnumerator LaserSkill()
+    {
+        isCastingSkill = true;
+
+        rb.linearVelocity =
+            Vector2.zero;
+
+        for (int i = 0;
+             i < laserCastCount;
+             i++)
+        {
+            if (isDead)
+                yield break;
+
+            // phát animation mỗi lần
+            PlayLaser();
+
+            yield return
+            new WaitForSeconds(.5f);
+
+            if (laserObject != null)
+                laserObject.SetActive(true);
+
+            // thời gian laser tồn tại
+            yield return
+            new WaitForSeconds(
+                laserDuration
+            );
+
+            if (laserObject != null)
+                laserObject.SetActive(false);
+
+            // nghỉ giữa các lần bắn
+            if (i < laserCastCount - 1)
+            {
+                yield return
+                new WaitForSeconds(
+                    laserInterval
+                );
+            }
+        }
+
+        PlayIdle();
+
+        isCastingSkill = false;
+    }
+
+    //--------------------------------
+    // SHOOT
+    //--------------------------------
+
+    IEnumerator ShootSkill()
+    {
+        isCastingSkill = true;
+
+        for (int i = 0;
+            i < shootCount;
+            i++)
+        {
+            if (isDead)
+                yield break;
+
+            PlayShoot();
+
+            yield return
+            new WaitForSeconds(
+                .3f
+            );
+
+            SpawnBullet();
+
+            yield return
+            new WaitForSeconds(
+                shootInterval
+            );
+        }
+
+        PlayIdle();
+
+        isCastingSkill =
+            false;
+    }
+
+    void SpawnBullet()
+    {
+        Vector2 dir =
+            (
+            target.position -
+            shootPoint.position
+            ).normalized;
+
+        float angle =
+            Mathf.Atan2(
+                dir.y,
+                dir.x
+            ) *
+            Mathf.Rad2Deg;
+
+        Instantiate(
+            bulletPrefab,
+            shootPoint.position,
+            Quaternion.Euler(
+                0,
+                0,
+                angle
+            )
+        );
+    }
+
+    //--------------------------------
+    // ANIMATION
+    //--------------------------------
+
+    void PlayIdle()
+    {
         anim.Play("idle");
     }
-   
 
-    // =====================================
-    // IMMUNE
-    // =====================================
-    public void PlayImmune()
+    void PlayLaser()
     {
-        if (isDead) return;
-
-        anim.Play("immune");
+        anim.Play(
+            "laser_cast",
+            0,
+            0
+        );
     }
 
-    // =====================================
-    // LASER CAST
-    // =====================================
-    public void PlayLaserCast()
+    void PlayShoot()
     {
-        if (isDead) return;
-
-        anim.Play("laser_cast");
+        anim.Play(
+            "shoot",
+            0,
+            0
+        );
     }
 
-    // =====================================
-    // MELEE
-    // =====================================
-    public void PlayMelee()
+    void PlayDeath()
     {
-        if (isDead) return;
-
-        anim.Play("melee");
+        anim.Play(
+            "death"
+        );
     }
 
-    // =====================================
-    // SHIELD CAST
-    // =====================================
-    public void PlayShieldCast()
-    {
-        if (isDead) return;
+    //--------------------------------
+    // DESTROY
+    //--------------------------------
 
-        anim.Play("sheild_cast");
+    IEnumerator DeathRoutine()
+    {
+        yield return
+        new WaitForSeconds(
+            anim.GetCurrentAnimatorStateInfo(0)
+            .length
+        );
+
+        Destroy(gameObject);
     }
 
-    // =====================================
-    // SHOOT
-    // =====================================
-    public void PlayShoot()
+    //--------------------------------
+    // GIZMOS
+    //--------------------------------
+
+    void OnDrawGizmosSelected()
     {
-        if (isDead) return;
+        Gizmos.color =
+            Color.yellow;
 
-        anim.Play("shoot");
-    }
+        Gizmos.DrawWireSphere(
+            transform.position,
+            detectRange
+        );
 
-    // =====================================
-    // GLOW
-    // =====================================
-    public void PlayGlow()
-    {
-        if (isDead) return;
+        Gizmos.color =
+            Color.red;
 
-        anim.Play("glow");
+        Gizmos.DrawWireSphere(
+            transform.position,
+            keepDistance
+        );
 
-        Debug.Log("Boss vào phase cuối!");
-    }
+        Gizmos.color =
+            Color.cyan;
 
-    // =====================================
-    // DEATH
-    // =====================================
-    public void PlayDeath()
-    {
-        if (anim == null) return;
-
-        anim.Play("death");
-
-        Debug.Log("Boss chết!");
-    }
-
-    // =====================================
-    // CHECK RENDERER
-    // =====================================
-    void CheckRenderer()
-    {
-        if (sprite == null)
-        {
-            Debug.LogError("Chưa gắn SpriteRenderer cho Boss!");
-            return;
-        }
-
-        Debug.Log("Đã gắn SpriteRenderer: " + sprite.name);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        // Detect Range
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectRange);
-
-        // Attack Range
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(
+            transform.position,
+            randomMoveRadius
+        );
     }
 }

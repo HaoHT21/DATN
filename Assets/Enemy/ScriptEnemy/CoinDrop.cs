@@ -3,7 +3,10 @@ using UnityEngine;
 public class CoinDrop : MonoBehaviour
 {
     public GameObject coinPrefab;
-    public int coinAmount = 5;
+
+    [Header("Coin Drop")]
+    public int minCoin = 1;
+    public int maxCoin = 5;
 
     private EnemyHeath health;
 
@@ -23,7 +26,9 @@ public class CoinDrop : MonoBehaviour
 
     private void DropCoins()
     {
-        Debug.Log("DROP COINS");
+        int coinAmount = Random.Range(minCoin, maxCoin + 1);
+
+        Debug.Log($"DROP {coinAmount} COINS");
 
         for (int i = 0; i < coinAmount; i++)
         {

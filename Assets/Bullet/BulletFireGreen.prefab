@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3163300957293071002}
   - component: {fileID: 3745504820793318150}
   - component: {fileID: -4699383072217090097}
-  - component: {fileID: -5728605617672304677}
+  - component: {fileID: 1364086752830526060}
   m_Layer: 0
   m_Name: BulletFireGreen
   m_TagString: Untagged
@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 4554662268799726002}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 200.55125, y: -1399.5641, z: 0}
-  m_LocalScale: {x: 42.45502, y: 13.429215, z: 21.660725}
+  m_LocalPosition: {x: 3.5807421, y: -7.488471, z: 0}
+  m_LocalScale: {x: 34.04935, y: 10.770365, z: 17.372118}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1815996814580736349}
@@ -163,8 +163,8 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!114 &-5728605617672304677
+  m_Constraints: 4
+--- !u!114 &1364086752830526060
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -173,12 +173,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 4554662268799726002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
+  m_Script: {fileID: 11500000, guid: 217f4fed85f664c4a9c9b4bea3144f65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 15
-  speed: 8
+  speed: 10
   lifeTime: 5
+  damage: 5
+  trailBulletPrefab: {fileID: 3417836176469242662, guid: 1fd4f84cdf192d04685c8df7459a62ab, type: 3}
+  spawnInterval: 0.2
+  trailBulletSpeed: 1
 --- !u!1 &5285701373707935743
 GameObject:
   m_ObjectHideFlags: 0

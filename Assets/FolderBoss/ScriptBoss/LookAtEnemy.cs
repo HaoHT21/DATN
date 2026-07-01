@@ -6,19 +6,23 @@ public class LookAtEnemy : MonoBehaviour
     public float detectRadius = 8f;
 
     private Transform target;
+    private PlayerController player;
+
+    void Start()
+    {
+        player = GetComponentInParent<PlayerController>();
+    }
 
     void Update()
     {
-        // kiểm tra target hiện tại còn hợp lệ không
+        // Kiểm tra target còn hợp lệ không
         if (target != null)
         {
-            float distance =
-                Vector2.Distance(
-                    transform.position,
-                    target.position
-                );
+            float distance = Vector2.Distance(
+                transform.position,
+                target.position
+            );
 
-            // ra khỏi vùng hoặc chết
             if (distance > detectRadius ||
                 !target.gameObject.activeInHierarchy)
             {
@@ -26,19 +30,34 @@ public class LookAtEnemy : MonoBehaviour
             }
         }
 
-        // chưa có target thì tìm
+        // Chưa có target thì tìm
         if (target == null)
         {
             FindNearestTarget();
         }
 
-        // quay
-        if (target == null)
-            return;
+        Vector2 direction;
 
-        Vector2 direction =
-            target.position -
-            transform.position;
+        // Có enemy → nhìn enemy
+        if (target != null)
+        {
+            direction =
+                target.position -
+                transform.position;
+        }
+        // Không có enemy → nhìn theo hướng di chuyển
+        else
+        {
+            direction =
+                new Vector2(
+                    Input.GetAxisRaw("Horizontal"),
+                    Input.GetAxisRaw("Vertical")
+                );
+
+            // Nếu đứng yên thì giữ góc cũ
+            if (direction.magnitude < 0.1f)
+                return;
+        }
 
         float angle =
             Mathf.Atan2(
@@ -64,20 +83,15 @@ public class LookAtEnemy : MonoBehaviour
 
     void FindNearestTarget()
     {
-        float closestDistance =
-            Mathf.Infinity;
+        float closestDistance = Mathf.Infinity;
+        Transform closest = null;
 
-        Transform closest =
-            null;
-
-        // tìm Enemy
         FindTargetByTag(
             "Enemy",
             ref closest,
             ref closestDistance
         );
 
-        // tìm Boss
         FindTargetByTag(
             "Boss",
             ref closest,
@@ -93,9 +107,7 @@ public class LookAtEnemy : MonoBehaviour
         ref float closestDistance)
     {
         GameObject[] objects =
-            GameObject.FindGameObjectsWithTag(
-                tag
-            );
+            GameObject.FindGameObjectsWithTag(tag);
 
         foreach (GameObject obj in objects)
         {
@@ -110,11 +122,8 @@ public class LookAtEnemy : MonoBehaviour
                 distance < closestDistance
             )
             {
-                closestDistance =
-                    distance;
-
-                closest =
-                    obj.transform;
+                closestDistance = distance;
+                closest = obj.transform;
             }
         }
     }
@@ -122,7 +131,6 @@ public class LookAtEnemy : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-
         Gizmos.DrawWireSphere(
             transform.position,
             detectRadius
