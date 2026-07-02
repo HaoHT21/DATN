@@ -9,12 +9,12 @@ public class CoinDrop : MonoBehaviour
     public int maxCoin = 5;
 
     private EnemyHeath enemyHealth;
-    private BossHealth bossHealth;
+    private BossHeath bossHealth;
 
     private void Awake()
     {
         enemyHealth = GetComponent<EnemyHeath>();
-        bossHealth = GetComponent<BossHealth>();
+        bossHealth = GetComponent<BossHeath>();
 
         if (enemyHealth != null)
             enemyHealth.OnDeath += DropCoins;
@@ -41,7 +41,7 @@ public class CoinDrop : MonoBehaviour
         for (int i = 0; i < coinAmount; i++)
         {
             Vector3 pos = transform.position +
-                          (Vector3)(Random.insideUnitCircle * 0.5f);
+                         (Vector3)(Random.insideUnitCircle * 0.5f);
 
             Instantiate(coinPrefab, pos, Quaternion.identity);
         }
