@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 3715484722455062951}
   - component: {fileID: 6016746862960790320}
   - component: {fileID: 6941380269555428968}
-  - component: {fileID: 1389413017065578404}
   m_Layer: 0
   m_Name: 'Slime '
   m_TagString: Enemy
@@ -248,21 +247,6 @@ MonoBehaviour:
   dashDuration: 0.3
   recoveryTime: 1
   attackHitbox: {fileID: 6906154346952907705}
---- !u!114 &1389413017065578404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6815145705966534051}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc6b7ba5200aa144b90af477056beaeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  coinPrefab: {fileID: 0}
-  minCoin: 1
-  maxCoin: 10
 --- !u!1 &6906154346952907705
 GameObject:
   m_ObjectHideFlags: 0

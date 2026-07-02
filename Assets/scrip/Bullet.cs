@@ -77,7 +77,12 @@ public class Bullet : MonoBehaviour
 
             return;
         }
-
+        if (col.TryGetComponent<NPCHealth>(out var npcHealth))
+        {
+            npcHealth.TakeDamage(damage);
+            HitEffect();
+            return;
+        }
         // Boss
         if (col.TryGetComponent<BossHeath>(out var boss))
         {

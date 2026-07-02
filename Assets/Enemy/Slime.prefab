@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: -4160357162371704562}
   - component: {fileID: 7044828470053132883}
   - component: {fileID: -1986909456246232711}
+  - component: {fileID: 4041259392892869854}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Enemy
@@ -295,3 +296,18 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.2
+--- !u!114 &4041259392892869854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 678173421849214333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6b7ba5200aa144b90af477056beaeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
+  minCoin: 1
+  maxCoin: 5
