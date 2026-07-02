@@ -140,6 +140,7 @@ GameObject:
   - component: {fileID: 8454931793112259813}
   - component: {fileID: 8282456444444095357}
   - component: {fileID: 7055630640729141374}
+  - component: {fileID: 8372440953380112605}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -251,8 +252,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 663b7c12a0dcc604981566a8ff7c6da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHeath: 500
-  maxHeath: 500
+  currentHeath: 1000
+  maxHeath: 1000
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
@@ -352,6 +353,21 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: -0.0768671, y: 0}
   m_Radius: 1.3148999
+--- !u!114 &8372440953380112605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7152426900566913204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6b7ba5200aa144b90af477056beaeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 727121847254001119, guid: 9896cda8f6a34b841bc4dc4d211d4c39, type: 3}
+  minCoin: 1
+  maxCoin: 1
 --- !u!1 &8036310494709170500
 GameObject:
   m_ObjectHideFlags: 0

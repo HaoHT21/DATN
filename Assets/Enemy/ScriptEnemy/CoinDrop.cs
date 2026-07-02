@@ -8,20 +8,28 @@ public class CoinDrop : MonoBehaviour
     public int minCoin = 1;
     public int maxCoin = 5;
 
-    private EnemyHeath health;
+    private EnemyHeath enemyHealth;
+    private BossHealth bossHealth;
 
     private void Awake()
     {
-        health = GetComponent<EnemyHeath>();
+        enemyHealth = GetComponent<EnemyHeath>();
+        bossHealth = GetComponent<BossHealth>();
 
-        if (health != null)
-            health.OnDeath += DropCoins;
+        if (enemyHealth != null)
+            enemyHealth.OnDeath += DropCoins;
+
+        if (bossHealth != null)
+            bossHealth.OnDeath += DropCoins;
     }
 
     private void OnDestroy()
     {
-        if (health != null)
-            health.OnDeath -= DropCoins;
+        if (enemyHealth != null)
+            enemyHealth.OnDeath -= DropCoins;
+
+        if (bossHealth != null)
+            bossHealth.OnDeath -= DropCoins;
     }
 
     private void DropCoins()

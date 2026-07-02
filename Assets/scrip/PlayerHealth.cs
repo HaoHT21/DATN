@@ -65,6 +65,12 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         _playerController = GetComponent<PlayerController>();
+        PlayerEffect effect = GetComponent<PlayerEffect>();
+
+        if (effect != null)
+        {
+            effect.ResetEffects();
+        }
 
         // Khởi tạo đầy cây máu và cây mana khi vào game
         currentHealth = maxHealth;
@@ -301,6 +307,12 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     private void PlayerDie()
     {
         IsDead = true;
+
+        PlayerEffect effect = GetComponent<PlayerEffect>();
+        if (effect != null)
+        {
+            effect.ResetEffects();
+        }
 
         if (_animator != null) _animator.SetBool("Dead", true);
 

@@ -131,8 +131,8 @@ MonoBehaviour:
   randomMoveInterval: 1
   icePrefab: {fileID: 9035861995818589019, guid: 445ef3660c83efb4395a4cf857f8ef19, type: 3}
   icePoint: {fileID: 1161897125325457446}
-  iceCount: 20
   iceBurstCount: 1
+  iceCount: 20
   attackIcePrefab: {fileID: 2253353001783897143, guid: fb8ead5dd91167d4e8c524b164aab8ea, type: 3}
   attackIcePoint: {fileID: 8994751653521422405}
   attackIceCount: 10
@@ -184,6 +184,7 @@ GameObject:
   - component: {fileID: 6999660479923168649}
   - component: {fileID: 7580510381073735553}
   - component: {fileID: 8537312601809840346}
+  - component: {fileID: 5116151584270277203}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Boss
@@ -295,8 +296,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 663b7c12a0dcc604981566a8ff7c6da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHeath: 500
-  maxHeath: 500
+  currentHeath: 1000
+  maxHeath: 1000
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
@@ -396,3 +397,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalTags:
   - PortalSkyBlue
+--- !u!114 &5116151584270277203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8584556993785574022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6b7ba5200aa144b90af477056beaeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 6253682636440716117, guid: aa03358df14a8634387964cc7f7610df, type: 3}
+  minCoin: 1
+  maxCoin: 1

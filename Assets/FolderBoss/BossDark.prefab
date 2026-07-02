@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3795099687825122570}
   - component: {fileID: 4830906287854357009}
   - component: {fileID: 1962954388394684697}
+  - component: {fileID: 4040670307918360707}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -227,6 +228,21 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0.32310075, y: 0}
   m_Radius: 1.6195936
+--- !u!114 &4040670307918360707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137719909907162588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6b7ba5200aa144b90af477056beaeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 6522669680145788577, guid: 97b8d684c527848448f3904b50533947, type: 3}
+  minCoin: 1
+  maxCoin: 1
 --- !u!1 &3023948101480405388
 GameObject:
   m_ObjectHideFlags: 0

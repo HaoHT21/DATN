@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
 public class IceBullet : MonoBehaviour
@@ -7,7 +7,7 @@ public class IceBullet : MonoBehaviour
     public int damage = 10;
 
     [Header("Freeze")]
-    public float freezeDuration = 2f;
+    public float freezeDuration = 2f; //Thời gian đóng băn
 
     [Header("Effect")]
     public GameObject hitEffectPrefab;

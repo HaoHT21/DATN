@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6558708864249700265}
   - component: {fileID: 8674557160359346065}
   - component: {fileID: 490247686830378988}
-  - component: {fileID: 9064068196828864583}
+  - component: {fileID: 6703238114481150759}
   m_Layer: 0
   m_Name: BulletAttackIce
   m_TagString: Untagged
@@ -186,7 +186,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &9064068196828864583
+--- !u!114 &6703238114481150759
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -195,9 +195,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2253353001783897143}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
+  m_Script: {fileID: 11500000, guid: e765d776ecf26004ebdbd345c33b3bc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 5
   speed: 10
-  lifeTime: 5
+  damage: 5
+  freezeDuration: 2
+  hitEffectPrefab: {fileID: 0}

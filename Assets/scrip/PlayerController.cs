@@ -88,15 +88,6 @@ public class PlayerController : MonoBehaviour
     //private float gunScaleValue = 0.5f;
 
 
-
-    [Header("Ép vị trí đầu nòng")]
-
-    [SerializeField] private float firePointXOffset = 0.355f;
-
-    [SerializeField] private float firePointYOffset = 0.353f;
-
-
-
     private void Awake()
 
     {

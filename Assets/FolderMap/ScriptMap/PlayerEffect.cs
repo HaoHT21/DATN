@@ -11,6 +11,8 @@ public class PlayerEffect : MonoBehaviour
     [Header("Chỉ số hiện tại")]
     public float currentMoveSpeed;
 
+    private Coroutine freezeCoroutine;
+
     private void Awake()
     {
         player = GetComponent<PlayerController>();
@@ -57,19 +59,32 @@ public class PlayerEffect : MonoBehaviour
 
     public void Freeze(float duration)
     {
-        StartCoroutine(FreezeRoutine(duration));
+        if (freezeCoroutine != null)
+            StopCoroutine(freezeCoroutine);
+
+        freezeCoroutine = StartCoroutine(FreezeRoutine(duration));
     }
 
     private IEnumerator FreezeRoutine(float duration)
     {
-        float oldSpeed = currentMoveSpeed;
-
         currentMoveSpeed = 0;
         ApplyStats();
 
         yield return new WaitForSeconds(duration);
 
-        currentMoveSpeed = oldSpeed;
+        freezeCoroutine = null;   // thêm dòng này
+        ResetEffects();
+    }
+
+    public void ResetEffects()
+    {   
+        if (freezeCoroutine != null)
+        {
+            StopCoroutine(freezeCoroutine);
+            freezeCoroutine = null;
+        }
+
+        currentMoveSpeed = baseMoveSpeed;
         ApplyStats();
     }
 }

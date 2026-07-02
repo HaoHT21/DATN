@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class BossHeath : MonoBehaviour
 {
     public int currentHeath = 500;
     public int maxHeath = 500;
+
+    public event Action OnDeath;
 
     [Header("UI Health Bar")]
     public Image healthFill;
@@ -83,15 +86,17 @@ public class BossHeath : MonoBehaviour
 
         currentHeath -= damage;
 
-        // =========================
-        // CHẾT
-        // =========================
         if (currentHeath <= 0)
         {
             currentHeath = 0;
             isDead = true;
 
-            SendMessage("OnBossDeath", SendMessageOptions.DontRequireReceiver);
+            OnDeath?.Invoke(); // THÊM DÒNG NÀY
+
+            SendMessage(
+                "OnBossDeath",
+                SendMessageOptions.DontRequireReceiver
+            );
         }
 
         targetFill = (float)currentHeath / maxHeath;

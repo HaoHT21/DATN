@@ -25,10 +25,8 @@ public class BossIceController : MonoBehaviour
     public GameObject icePrefab;
     public Transform icePoint;
 
-    public int iceCount = 20;
-
-    [Header("Ice Skill")]
     public int iceBurstCount = 1;
+    public int iceCount = 20;
 
     [Header("Attack Ice")]
     public GameObject attackIcePrefab;
@@ -136,7 +134,7 @@ public class BossIceController : MonoBehaviour
 
             skillInterval = 2f;
 
-            iceBurstCount += 1;
+            iceBurstCount += 2;
 
             iceCount += 20;
 

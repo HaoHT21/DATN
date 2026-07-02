@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 2017366247982543837}
   - component: {fileID: 1697641274032919246}
   - component: {fileID: 4464828106825799523}
+  - component: {fileID: 4292008385535015244}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -273,6 +274,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.21142122, y: 0.46000004}
   m_EdgeRadius: 0
+--- !u!114 &4292008385535015244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4127300441386205223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6b7ba5200aa144b90af477056beaeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 7949986674347164867, guid: c39be19e5b47b874db9b605373a3f0e3, type: 3}
+  minCoin: 1
+  maxCoin: 1
 --- !u!1 &5262982958826072117
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,7 +322,6 @@ Transform:
   m_Children:
   - {fileID: 6835805489388448769}
   - {fileID: 2166141072918886224}
-  - {fileID: 494972067599882905}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &5423722872995112170
@@ -356,7 +371,7 @@ MonoBehaviour:
   keepDistance: 4
   randomMoveRadius: 7
   randomMoveInterval: 1
-  laserObject: {fileID: 5843340687540868253}
+  laserObject: {fileID: 0}
   laserDuration: 1
   laserCastCount: 1
   laserInterval: 0.3
@@ -365,70 +380,3 @@ MonoBehaviour:
   shootCount: 10
   shootInterval: 0.3
   skillInterval: 3
---- !u!1001 &1162963021174807084
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 6056916006279979147}
-    m_Modifications:
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.282
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.99996495
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.0083774375
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -0.96
-      objectReference: {fileID: 0}
-    - target: {fileID: 1857316609127644506, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-      propertyPath: m_Name
-      value: Laser
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
---- !u!4 &494972067599882905 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1656712019392463029, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-  m_PrefabInstance: {fileID: 1162963021174807084}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5843340687540868253 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4698410898308452017, guid: 38e4ba84c72f3f846a24716378f40ba6, type: 3}
-  m_PrefabInstance: {fileID: 1162963021174807084}
-  m_PrefabAsset: {fileID: 0}
