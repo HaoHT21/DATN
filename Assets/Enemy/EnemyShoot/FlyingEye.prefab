@@ -212,7 +212,7 @@ MonoBehaviour:
   wanderInterval: 2
   alertedRange: 20
   hurtDuration: 0.3
-  knockbackForce: 3
+  knockbackForce: 5
   enemyVisual: {fileID: 7763603407439364821}
 --- !u!114 &4313215253566040633
 MonoBehaviour:
@@ -269,7 +269,7 @@ MonoBehaviour:
   firePoint: {fileID: 6844038010962383278}
   bulletsPerShot: 1
   spreadAngle: 0
-  enemyVisual: {fileID: 0}
+  enemyVisual: {fileID: 7763603407439364821}
 --- !u!1 &3850295788718324313
 GameObject:
   m_ObjectHideFlags: 0

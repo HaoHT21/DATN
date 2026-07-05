@@ -1,280 +1,246 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class BossSlimeController : MonoBehaviour
+public class BossSlimeController : BossController
 {
-    [Header("References")]
-    public Animator anim;
-    public SpriteRenderer sprite;
-    public BossHeath bossHeath;
-
-    [Header("Movement")]
-    public float moveSpeed = 2f;
-
-    public float detectRange = 10f;
-    public float keepDistance = 4f;
-
-    public float randomMoveRadius = 3f;
-    public float randomMoveInterval = 2f;
-
-    [Header("Shoot Skill")]
+    [Header("Shoot")]
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public int bulletCount = 8;
 
+    public int bulletCount = 20;
     public int jumpAttackCount = 2;
 
-    [Header("Summon Skill")]
+    [Header("Summon")]
     public GameObject enemyPrefab;
+
     public int summonCount = 5;
     public float summonRadius = 3f;
+    public float summonLifeTime = 10f;
 
-    [Header("Skill AI")]
-    public float skillInterval = 5f;
+    int skillIndex;
 
-    private float skillTimer;
-    private float moveTimer;
+    //--------------------------------
+    // PHASE
+    //--------------------------------
 
-    private Vector2 randomTarget;
-
-    private bool isCastingSkill;
-    private bool isDead;
-    private bool phase2;
-
-    private Transform target;
-    private Rigidbody2D rb;
-
-    void Awake()
+    protected override void OnPhaseChange(
+        int phase
+    )
     {
-        rb = GetComponent<Rigidbody2D>();
-
-        if (anim == null)
-            anim = GetComponent<Animator>();
-
-        if (sprite == null)
-            sprite = GetComponent<SpriteRenderer>();
-
-        if (bossHeath == null)
-            bossHeath = GetComponent<BossHeath>();
-    }
-
-    void Start()
-    {
-        GameObject player =
-            GameObject.FindGameObjectWithTag(
-                "Player"
-            );
-
-        if (player != null)
-            target = player.transform;
-    }
-
-    void Update()
-    {
-        //--------------------------------
-        // DEATH
-        //--------------------------------
-
-        if (!isDead &&
-            bossHeath.currentHeath <= 0)
+        if (phase == 2)
         {
-            isDead = true;
-
-            StopAllCoroutines();
-            isCastingSkill = false;
-
-            // dừng di chuyển
-            rb.linearVelocity = Vector2.zero;
-            rb.simulated = false;
-
-            // tắt collider để không nhận đạn nữa
-            Collider2D col =
-                GetComponent<Collider2D>();
-
-            if (col != null)
-                col.enabled = false;
-
-            PlayDeath();
-
-            StartCoroutine(
-                DeathRoutine()
-            );
-
-            return;
-        }
-
-        if (isDead || target == null)
-            return;
-
-        //--------------------------------
-        // PHASE 2
-        //--------------------------------
-
-        if (!phase2 &&
-        bossHeath.currentHeath <=
-        bossHeath.maxHeath * 0.5f)
-        {
-            phase2 = true;
-
-            skillInterval = 3f;
-
-            bulletCount += 6;
-
-            summonCount += 5;
-
+            bulletCount += 10;
+            summonCount += 2;
             jumpAttackCount += 2;
 
-            moveSpeed += 5f;
+            moveSpeed += 5;
         }
 
-        //--------------------------------
-        // SKILL TIMER
-        //--------------------------------
-
-        if (!isCastingSkill)
+        if (phase == 3)
         {
-            skillTimer += Time.deltaTime;
+            bulletCount += 10;
+            summonCount += 2;
+            jumpAttackCount += 2;
 
-            if (skillTimer >= skillInterval)
+            moveSpeed += 5;
+        }
+    }
+
+    //--------------------------------
+    // SKILL 1
+    //--------------------------------
+
+    protected override IEnumerator UseSkill1()
+    {
+        yield return ShootSkill();
+    }
+
+    //--------------------------------
+    // SKILL 2
+    //--------------------------------
+
+    protected override IEnumerator UseSkill2()
+    {
+        yield return SummonSkill();
+    }
+
+    //--------------------------------
+    // boss tự chọn thứ tự
+    //--------------------------------
+
+    protected override IEnumerator Think()
+    {
+        isThinking = true;
+
+        yield return new WaitForSeconds(
+            Random.Range(
+                thinkMin,
+                thinkMax
+            )
+        );
+
+        int action = 0;
+
+        //--------------------------------
+        // Phase 1
+        //--------------------------------
+
+        if (currentPhase == 1)
+        {
+            int roll =
+            Random.Range(
+                0,
+                100
+            );
+
+            //--------------------------------
+            // 70% di chuyển
+            //--------------------------------
+
+            if (roll < 50)
             {
-                skillTimer = 0f;
-
-                int randomSkill =
-                    Random.Range(0, 2);
-
-                if (randomSkill == 0)
-                {
-                    StartCoroutine(
-                        ShootSkill()
-                    );
-                }
-                else
-                {
-                    StartCoroutine(
-                        SummonSkill()
-                    );
-                }
+                yield return StartCoroutine(
+                    MoveState()
+                );
+            }
+            else if (roll < 75)
+            {
+                action = 0;
+            }
+            else
+            {
+                action = 1;
             }
         }
 
-        if (isCastingSkill)
-            return;
-
         //--------------------------------
-        // DETECT PLAYER
+        // Phase 2
         //--------------------------------
 
-        float distance =
-            Vector2.Distance(
-                transform.position,
-                target.position
+        else if (currentPhase == 2)
+        {
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (distance > detectRange)
-        {
-            PlayIdle();
-            return;
+            if (roll < 30)
+                yield return StartCoroutine(
+                    MoveState()
+                );
+
+            //--------------------------------
+            // 30% bắn
+            //--------------------------------
+
+            else if (roll < 70)
+                action = 0;
+
+            //--------------------------------
+            // 20% summon
+            //--------------------------------
+
+            else
+                action = 1;
         }
 
         //--------------------------------
-        // RANDOM MOVE
+        // Phase 3
         //--------------------------------
 
-        moveTimer -= Time.deltaTime;
-
-        if (moveTimer <= 0)
+        else
         {
-            moveTimer =
-                randomMoveInterval;
-
-            PickRandomPosition();
-        }
-
-        MoveBoss();
-
-        PlayIdle();
-
-        sprite.flipX =
-            target.position.x <
-            transform.position.x;
-    }
-
-    void PickRandomPosition()
-    {
-        Vector2 offset =
-            Random.insideUnitCircle *
-            randomMoveRadius;
-
-        Vector2 playerPos =
-            target.position;
-
-        randomTarget =
-            playerPos +
-            offset;
-
-        float distance =
-            Vector2.Distance(
-                randomTarget,
-                target.position
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (distance < keepDistance)
-        {
-            Vector2 dir =
-                (randomTarget - playerPos)
-                .normalized;
+            if (roll < 20)
+                yield return StartCoroutine(
+                    MoveState()
+                );
 
-            randomTarget =
-                playerPos +
-                dir *
-                keepDistance;
+            else if (roll < 50)
+                action = 0;
+
+            else
+                action = 1;
         }
+
+        //--------------------------------
+        // Execute
+        //--------------------------------
+
+        switch (action)
+        {
+            case 0:
+
+                yield return
+                StartCoroutine(
+                    UseSkill1()
+                );
+
+                break;
+
+            case 1:
+
+                yield return
+                StartCoroutine(
+                    UseSkill2()
+                );
+
+                break;
+        }
+
+        isThinking = false;
     }
 
-    void MoveBoss()
-    {
-        Vector2 direction =
-            (
-            randomTarget -
-            (Vector2)transform.position
-            ).normalized;
+    //--------------------------------
+    // SHOOT
+    //--------------------------------
 
-        rb.MovePosition(
-            rb.position +
-            direction *
-            moveSpeed *
-            Time.deltaTime
+    IEnumerator MoveState()
+    {
+        movementLocked = false;
+
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                .8f,
+                1.5f
+            )
         );
     }
 
     IEnumerator ShootSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        for (int wave = 0;
-             wave < jumpAttackCount;
-             wave++)
+        for (
+            int wave = 0;
+            wave < jumpAttackCount;
+            wave++
+        )
         {
-            if (isDead)
-            {
-                isCastingSkill = false;
-                yield break;
-            }
+            //--------------------------------
+            // phát animation mỗi wave
+            //--------------------------------
 
             PlayAttack();
 
-            yield return new WaitForSeconds(.5f);
-
-            if (isDead)
-                yield break;
+            yield return
+            new WaitForSeconds(.5f);
 
             float angleStep =
-                360f / bulletCount;
+            360f / bulletCount;
 
-            for (int i = 0;
-                 i < bulletCount;
-                 i++)
+            for (
+                int i = 0;
+                i < bulletCount;
+                i++
+            )
             {
                 Instantiate(
                     bulletPrefab,
@@ -287,99 +253,55 @@ public class BossSlimeController : MonoBehaviour
                 );
             }
 
-            yield return new WaitForSeconds(.4f);
+            yield return
+            new WaitForSeconds(.4f);
         }
 
-        isCastingSkill = false;
+        usingSkill = false;
+
+        PlayIdle();
     }
+
+    //--------------------------------
+    // SUMMON
+    //--------------------------------
 
     IEnumerator SummonSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
         PlayAttack();
 
-        yield return new WaitForSeconds(.5f);
+        yield return
+        new WaitForSeconds(.5f);
 
-        if (isDead)
-        {
-            isCastingSkill = false;
-            yield break;
-        }
-
-        for (int i = 0;
-             i < summonCount;
-             i++)
+        for (
+            int i = 0;
+            i < summonCount;
+            i++
+        )
         {
             Vector2 pos =
-                (Vector2)transform.position +
-                Random.insideUnitCircle *
-                summonRadius;
+            (Vector2)transform.position +
+            Random.insideUnitCircle *
+            summonRadius;
 
             GameObject enemy =
-                Instantiate(
-                    enemyPrefab,
-                    pos,
-                    Quaternion.identity
-                );
+            Instantiate(
+                enemyPrefab,
+                pos,
+                Quaternion.identity
+            );
 
-            Destroy(enemy, 10f);
+            Destroy(
+            enemy,
+            summonLifeTime
+            );
         }
 
-        yield return new WaitForSeconds(.5f);
 
-        isCastingSkill = false;
-    }
+        usingSkill = false;
 
-    void PlayIdle()
-    {
-        anim.Play("idle");
-    }
-
-    void PlayAttack()
-    {
-        anim.Play("attack", 0, 0f);
-    }
-
-    void PlayDeath()
-    {
-        anim.Play("death");
-    }
-
-    IEnumerator DeathRoutine()
-    {
-        // lấy độ dài animation death
-        AnimatorStateInfo state =
-            anim.GetCurrentAnimatorStateInfo(0);
-
-        yield return new WaitForSeconds(
-            state.length
-        );
-
-        Destroy(gameObject);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        // Detect range
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRange
-        );
-
-        // Keep distance
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            keepDistance
-        );
-
-        // Random move radius
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            randomMoveRadius
-        );
+        PlayIdle();
     }
 }

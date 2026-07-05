@@ -78,7 +78,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 1917365263, guid: 57384e3e200e7894ab6388c334a13241, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -103,6 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healAmount: 70
+  itemIcon: {fileID: 1917365263, guid: 57384e3e200e7894ab6388c334a13241, type: 3}
   potionVisualPrefab: {fileID: 5509279923031117867}
   pickupPrefab: {fileID: 5509279923031117867}
 --- !u!61 &-513563291090542277
@@ -167,5 +168,5 @@ MonoBehaviour:
   weaponVisualPrefab: {fileID: 5509279923031117867}
   weaponPickupPrefab: {fileID: 5509279923031117867}
   bulletPrefab: {fileID: 0}
-  isGun: 0
+  isGun: 1
   damage: 0

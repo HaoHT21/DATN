@@ -1,26 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class BossIceController : MonoBehaviour
+public class BossIceController : BossController
 {
-    [Header("References")]
-    public Animator anim;
-    public BossHeath bossHeath;
-
-
-    [Header("Visual")]
-    public Transform bossVisual;
-
-    [Header("Movement")]
-    public float moveSpeed = 2f;
-
-    public float detectRange = 10f;
-    public float keepDistance = 4f;
-
-    public float randomMoveRadius = 3f;
-    public float randomMoveInterval = 2f;
-
     [Header("Ice Burst")]
     public GameObject icePrefab;
     public Transform icePoint;
@@ -35,298 +17,237 @@ public class BossIceController : MonoBehaviour
     public int attackIceCount = 3;
     public float attackIceInterval = .3f;
 
-    [Header("Skill AI")]
-    public float skillInterval = 5f;
-
-    private float skillTimer;
-    private float moveTimer;
-
-    private Vector2 randomTarget;
-
-    private bool isCastingSkill;
-    private bool isDead;
-    private bool phase2;
-
-    private Transform target;
-    private Rigidbody2D rb;
-
     //--------------------------------
-    // SETUP
+    // PHASE
     //--------------------------------
 
-    void Awake()
+    protected override void OnPhaseChange(
+        int phase
+    )
     {
-        rb = GetComponent<Rigidbody2D>();
-
-        if (anim == null)
-            anim = GetComponent<Animator>();
-
-        if (bossHeath == null)
-            bossHeath =
-            GetComponent<BossHeath>();
-    }
-
-    void Start()
-    {
-        GameObject player =
-            GameObject.FindGameObjectWithTag(
-                "Player"
-            );
-
-        if (player != null)
-            target =
-            player.transform;
-    }
-
-    //--------------------------------
-    // UPDATE
-    //--------------------------------
-
-    void Update()
-    {
-        //--------------------------------
-        // DEATH
-        //--------------------------------
-
-        if (!isDead &&
-           bossHeath.currentHeath <= 0)
+        if (phase == 2)
         {
-            isDead = true;
+            iceBurstCount += 2;
 
-            StopAllCoroutines();
+            iceCount += 10;
 
-            isCastingSkill = false;
+            attackIceCount += 5;
 
-            rb.linearVelocity =
-            Vector2.zero;
-
-            rb.simulated = false;
-
-            foreach (
-                Collider2D col
-                in GetComponents<Collider2D>())
-            {
-                col.enabled = false;
-            }
-
-            PlayDeath();
-
-            StartCoroutine(
-                DeathRoutine()
-            );
-
-            return;
+            moveSpeed += 5;
         }
 
-        if (isDead ||
-           target == null)
-            return;
+        if (phase == 3)
+        {
+            iceBurstCount += 2;
+
+            iceCount += 10;
+
+            attackIceCount += 5;
+
+            moveSpeed += 5;
+        }
+    }
+
+    //--------------------------------
+    // SKILL 1
+    //--------------------------------
+
+    protected override IEnumerator UseSkill1()
+    {
+        yield return IceSkill();
+    }
+
+    //--------------------------------
+    // SKILL 2
+    //--------------------------------
+
+    protected override IEnumerator UseSkill2()
+    {
+        yield return AttackIceSkill();
+    }
+
+    //--------------------------------
+    // THINK
+    //--------------------------------
+
+    protected override IEnumerator Think()
+    {
+        isThinking = true;
+
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                thinkMin,
+                thinkMax
+            )
+        );
+
+        int action = 0;
+
+        //--------------------------------
+        // PHASE 1
+        //--------------------------------
+
+        if (currentPhase == 1)
+        {
+            int roll =
+            Random.Range(
+                0,
+                100
+            );
+
+            if (roll < 50)
+            {
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
+
+            else if (roll < 75)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
+        }
 
         //--------------------------------
         // PHASE 2
         //--------------------------------
 
-        if (!phase2 &&
-           bossHeath.currentHeath <=
-           bossHeath.maxHeath * .5f)
+        else if (currentPhase == 2)
         {
-            phase2 = true;
+            int roll =
+            Random.Range(
+                0,
+                100
+            );
 
-            skillInterval = 2f;
-
-            iceBurstCount += 2;
-
-            iceCount += 20;
-
-            attackIceCount += 10;
-
-            moveSpeed += 5f;
-        }
-
-        //--------------------------------
-        // SKILL TIMER
-        //--------------------------------
-
-        if (!isCastingSkill)
-        {
-            skillTimer += Time.deltaTime;
-
-            if (skillTimer >= skillInterval)
+            if (roll < 30)
             {
-                skillTimer = 0f;
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
 
-                int randomSkill =
-                    Random.Range(0, 2);
+            else if (roll < 60)
+            {
+                action = 0;
+            }
 
-                if (randomSkill == 0)
-                {
-                    StartCoroutine(
-                        IceSkill()
-                    );
-                }
-                else
-                {
-                    StartCoroutine(
-                        AttackIceSkill()
-                    );
-                }
+            else
+            {
+                action = 1;
             }
         }
 
-        if (isCastingSkill)
-            return;
-
         //--------------------------------
-        // PLAYER RANGE
+        // PHASE 3
         //--------------------------------
 
-        float distance =
-            Vector2.Distance(
-                transform.position,
-                target.position
-            );
-
-        if (distance >
-           detectRange)
-        {
-            PlayIdle();
-            return;
-        }
-
-        //--------------------------------
-        // RANDOM MOVE
-        //--------------------------------
-
-        moveTimer -=
-        Time.deltaTime;
-
-        if (moveTimer <= 0)
-        {
-            moveTimer =
-            randomMoveInterval;
-
-            PickRandomPosition();
-        }
-
-        //--------------------------------
-        // LOOK PLAYER
-        //--------------------------------
-
-        Vector3 rot =
-        bossVisual.localEulerAngles;
-
-        if (target.position.x >
-           transform.position.x)
-        {
-            rot.y = 0;
-        }
         else
         {
-            rot.y = 180;
-        }
-
-        bossVisual.localEulerAngles =
-        rot;
-
-        MoveBoss();
-
-        PlayIdle();
-    }
-
-    //--------------------------------
-    // MOVE
-    //--------------------------------
-
-    void PickRandomPosition()
-    {
-        Vector2 offset =
-            Random.insideUnitCircle *
-            randomMoveRadius;
-
-        Vector2 playerPos =
-            target.position;
-
-        randomTarget =
-            playerPos +
-            offset;
-
-        float distance =
-            Vector2.Distance(
-                randomTarget,
-                playerPos
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (distance <
-           keepDistance)
-        {
-            Vector2 dir =
-                (randomTarget -
-                playerPos)
-                .normalized;
+            if (roll < 20)
+            {
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
 
-            randomTarget =
-                playerPos +
-                dir *
-                keepDistance;
+            else if (roll < 50)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
         }
+
+        //--------------------------------
+        // EXECUTE
+        //--------------------------------
+
+        switch (action)
+        {
+            case 0:
+
+                yield return
+                StartCoroutine(
+                    UseSkill1()
+                );
+
+                break;
+
+            case 1:
+
+                yield return
+                StartCoroutine(
+                    UseSkill2()
+                );
+
+                break;
+        }
+
+        isThinking = false;
     }
 
-    void MoveBoss()
+    IEnumerator MoveState()
     {
-        Vector2 dir =
-        (
-        randomTarget -
-        (Vector2)
-        transform.position
-        ).normalized;
-
-        rb.MovePosition(
-            rb.position +
-            dir *
-            moveSpeed *
-            Time.deltaTime
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                .8f,
+                1.5f
+            )
         );
     }
 
     //--------------------------------
-    // SKILLS
+    // ICE BURST
     //--------------------------------
 
     IEnumerator IceSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        for (int wave = 0;
-             wave < iceBurstCount;
-             wave++)
+        for (
+            int wave = 0;
+            wave < iceBurstCount;
+            wave++
+        )
         {
-            if (isDead)
-            {
-                isCastingSkill = false;
-                yield break;
-            }
-
-            // chạy animation mỗi lần
-            PlayIce();
+            Ice();
 
             yield return
-            new WaitForSeconds(.5f);
-
-            if (isDead)
-            {
-                isCastingSkill = false;
-                yield break;
-            }
+            new WaitForSeconds(
+                .5f
+            );
 
             float angleStep =
-                360f / iceCount;
+            360f / iceCount;
 
-            for (int i = 0;
-                 i < iceCount;
-                 i++)
+            for (
+                int i = 0;
+                i < iceCount;
+                i++
+            )
             {
                 float angle =
-                    i * angleStep;
+                i * angleStep;
 
                 Instantiate(
                     icePrefab,
@@ -339,31 +260,37 @@ public class BossIceController : MonoBehaviour
                 );
             }
 
-            // nghỉ giữa các lần bắn
             yield return
-            new WaitForSeconds(.4f);
+            new WaitForSeconds(
+                .4f
+            );
         }
 
-        PlayIdle();
+        usingSkill = false;
 
-        isCastingSkill = false;
+        PlayIdle();
     }
+
+    //--------------------------------
+    // ATTACK ICE
+    //--------------------------------
 
     IEnumerator AttackIceSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        for (int i = 0;
+        for (
+            int i = 0;
             i < attackIceCount;
-            i++)
+            i++
+        )
         {
-            if (isDead)
-                yield break;
-
             PlayAttack();
 
             yield return
-            new WaitForSeconds(.3f);
+            new WaitForSeconds(
+                .3f
+            );
 
             SpawnAttackIce();
 
@@ -373,25 +300,25 @@ public class BossIceController : MonoBehaviour
             );
         }
 
-        PlayIdle();
+        usingSkill = false;
 
-        isCastingSkill = false;
+        PlayIdle();
     }
 
     void SpawnAttackIce()
     {
         Vector2 dir =
-            (
+        (
             target.position -
             attackIcePoint.position
-            ).normalized;
+        ).normalized;
 
         float angle =
-            Mathf.Atan2(
-                dir.y,
-                dir.x
-            ) *
-            Mathf.Rad2Deg;
+        Mathf.Atan2(
+            dir.y,
+            dir.x
+        ) *
+        Mathf.Rad2Deg;
 
         Instantiate(
             attackIcePrefab,
@@ -401,86 +328,6 @@ public class BossIceController : MonoBehaviour
                 0,
                 angle
             )
-        );
-    }
-
-    //--------------------------------
-    // ANIMATION
-    //--------------------------------
-
-    void PlayIdle()
-    {
-        anim.Play("idle");
-    }
-
-    void PlayAttack()
-    {
-        anim.Play(
-            "attack",
-            0,
-            0
-        );
-    }
-
-    void PlayIce()
-    {
-        anim.Play(
-            "ice",
-            0,
-            0
-        );
-    }
-
-    void PlayDeath()
-    {
-        anim.Play(
-            "death"
-        );
-    }
-
-    //--------------------------------
-    // DESTROY
-    //--------------------------------
-
-    IEnumerator DeathRoutine()
-    {
-        yield return
-        new WaitForSeconds(
-            anim.GetCurrentAnimatorStateInfo(0)
-            .length
-        );
-
-        Destroy(gameObject);
-    }
-
-    //--------------------------------
-    // GIZMOS
-    //--------------------------------
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color =
-        Color.yellow;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRange
-        );
-
-        Gizmos.color =
-        Color.red;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            keepDistance
-        );
-
-        Gizmos.color =
-        Color.cyan;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            randomMoveRadius
         );
     }
 }

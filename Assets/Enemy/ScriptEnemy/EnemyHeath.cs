@@ -40,7 +40,7 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
 
     public void TakeDamage(int damage)
     {
-        if (isDead)
+        if (isDead) 
             return;
 
         currentHealth -= damage;

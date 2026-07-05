@@ -1,24 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class BossMinoController : MonoBehaviour
+public class BossMinoController : BossController
 {
-    [Header("References")]
-    public Animator anim;
-    public SpriteRenderer sprite;
-    public BossHeath bossHeath;
-
-    [Header("Movement")]
-    public float moveSpeed = 2f;
-
-    public float detectRange = 10f;
-    public float keepDistance = 4f;
-
-    public float randomMoveRadius = 3f;
-    public float randomMoveInterval = 2f;
-
-    [Header("Shoot Skill")]
+    [Header("Shoot")]
     public GameObject bulletPrefab;
     public Transform firePoint;
 
@@ -26,7 +11,7 @@ public class BossMinoController : MonoBehaviour
     public int shootCount = 2;
     public float shootInterval = .5f;
 
-    [Header("RedBull Skill")]
+    [Header("RedBull")]
     public GameObject redBullEffect;
 
     public float chargeSpeed = 10f;
@@ -35,275 +20,209 @@ public class BossMinoController : MonoBehaviour
     public int redBullCount = 1;
     public float redBullInterval = .5f;
 
-    [Header("Retreat")]
     public float retreatDistance = 6f;
-    public float retreatSpeed = 4f;
+    public float retreatSpeed =  4f;
 
-    [Header("Skill AI")]
-    public float skillInterval = 5f;
-
-    [Header("Visual")]
-    public Transform bossVisual;
-
-    [Header("Death")]
-    public float deathDuration = 1.5f;
-
-    private float skillTimer;
-    private float moveTimer;
-
-    private Vector2 randomTarget;
-    private Vector2 chargeDirection;
-
-    private bool isCastingSkill;
-    private bool isDead;
-    private bool phase2;
-
-    private Transform target;
-    private Rigidbody2D rb;
+    Vector2 chargeDirection;
 
     //--------------------------------
-    // SETUP
+    // PHASE
     //--------------------------------
 
-    void Awake()
+    protected override void OnPhaseChange(
+        int phase
+    )
     {
-        rb = GetComponent<Rigidbody2D>();
-
-        if (anim == null)
-            anim = GetComponent<Animator>();
-
-        if (sprite == null)
-            sprite = GetComponent<SpriteRenderer>();
-
-        if (bossHeath == null)
-            bossHeath =
-                GetComponent<BossHeath>();
-    }
-
-    void Start()
-    {
-        GameObject player =
-            GameObject.FindGameObjectWithTag(
-                "Player"
-            );
-
-        if (player != null)
-            target =
-                player.transform;
-
-        if (redBullEffect != null)
-            redBullEffect.SetActive(false);
-    }
-
-    //--------------------------------
-    // UPDATE
-    //--------------------------------
-
-    void Update()
-    {
-        //--------------------------------
-        // DEATH
-        //--------------------------------
-
-        if (!isDead &&
-    bossHeath.currentHeath <= 0)
+        if (phase == 2)
         {
-            isDead = true;
-
-            StopAllCoroutines();
-
-            if (redBullEffect != null)
-                redBullEffect.SetActive(false);
-
-            rb.linearVelocity =
-                Vector2.zero;
-
-            rb.simulated = false;
-
-            foreach (
-                Collider2D col
-                in GetComponents<Collider2D>())
-            {
-                col.enabled = false;
-            }
-
-            PlayDeath();
-
-            StartCoroutine(
-                DeathRoutine()
-            );
-
-            return;
-        }
-
-        if (isDead ||
-            target == null)
-            return;
-
-        //--------------------------------
-        // PHASE 2
-        //--------------------------------
-
-        if (!phase2 &&
-            bossHeath.currentHeath <=
-            bossHeath.maxHeath * .5f)
-        {
-            phase2 = true;
-
-            skillInterval = 2f;
-
             bulletCount += 5;
+
             shootCount += 2;
+
+            chargeSpeed += 100;
+
+            chargeDuration -= 0.2f;
 
             redBullCount += 1;
 
-            moveSpeed += 5f;
+            moveSpeed += 5;
         }
 
-        //--------------------------------
-        // SKILL
-        //--------------------------------
-
-        if (!isCastingSkill)
+        if (phase == 3)
         {
-            skillTimer +=
-                Time.deltaTime;
+            bulletCount += 5;
 
-            if (skillTimer >=
-                skillInterval)
+            shootCount += 2;
+
+            chargeSpeed += 100;
+
+            chargeDuration -= 0.2f;
+
+            redBullCount += 1;
+
+            moveSpeed += 5;
+        }
+    }
+
+    protected override void DisableEffects()
+    {
+        if (redBullEffect != null)
+        {
+            redBullEffect.SetActive(
+                false
+            );
+        }
+    }
+
+    //--------------------------------
+    // SKILL 1
+    //--------------------------------
+
+    protected override IEnumerator UseSkill1()
+    {
+        yield return ShootSkill();
+    }
+
+    //--------------------------------
+    // SKILL 2
+    //--------------------------------
+
+    protected override IEnumerator UseSkill2()
+    {
+        yield return RedBullSkill();
+    }
+
+    //--------------------------------
+    // THINK
+    //--------------------------------
+
+    protected override IEnumerator Think()
+    {
+        isThinking = true;
+
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                thinkMin,
+                thinkMax
+            )
+        );
+
+        int action = 0;
+
+        if (currentPhase == 1)
+        {
+            int roll =
+            Random.Range(
+                0,
+                100
+            );
+
+            if (roll < 50)
             {
-                skillTimer = 0;
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
 
-                int skill =
-                    Random.Range(0, 2);
+            else if (roll < 75)
+            {
+                action = 0;
+            }
 
-                if (skill == 0)
-                {
-                    StartCoroutine(
-                        ShootSkill()
-                    );
-                }
-                else
-                {
-                    StartCoroutine(
-                        RedBullSkill()
-                    );
-                }
+            else
+            {
+                action = 1;
             }
         }
 
-        if (isCastingSkill)
-            return;
-
-        //--------------------------------
-        // PLAYER RANGE
-        //--------------------------------
-
-        float distance =
-            Vector2.Distance(
-                transform.position,
-                target.position
+        else if (currentPhase == 2)
+        {
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (distance > detectRange)
-        {
-            PlayIdle();
-            return;
+            if (roll < 30)
+            {
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
+
+            else if (roll < 50)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
         }
 
-        //--------------------------------
-        // RANDOM MOVE
-        //--------------------------------
-
-        moveTimer -=
-            Time.deltaTime;
-
-        if (moveTimer <= 0)
-        {
-            moveTimer =
-                randomMoveInterval;
-
-            PickRandomPosition();
-        }
-
-        //--------------------------------
-        // LOOK PLAYER
-        //--------------------------------
-
-        Vector3 rot =
-            bossVisual.localEulerAngles;
-
-        if (target.position.x >
-            transform.position.x)
-        {
-            rot.y = 0;
-        }
         else
         {
-            rot.y = 180;
-        }
-
-        bossVisual.localEulerAngles =
-            rot;
-
-        MoveBoss();
-
-        PlayIdle();
-    }
-
-    //--------------------------------
-    // MOVE
-    //--------------------------------
-
-    void PickRandomPosition()
-    {
-        Vector2 offset =
-            Random.insideUnitCircle *
-            randomMoveRadius;
-
-        Vector2 playerPos =
-            target.position;
-
-        randomTarget =
-            playerPos +
-            offset;
-
-        float distance =
-            Vector2.Distance(
-                randomTarget,
-                playerPos
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (distance <
-            keepDistance)
-        {
-            Vector2 dir =
-                (
-                randomTarget -
-                playerPos
-                ).normalized;
+            if (roll < 20)
+            {
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
 
-            randomTarget =
-                playerPos +
-                dir *
-                keepDistance;
+            else if (roll < 50)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
         }
+
+        switch (action)
+        {
+            case 0:
+
+                yield return
+                StartCoroutine(
+                    UseSkill1()
+                );
+
+                break;
+
+            case 1:
+
+                yield return
+                StartCoroutine(
+                    UseSkill2()
+                );
+
+                break;
+        }
+
+        isThinking = false;
     }
 
-    void MoveBoss()
+    IEnumerator MoveState()
     {
-        Vector2 dir =
-            (
-            randomTarget -
-            (Vector2)
-            transform.position
-            ).normalized;
-
-        rb.MovePosition(
-            rb.position +
-            dir *
-            moveSpeed *
-            Time.deltaTime
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                .8f,
+                1.5f
+            )
         );
     }
 
@@ -313,46 +232,45 @@ public class BossMinoController : MonoBehaviour
 
     IEnumerator ShootSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        for (int i = 0; i < shootCount; i++)
+        for (
+            int i = 0;
+            i < shootCount;
+            i++
+        )
         {
-            // chạy animation 1 lần
             PlayAttack();
 
-            // đợi tới thời điểm đòn 1
             yield return
-            new WaitForSeconds(.3f);
+            new WaitForSeconds(
+                .3f
+            );
 
             FireBullets();
 
-            // đợi tới thời điểm đòn 2
             yield return
-            new WaitForSeconds(.5f);
+            new WaitForSeconds(
+                .5f
+            );
 
             FireBullets();
 
-            // nghỉ trước combo tiếp theo
             yield return
             new WaitForSeconds(
                 shootInterval
             );
         }
 
-        PlayIdle();
+        usingSkill = false;
 
-        isCastingSkill = false;
+        PlayIdle();
     }
 
-    private void FireBullets()
+    void FireBullets()
     {
-        if (bulletPrefab == null ||
-            firePoint == null)
-            return;
+        float spread = 60f;
 
-        float spread = 45f;
-
-        // nếu chỉ có 1 viên
         if (bulletCount <= 1)
         {
             Instantiate(
@@ -364,20 +282,26 @@ public class BossMinoController : MonoBehaviour
             return;
         }
 
-        // nhiều viên tỏa hình quạt
-        for (int i = 0; i < bulletCount; i++)
+        for (
+            int i = 0;
+            i < bulletCount;
+            i++
+        )
         {
             float angle =
-                -spread / 2f +
-                (spread / (bulletCount - 1)) * i;
+            -spread / 2f +
+            (
+            spread /
+            (bulletCount - 1)
+            ) * i;
 
             Quaternion rot =
-                firePoint.rotation *
-                Quaternion.Euler(
-                    0,
-                    0,
-                    angle
-                );
+            firePoint.rotation *
+            Quaternion.Euler(
+                0,
+                0,
+                angle
+            );
 
             Instantiate(
                 bulletPrefab,
@@ -393,245 +317,100 @@ public class BossMinoController : MonoBehaviour
 
     IEnumerator RedBullSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
+        movementLocked = true;
 
-        for (int i = 0;
-             i < redBullCount;
-             i++)
+        for (
+            int i = 0;
+            i < redBullCount;
+            i++
+        )
         {
-            // cập nhật hướng nhìn mới
-            Vector3 rot =
-                bossVisual.localEulerAngles;
-
-            if (target.position.x >
-                transform.position.x)
-            {
-                rot.y = 0f;
-            }
-            else
-            {
-                rot.y = 180f;
-            }
-
-            bossVisual.localEulerAngles =
-                rot;
-
-            // lấy hướng mới tới player
             chargeDirection =
             (
-            target.position -
-            transform.position
+                target.position -
+                transform.position
             ).normalized;
 
-            PlayRedBull();
+            RedBull();
 
             yield return
             new WaitForSeconds(.3f);
 
             if (redBullEffect != null)
+            {
                 redBullEffect.SetActive(
                     true
                 );
+            }
 
             float timer = 0;
 
             while (
                 timer <
-                chargeDuration)
+                chargeDuration
+            )
             {
                 rb.MovePosition(
                     rb.position +
                     chargeDirection *
                     chargeSpeed *
-                    Time.fixedDeltaTime
+                    Time.deltaTime
                 );
 
                 timer +=
-                    Time.fixedDeltaTime;
+                Time.deltaTime;
 
-                yield return
-                new WaitForFixedUpdate();
+                yield return null;
             }
-
-            rb.linearVelocity =
-            Vector2.zero;
 
             if (redBullEffect != null)
-                redBullEffect.SetActive(false);
-
-            // lùi ra sau khi húc
-            yield return
-            StartCoroutine(
-                RetreatAfterCharge()
-            );
-
-            // nghỉ giữa các lần
-            if (i < redBullCount - 1)
             {
-                yield return
-                new WaitForSeconds(
-                    redBullInterval
+                redBullEffect.SetActive(
+                    false
                 );
             }
+
+            yield return
+            RetreatAfterCharge();
+
+            yield return
+            new WaitForSeconds(
+                redBullInterval
+            );
         }
 
-        PlayIdle();
+        movementLocked = false;
+        usingSkill = false;
 
-        isCastingSkill = false;
+        PlayIdle();
     }
 
     IEnumerator RetreatAfterCharge()
     {
-        float distance =
+        while (
             Vector2.Distance(
                 transform.position,
                 target.position
-            );
-
-        // nếu đủ xa thì thôi
-        if (distance >= retreatDistance)
-            yield break;
-
-        while (distance < retreatDistance)
+            )
+            <
+            retreatDistance
+        )
         {
-            if (target == null)
-                yield break;
-
-            // hướng ngược player
             Vector2 dir =
             (
             transform.position -
             target.position
             ).normalized;
 
-            // flip theo hướng lùi
-            Vector3 rot =
-                bossVisual.localEulerAngles;
-
-            if (dir.x > 0)
-                rot.y = 0f;
-            else
-                rot.y = 180f;
-
-            bossVisual.localEulerAngles =
-                rot;
-
             rb.MovePosition(
                 rb.position +
                 dir *
                 retreatSpeed *
-                Time.fixedDeltaTime
+                Time.deltaTime
             );
 
-            distance =
-                Vector2.Distance(
-                    transform.position,
-                    target.position
-                );
-
-            yield return
-                new WaitForFixedUpdate();
+            yield return null;
         }
-
-        rb.linearVelocity =
-            Vector2.zero;
-    }
-
-    //--------------------------------
-    // ANIMATION
-    //--------------------------------
-
-    void PlayIdle()
-    {
-        anim.Play("idle");
-    }
-
-    void PlayAttack()
-    {
-        anim.Play(
-            "attack",
-            0,
-            0
-        );
-    }
-
-    void PlayRedBull()
-    {
-        anim.Play(
-            "redbull",
-            0,
-            0
-        );
-    }
-
-    void PlayDeath()
-    {
-        anim.Play("death");
-    }
-
-    IEnumerator DeathRoutine()
-    {
-        yield return
-            new WaitForSeconds(
-                deathDuration
-            );
-
-        Destroy(gameObject);
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        // Detect Range
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRange
-        );
-
-        // Keep Distance
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            keepDistance
-        );
-
-        // Random Move Radius
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            randomMoveRadius
-        );
-
-        // Điểm boss đang muốn di chuyển tới
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(
-            randomTarget,
-            .2f
-        );
-
-        // Đường nối tới mục tiêu di chuyển
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawLine(
-            transform.position,
-            randomTarget
-        );
-
-        // Khi đang charge RedBull
-        if (Application.isPlaying)
-        {
-            Gizmos.color = Color.blue;
-
-            Gizmos.DrawRay(
-                transform.position,
-                chargeDirection * 3f
-            );
-        }
-
-        Gizmos.color = Color.green;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            retreatDistance
-        );
     }
 }

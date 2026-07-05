@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7721229704029659740}
   - component: {fileID: 8574186302067650516}
   - component: {fileID: 3868474196776496540}
-  - component: {fileID: 3435020659348411631}
   - component: {fileID: 4771119784679979070}
   - component: {fileID: 6454910713266590159}
+  - component: {fileID: 1025348016193689015}
   m_Layer: 0
   m_Name: Summon
   m_TagString: Enemy
@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 2359222360881132017}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 152.99129, y: -36.283314, z: 0}
+  m_LocalPosition: {x: 6.498457, y: -7.0744963, z: 0}
   m_LocalScale: {x: 5.1268563, y: 5.1268563, z: 5.1268563}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -177,7 +177,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -188,22 +188,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!114 &3435020659348411631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2359222360881132017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a9fcb8db05d7f542a6511cca90d2c61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
-  destroyDelay: 0.3
+  m_Constraints: 4
 --- !u!114 &4771119784679979070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,6 +238,22 @@ MonoBehaviour:
   bulletsPerShot: 1
   spreadAngle: 0
   enemyVisual: {fileID: 5435255626168514078}
+--- !u!114 &1025348016193689015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2359222360881132017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e4851d279219164daa38ecc8c8a500d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 100
+  expReward: 30
+  destroyDelay: 0.5
 --- !u!1 &7545844921616473371
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,6 +263,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8778679867893842952}
+  - component: {fileID: 6493850742001071379}
   m_Layer: 0
   m_Name: bullet
   m_TagString: Untagged
@@ -284,3 +286,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5435255626168514078}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6493850742001071379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7545844921616473371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc1ca2bb113c9434ca3fdabbd4300892, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rotateSpeed: 100

@@ -1,24 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class BossFireController : MonoBehaviour
+public class BossFireController : BossController
 {
-    [Header("References")]
-    public Animator anim;
-    public SpriteRenderer sprite;
-    public BossHeath bossHeath;
-
-    [Header("Movement")]
-    public float moveSpeed = 2f;
-
-    public float detectRange = 10f;
-    public float keepDistance = 4f;
-
-    public float randomMoveRadius = 3f;
-    public float randomMoveInterval = 2f;
-
-    [Header("Fireball Skill")]
+    [Header("Fireball")]
     public GameObject fireballPrefab;
     public Transform fireballPoint;
 
@@ -26,279 +11,246 @@ public class BossFireController : MonoBehaviour
     public float fireballInterval = .08f;
     public float randomAngle = 30f;
 
-    [Header("Spit Fire Skill")]
+    [Header("SpitFire")]
     public GameObject spitFireObject;
 
     public float spitFireDuration = 1f;
 
-    public int spitFireCount = 1; // số lần phun
-    public float spitFireInterval = .5f; // nghỉ giữa các lần
+    public int spitFireCount = 1;
+    public float spitFireInterval = .5f;
 
-    [Header("Skill AI")]
-    public float skillInterval = 5f;
+    //--------------------------------
+    // PHASE
+    //--------------------------------
 
-    [Header("Visual")]
-    public Transform bossVisual;
-
-    private float skillTimer;
-    private float moveTimer;
-
-    private Vector2 randomTarget;
-
-    private bool isCastingSkill;
-    private bool isDead;
-    private bool phase2;
-
-    private Transform target;
-    private Rigidbody2D rb;
-
-    void Awake()
+    protected override void OnPhaseChange(
+        int phase
+    )
     {
-        rb = GetComponent<Rigidbody2D>();
+        if (phase == 2)
+        {
+            fireballCount += 30;
 
-        if (anim == null)
-            anim = GetComponent<Animator>();
+            spitFireCount += 1;
 
-        if (sprite == null)
-            sprite = GetComponent<SpriteRenderer>();
+            randomAngle -= 10f;
 
-        if (bossHeath == null)
-            bossHeath =
-                GetComponent<BossHeath>();
+            moveSpeed += 5;
+        }
+
+        if (phase == 3)
+        {
+            fireballCount += 50;
+
+            spitFireCount += 1;
+
+            moveSpeed += 5;
+        }
     }
 
-    void Start()
+    //--------------------------------
+    // EFFECT OFF WHEN DEAD
+    //--------------------------------
+
+    protected override void DisableEffects()
     {
-        GameObject player =
-            GameObject.FindGameObjectWithTag(
-                "Player"
+        if (spitFireObject != null)
+        {
+            spitFireObject.SetActive(
+                false
+            );
+        }
+    }
+
+    //--------------------------------
+    // SKILL 1
+    //--------------------------------
+
+    protected override IEnumerator UseSkill1()
+    {
+        yield return FireballSkill();
+    }
+
+    //--------------------------------
+    // SKILL 2
+    //--------------------------------
+
+    protected override IEnumerator UseSkill2()
+    {
+        yield return SpitFireSkill();
+    }
+
+    //--------------------------------
+    // THINK
+    //--------------------------------
+
+    protected override IEnumerator Think()
+    {
+        isThinking = true;
+
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                thinkMin,
+                thinkMax
+            )
+        );
+
+        int action = 0;
+
+        //--------------------------------
+        // PHASE 1
+        //--------------------------------
+
+        if (currentPhase == 1)
+        {
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (player != null)
-            target =
-                player.transform;
-    }
-
-    void Update()
-    {
-        //--------------------------------
-        // DEATH
-        //--------------------------------
-
-        if (!isDead &&
-    bossHeath.currentHeath <= 0)
-        {
-            isDead = true;
-
-            StopAllCoroutines();
-            isCastingSkill = false;
-
-            // tắt skill đang bật
-            if (spitFireObject != null)
-                spitFireObject.SetActive(false);
-
-            // dừng di chuyển
-            rb.linearVelocity = Vector2.zero;
-            rb.simulated = false;
-
-            // tắt collider
-            foreach (Collider2D col in GetComponents<Collider2D>())
+            if (roll < 50)
             {
-                col.enabled = false;
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
             }
 
-            // chạy animation chết
-            PlayDeath();
+            else if (roll < 75)
+            {
+                action = 0;
+            }
 
-            // bắt đầu hủy boss
-            StartCoroutine(DeathRoutine());
-
-            return;
+            else
+            {
+                action = 1;
+            }
         }
-        if (isDead || target == null)
-            return;
 
         //--------------------------------
         // PHASE 2
         //--------------------------------
 
-        if (!phase2 &&
-    bossHeath.currentHeath <=
-    bossHeath.maxHeath * .5f)
+        else if (currentPhase == 2)
         {
-            phase2 = true;
+            int roll =
+            Random.Range(
+                0,
+                100
+            );
 
-            skillInterval = 2f;
-
-            fireballCount += 30;
-
-            //spitFireDuration += 1f;
-
-            spitFireCount += 1; // 1 -> 2 lần
-
-            moveSpeed += 5f;
-
-            randomAngle -= 10f;
-        }
-
-        //--------------------------------
-        // SKILL
-        //--------------------------------
-
-        if (!isCastingSkill)
-        {
-            skillTimer += Time.deltaTime;
-
-            if (skillTimer >= skillInterval)
+            if (roll < 30)
             {
-                skillTimer = 0f;
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
 
-                int skill =
-                    Random.Range(0, 2);
+            else if (roll < 60)
+            {
+                action = 0;
+            }
 
-                if (skill == 0)
-                {
-                    StartCoroutine(
-                        FireballSkill()
-                    );
-                }
-                else
-                {
-                    StartCoroutine(
-                        SpitFireSkill()
-                    );
-                }
+            else
+            {
+                action = 1;
             }
         }
 
-        if (isCastingSkill)
-            return;
-
         //--------------------------------
-        // PLAYER RANGE
+        // PHASE 3
         //--------------------------------
 
-        float distance =
-            Vector2.Distance(
-                transform.position,
-                target.position
-            );
-
-        if (distance > detectRange)
-        {
-            PlayIdle();
-            return;
-        }
-
-        //--------------------------------
-        // RANDOM MOVE
-        //--------------------------------
-
-        moveTimer -= Time.deltaTime;
-
-        if (moveTimer <= 0)
-        {
-            moveTimer =
-                randomMoveInterval;
-
-            PickRandomPosition();
-        }
-
-        //--------------------------------
-        // LOOK PLAYER
-        //--------------------------------
-
-        Vector3 rot =
-            bossVisual.localEulerAngles;
-
-        if (target.position.x >
-           transform.position.x)
-        {
-            rot.y = 0f;
-        }
         else
         {
-            rot.y = 180f;
-        }
-
-        bossVisual.localEulerAngles =
-            rot;
-
-        MoveBoss();
-
-        PlayIdle();
-    }
-
-    void PickRandomPosition()
-    {
-        Vector2 offset =
-            Random.insideUnitCircle *
-            randomMoveRadius;
-
-        Vector2 playerPos =
-            target.position;
-
-        randomTarget =
-            playerPos +
-            offset;
-
-        float distance =
-            Vector2.Distance(
-                randomTarget,
-                playerPos
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (distance <
-            keepDistance)
-        {
-            Vector2 dir =
-                (randomTarget -
-                playerPos)
-                .normalized;
+            if (roll < 20)
+            {
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
 
-            randomTarget =
-                playerPos +
-                dir *
-                keepDistance;
+            else if (roll < 50)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
         }
+
+        //--------------------------------
+        // EXECUTE
+        //--------------------------------
+
+        switch (action)
+        {
+            case 0:
+
+                yield return
+                StartCoroutine(
+                    UseSkill1()
+                );
+
+                break;
+
+            case 1:
+
+                yield return
+                StartCoroutine(
+                    UseSkill2()
+                );
+
+                break;
+        }
+
+        isThinking = false;
     }
 
-    void MoveBoss()
+    IEnumerator MoveState()
     {
-        Vector2 dir =
-            (
-            randomTarget -
-            (Vector2)
-            transform.position
-            ).normalized;
-
-        rb.MovePosition(
-            rb.position +
-            dir *
-            moveSpeed *
-            Time.deltaTime
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                .8f,
+                1.5f
+            )
         );
     }
 
+    //--------------------------------
+    // FIREBALL
+    //--------------------------------
+
     IEnumerator FireballSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        rb.linearVelocity =
-            Vector2.zero;
-
-        PlayFireball();
+        FireBall();
 
         yield return
-            new WaitForSeconds(.5f);
+        new WaitForSeconds(
+            .5f
+        );
 
-        for (int i = 0;
+        for (
+            int i = 0;
             i < fireballCount;
-            i++)
+            i++
+        )
         {
-            if (isDead)
-                yield break;
-
             SpawnFireball();
 
             yield return
@@ -307,18 +259,18 @@ public class BossFireController : MonoBehaviour
             );
         }
 
-        PlayIdle();
+        usingSkill = false;
 
-        isCastingSkill = false;
+        PlayIdle();
     }
 
     void SpawnFireball()
     {
         float offset =
-            Random.Range(
-                -randomAngle,
-                randomAngle
-            );
+        Random.Range(
+            -randomAngle,
+            randomAngle
+        );
 
         Instantiate(
             fireballPrefab,
@@ -332,144 +284,54 @@ public class BossFireController : MonoBehaviour
         );
     }
 
+    //--------------------------------
+    // SPIT FIRE
+    //--------------------------------
+
     IEnumerator SpitFireSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        rb.linearVelocity =
-            Vector2.zero;
-
-        for (int i = 0;
-             i < spitFireCount;
-             i++)
+        for (
+            int i = 0;
+            i < spitFireCount;
+            i++
+        )
         {
-            if (isDead)
-            {
-                isCastingSkill = false;
-                yield break;
-            }
-
-            // chạy animation mỗi lần
-            PlaySpitFire();
+            SpitFire();
 
             yield return
-            new WaitForSeconds(.5f);
+            new WaitForSeconds(
+                .5f
+            );
 
-            // bật lửa
             if (spitFireObject != null)
+            {
                 spitFireObject.SetActive(
                     true
                 );
+            }
 
-            // thời gian tồn tại
             yield return
             new WaitForSeconds(
                 spitFireDuration
             );
 
-            // tắt lửa
             if (spitFireObject != null)
+            {
                 spitFireObject.SetActive(
                     false
                 );
-
-            // nghỉ giữa các lần
-            if (i < spitFireCount - 1)
-            {
-                yield return
-                new WaitForSeconds(
-                    spitFireInterval
-                );
             }
+
+            yield return
+            new WaitForSeconds(
+                spitFireInterval
+            );
         }
 
+        usingSkill = false;
+
         PlayIdle();
-
-        isCastingSkill = false;
-    }
-    void PlayIdle()
-    {
-        anim.Play("idle");
-    }
-
-    void PlayFireball()
-    {
-        anim.Play(
-            "fireball",
-            0,
-            0
-        );
-    }
-
-    void PlaySpitFire()
-    {
-        anim.Play(
-            "spitfire",
-            0,
-            0
-        );
-    }
-
-    void PlayDeath()
-    {
-        anim.Play("death");
-    }
-
-    IEnumerator DeathRoutine()
-    {
-        // lấy độ dài animation death
-        AnimatorStateInfo state =
-            anim.GetCurrentAnimatorStateInfo(0);
-
-        yield return new WaitForSeconds(
-            state.length
-        );
-
-        Destroy(gameObject);
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color =
-            Color.yellow;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRange
-        );
-
-        Gizmos.color =
-            Color.red;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            keepDistance
-        );
-
-        Gizmos.color =
-            Color.cyan;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            randomMoveRadius
-        );
-
-        // Điểm boss muốn đi tới
-        Gizmos.color =
-            Color.green;
-
-        Gizmos.DrawSphere(
-            randomTarget,
-            .2f
-        );
-
-        // Đường nối boss -> mục tiêu
-        Gizmos.color =
-            Color.magenta;
-
-        Gizmos.DrawLine(
-            transform.position,
-            randomTarget
-        );
     }
 }

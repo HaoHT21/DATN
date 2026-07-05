@@ -270,7 +270,7 @@ Transform:
   m_GameObject: {fileID: 3023948101480405388}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1459913, y: -0.49500775, z: 0}
+  m_LocalPosition: {x: 54.7, y: 4.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -318,15 +318,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4369ff3676565d41b277f2164da2ff5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  randomMoveRadius: 7
+  randomMoveInterval: 1
   anim: {fileID: 3795099687825122570}
-  sprite: {fileID: 7269354682807966676}
   bossHeath: {fileID: 1644364692530888133}
-  bodyCollider: {fileID: 4830906287854357009}
+  bossVisual: {fileID: 7504817822580109076}
+  spriteRenderer: {fileID: 7269354682807966676}
+  hitColliders:
+  - {fileID: 4830906287854357009}
+  sprites: []
   moveSpeed: 5
   detectRange: 20
   keepDistance: 4
-  randomMoveRadius: 7
-  randomMoveInterval: 1
+  thinkMin: 0.5
+  thinkMax: 1.5
   bulletCastPrefab: {fileID: 6035235758144762600, guid: f42d48a105179454984001d98e702654, type: 3}
   castPoint: {fileID: 8583973896195866896}
   castCount: 5
@@ -336,11 +341,9 @@ MonoBehaviour:
   spawnBulletPrefab: {fileID: 467079513599447265, guid: c87e57c2b61430b4e908070ebcf73e60, type: 3}
   spawnPoint: {fileID: 5182542988469131853}
   spawnBulletCount: 15
-  skillInterval: 3
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
-  bossVisual: {fileID: 7504817822580109076}
 --- !u!1 &3611413556769118090
 GameObject:
   m_ObjectHideFlags: 0

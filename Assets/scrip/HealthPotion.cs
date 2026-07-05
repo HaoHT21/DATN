@@ -6,6 +6,7 @@ public class HealthPotion : MonoBehaviour
     public int healAmount = 50;
 
     [Header("Visuals")]
+    public Sprite itemIcon;               // Kéo ảnh sprite bình máu vào đây trên Inspector
     public GameObject potionVisualPrefab; // Kéo Prefab hình ảnh bình máu của bạn vào đây
     public GameObject pickupPrefab;       // File prefab gốc của bình máu (để khi vứt ra)
 
@@ -18,14 +19,19 @@ public class HealthPotion : MonoBehaviour
             if (pc != null)
             {
                 // 1. Tạo hình ảnh bình máu gắn vào tay nhân vật (ẩn đi ban đầu)
-                GameObject visual = Instantiate(potionVisualPrefab, pc.weaponHolder);
-                visual.transform.localPosition = Vector3.zero; // Căn giữa tại holder
-                visual.transform.localScale = new Vector3(2f, 2f, 2f); // Đồng bộ tỉ lệ với súng
-                visual.SetActive(false); // Ẩn đi, chỉ hiện khi được chọn trong inventory
+                GameObject visual = null;
+                if (potionVisualPrefab != null && pc.weaponHolder != null)
+                {
+                    visual = Instantiate(potionVisualPrefab, pc.weaponHolder);
+                    visual.transform.localPosition = Vector3.zero; // Căn giữa tại holder
+                    visual.transform.localScale = new Vector3(2f, 2f, 2f); // Đồng bộ tỉ lệ với súng
+                    visual.SetActive(false); // Ẩn đi, chỉ hiện khi được chọn trong inventory
+                }
 
                 // 2. Tạo item để đưa vào danh sách của Player
                 PlayerController.WeaponItem newPotion = new PlayerController.WeaponItem
                 {
+                    icon = this.itemIcon, // Gán icon để hiển thị chính xác trong Kholon
                     visualPrefab = visual, // Gán visual vừa tạo
                     pickupPrefab = this.pickupPrefab,
                     isGun = false,         // Không phải súng
@@ -33,13 +39,14 @@ public class HealthPotion : MonoBehaviour
                     healAmount = this.healAmount
                 };
 
-                // 3. Thêm vào túi và refresh UI/Visuals
-                pc.inventory.Add(newPotion);
+                // 3. Thêm thẳng vào list inventory dùng chung của PlayerController
+                if (pc.inventory != null)
+                {
+                    pc.inventory.Add(newPotion);
+                    pc.UpdateWeaponVisuals(); // Cập nhật và kích hoạt OnInventoryChanged làm mới UI
+                }
 
-                // Lưu ý: Đảm bảo bạn gọi hàm UpdateWeaponVisuals() trong PlayerController
-                // để nó cập nhật hiển thị ngay lập tức
-                Debug.Log("Đã nhặt bình máu!");
-
+                Debug.Log("Đã nhặt bình máu thành công!");
                 Destroy(gameObject);
             }
         }

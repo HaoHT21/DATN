@@ -58,7 +58,6 @@ public class EnemyController : MonoBehaviour
 
     private Coroutine hurtCoroutine;
 
-
     public Transform Target => target;
 
     public bool HasTarget =>
@@ -66,7 +65,6 @@ public class EnemyController : MonoBehaviour
 
     public Rigidbody2D RB =>
         rb;
-
 
     private void Awake()
     {
@@ -156,34 +154,28 @@ public class EnemyController : MonoBehaviour
         if (animator == null)
             return;
 
-        // Attack luôn restart
-        if (animName == "attack")
-        {
-            currentAnim = animName;
-
-            animator.Play(
-                animName,
-                0,
-                0f
-            );
-
+        if (currentAnim == "death")
             return;
-        }
 
-        // Death ưu tiên
-        if (isDead &&
+        if (currentAnim == "hurt" &&
             animName != "death")
             return;
 
-        // Tránh spam cùng animation
-        if (currentAnim == animName)
+        // attack luôn cho phát lại
+        if (
+            currentAnim == animName &&
+            animName != "attack"
+        )
             return;
 
         currentAnim = animName;
 
-        animator.Play(animName);
+        animator.Play(
+            animName,
+            0,
+            0f
+        );
     }
-
 
     bool CanSeePlayer(Transform player)
     {
@@ -530,65 +522,128 @@ public class EnemyController : MonoBehaviour
     }
 
 
+    //--------------------------------
+    // HURT + KNOCKBACK
+    //--------------------------------
+
     void HandleHurt()
     {
-        // reset trạng thái cũ trước
-        if (hurtCoroutine != null)
+        //--------------------------------
+        // Nếu đang bị hurt
+        // thì reset coroutine cũ
+        //--------------------------------
+
+        if (
+            hurtCoroutine != null
+        )
         {
             StopCoroutine(
-                hurtCoroutine);
+                hurtCoroutine
+            );
 
             isHurting = false;
         }
 
+        //--------------------------------
+        // Chạy hurt mới
+        //--------------------------------
+
         hurtCoroutine =
-            StartCoroutine(
-                HurtRoutine());
+        StartCoroutine(
+            HurtRoutine()
+        );
     }
 
 
     IEnumerator HurtRoutine()
     {
+        //--------------------------------
+        // Đã chết thì bỏ
+        //--------------------------------
+
         if (isDead)
             yield break;
 
+        //--------------------------------
+        // Khóa AI
+        //--------------------------------
+
         isHurting = true;
 
-        // hướng bật lùi
+        //--------------------------------
+        // Tính hướng bật lùi
+        //--------------------------------
+
         Vector2 dir =
-            (
-                (Vector2)transform.position -
-                lastHitPosition
-            ).normalized;
+        (
+            (Vector2)
+            transform.position -
+            lastHitPosition
+        ).normalized;
 
-        // bật lùi
-        rb.linearVelocity =
-            dir * knockbackForce;
-
-        // restart hurt
-        animator.Play(
-            "hurt",
-            0,
-            0f);
-
-        yield return new WaitForSeconds(
-            hurtDuration);
-
-        rb.linearVelocity =
-            Vector2.zero;
-
-        isHurting = false;
-
-        hurtCoroutine = null;
+        //--------------------------------
+        // Phát animation hurt
+        //--------------------------------
 
         currentAnim = "";
 
-        if (target != null)
-            PlayAnimation("run");
-        else
-            PlayAnimation("idle");
-    }
+        PlayAnimation(
+            "hurt"
+        );
 
+        //--------------------------------
+        // Bật lùi NGAY LẬP TỨC
+        //--------------------------------
+
+        rb.linearVelocity =
+        dir *
+        knockbackForce;
+
+        //--------------------------------
+        // Chờ thời gian hurt
+        //--------------------------------
+
+        yield return
+        new WaitForSeconds(
+            hurtDuration
+        );
+
+        //--------------------------------
+        // Dừng knockback
+        //--------------------------------
+
+        rb.linearVelocity =
+        Vector2.zero;
+
+        //--------------------------------
+        // Mở lại AI
+        //--------------------------------
+
+        isHurting =
+        false;
+
+        hurtCoroutine =
+        null;
+
+        currentAnim = "";
+
+        //--------------------------------
+        // Quay lại state cũ
+        //--------------------------------
+
+        if (target != null)
+        {
+            PlayAnimation(
+                "run"
+            );
+        }
+        else
+        {
+            PlayAnimation(
+                "idle"
+            );
+        }
+    }
 
     void HandleDeath()
     {

@@ -88,6 +88,15 @@ public class PlayerController : MonoBehaviour
     //private float gunScaleValue = 0.5f;
 
 
+
+    [Header("Ép vị trí đầu nòng")]
+
+    [SerializeField] private float firePointXOffset = 0.355f;
+
+    [SerializeField] private float firePointYOffset = 0.353f;
+
+
+
     private void Awake()
 
     {
@@ -402,6 +411,8 @@ public class PlayerController : MonoBehaviour
 
     }
 
+
+
     public void SwitchToWeaponIndex(int slotIndex)
     {
         if (inventory == null)
@@ -409,6 +420,28 @@ public class PlayerController : MonoBehaviour
 
         if (slotIndex < 0 || slotIndex >= inventory.Count)
             return;
+
+        // --- THÊM PHẦN XỬ LÝ DÙNG BÌNH MÁU TẠI ĐÂY ---
+        if (inventory[slotIndex].isPotion)
+        {
+            PlayerHealth ph = GetComponent<PlayerHealth>();
+            if (ph != null)
+            {
+                // Gọi hàm hồi máu của Player
+                ph.Heal(inventory[slotIndex].healAmount);
+
+                // Phát âm thanh hồi máu nếu có cấu hình
+                if (AudioManager.Instance != null && healSound != null)
+                {
+                    AudioManager.Instance.PlaySound(healSound);
+                }
+
+                // Xóa bình máu ra khỏi danh sách
+                RemoveWeapon(slotIndex);
+            }
+            return; // Ngăn chặn không cho gán làm vũ khí cầm trên tay
+        }
+        // ----------------------------------------------
 
         currentWeaponIndex = slotIndex;
 

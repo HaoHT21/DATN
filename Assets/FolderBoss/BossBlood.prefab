@@ -58,7 +58,7 @@ Transform:
   m_GameObject: {fileID: 3064413470847460566}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 160.21931, y: -45.54882, z: 0}
+  m_LocalPosition: {x: 39.04, y: 3.94, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -106,25 +106,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ab008fe063a74448e45f5291db28f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  randomMoveRadius: 7
+  randomMoveInterval: 1
   anim: {fileID: 1210730058464290578}
-  sprite: {fileID: 1826291345669189954}
   bossHeath: {fileID: 5220937057520885301}
   bossVisual: {fileID: 3089116152010881573}
+  spriteRenderer: {fileID: 1826291345669189954}
+  hitColliders: []
+  sprites: []
   moveSpeed: 5
   detectRange: 20
   keepDistance: 4
-  randomMoveRadius: 7
-  randomMoveInterval: 1
+  thinkMin: 0.5
+  thinkMax: 1.5
   bulletPrefab: {fileID: 1643830161435805557, guid: 843fa729cba5ce845ad048fcba2c10da, type: 3}
   firePoint: {fileID: 9081796348302129515}
-  bulletCount: 2
+  bulletCount: 1
   bulletInterval: 0.3
-  summonPrefab: {fileID: 996668166563666831, guid: e1808ade3f55b1f4b994065f4476940f, type: 3}
+  summonPrefab: {fileID: 2359222360881132017, guid: e1808ade3f55b1f4b994065f4476940f, type: 3}
   summonPoint: {fileID: 2734535326007396112}
   summonCount: 5
   summonLifeTime: 5
-  skillInterval: 3
-  deathDuration: 1.5
 --- !u!1 &7152426900566913204
 GameObject:
   m_ObjectHideFlags: 0

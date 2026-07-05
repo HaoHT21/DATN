@@ -1,24 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class BossDarkController : MonoBehaviour
+public class BossDarkController : BossController
 {
-    [Header("References")]
-    public Animator anim;
-    public SpriteRenderer sprite;
-    public BossHeath bossHeath;
-    public BoxCollider2D bodyCollider;
-
-    [Header("Movement")]
-    public float moveSpeed = 5f;
-
-    public float detectRange = 10f;
-    public float keepDistance = 4f;
-
-    public float randomMoveRadius = 6f;
-    public float randomMoveInterval = 2f;
-
     [Header("Cast Skill")]
     public GameObject bulletCastPrefab;
     public Transform castPoint;
@@ -33,294 +17,277 @@ public class BossDarkController : MonoBehaviour
     [Header("Spawn Attack")]
     public GameObject spawnBulletPrefab;
     public Transform spawnPoint;
-    public int spawnBulletCount = 12;
 
-    [Header("Skill AI")]
-    public float skillInterval = 5f;
+    public int spawnBulletCount = 12;
 
     [Header("Invisible")]
     public LayerMask wallLayer;
 
-    [Header("Visual")]
-    public Transform bossVisual;
+    BoxCollider2D bodyCollider;
 
-    private float skillTimer;
-    private float moveTimer;
-
-    private Vector2 randomTarget;
-
-    private bool isCastingSkill;
-    private bool isInvisible;
-    private bool isDead;
-    private bool phase2;
-
-    private Transform target;
-    private Rigidbody2D rb;
+    bool isInvisible;
 
     //--------------------------------
     // SETUP
     //--------------------------------
 
-    void Awake()
+    protected override void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        base.Awake();
 
-        if (anim == null)
-            anim = GetComponent<Animator>();
+        bodyCollider =
+        GetComponent<BoxCollider2D>();
 
-        if (sprite == null)
-            sprite = GetComponent<SpriteRenderer>();
-
-        if (bossHeath == null)
-            bossHeath =
-            GetComponent<BossHeath>();
-
-        if (bodyCollider == null)
-            bodyCollider =
-            GetComponent<BoxCollider2D>();
-    }
-
-    void Start()
-    {
-        GameObject player =
-        GameObject.FindGameObjectWithTag(
-            "Player"
-        );
-
-        if (player != null)
-            target =
-            player.transform;
-    }
-
-    //--------------------------------
-    // UPDATE
-    //--------------------------------
-
-    void Update()
-    {
-        //--------------------------------
-        // DEATH
-        //--------------------------------
-
-        if (!isDead &&
-            bossHeath.currentHeath <= 0)
+        if (
+            sprites == null ||
+            sprites.Length == 0
+        )
         {
-            isDead = true;
-
-            StopAllCoroutines();
-
-            rb.linearVelocity =
-            Vector2.zero;
-
-            rb.simulated = false;
-
-            PlayDeath();
-
-            StartCoroutine(
-                DeathRoutine()
-            );
-
-            return;
+            sprites =
+            GetComponentsInChildren<
+            SpriteRenderer>();
         }
 
-        if (isDead || target == null)
-            return;
-
-        //--------------------------------
-        // PHASE 2
-        //--------------------------------
-
-        if (!phase2 &&
-            bossHeath.currentHeath <=
-            bossHeath.maxHeath * .5f)
+        if (
+            hitColliders == null ||
+            hitColliders.Length == 0
+        )
         {
-            phase2 = true;
+            hitColliders =
+            GetComponentsInChildren<
+            Collider2D>();
+        }
+    }
 
-            skillInterval = 2f;
+    protected void SetInvisible(
+bool value
+)
+    {
+        foreach (
+            SpriteRenderer sp
+            in sprites
+        )
+        {
+            sp.enabled =
+            !value;
+        }
 
+        foreach (
+            Collider2D col
+            in hitColliders
+        )
+        {
+            col.enabled =
+            !value;
+        }
+
+        if (anim != null)
+        {
+            anim.enabled =
+            !value;
+        }
+    }
+
+    //--------------------------------
+    // PHASE
+    //--------------------------------
+
+    protected override void OnPhaseChange(
+        int phase
+    )
+    {
+        if (phase == 2)
+        {
+            castCount += 3;
+
+            invisibleMoveSpeed += 5;
+
+            spawnBulletCount += 10;
+
+            moveSpeed += 5;
+        }
+
+        if (phase == 3)
+        {
             castCount += 5;
 
-            moveSpeed += 5f;
+            invisibleMoveSpeed += 5;
 
-            invisibleMoveSpeed += 10f;
+            spawnBulletCount += 15;
 
-            spawnBulletCount += 20;
+            moveSpeed += 5;
         }
+    }
 
-        //--------------------------------
-        // INVISIBLE MOVE
-        //--------------------------------
+    //--------------------------------
+    // SKILL1
+    //--------------------------------
 
-        if (isInvisible)
+    protected override IEnumerator UseSkill1()
+    {
+        yield return CastSkill();
+    }
+
+    //--------------------------------
+    // SKILL2
+    //--------------------------------
+
+    protected override IEnumerator UseSkill2()
+    {
+        yield return InvisibleSkill();
+    }
+
+    //--------------------------------
+    // THINK
+    //--------------------------------
+
+    protected override IEnumerator Think()
+    {
+        isThinking = true;
+
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                thinkMin,
+                thinkMax
+            )
+        );
+
+        int action = 0;
+
+        if (currentPhase == 1)
         {
-            MoveInvisible();
-            return;
-        }
+            int roll =
+            Random.Range(0, 100);
 
-        //--------------------------------
-        // SKILL
-        //--------------------------------
-
-        if (!isCastingSkill)
-        {
-            skillTimer +=
-            Time.deltaTime;
-
-            if (skillTimer >=
-                skillInterval)
+            if (roll < 50)
             {
-                skillTimer = 0;
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
 
-                int skill =
-                Random.Range(0, 2);
+            else if (roll < 75)
+            {
+                action = 0;
+            }
 
-                if (skill == 0)
-                {
-                    StartCoroutine(
-                        CastSkill()
-                    );
-                }
-                else
-                {
-                    StartCoroutine(
-                        InvisibleSkill()
-                    );
-                }
+            else
+            {
+                action = 1;
             }
         }
 
-        if (isCastingSkill)
-            return;
-
-        //--------------------------------
-        // PLAYER RANGE
-        //--------------------------------
-
-        float distance =
-        Vector2.Distance(
-            transform.position,
-            target.position
-        );
-
-        if (distance >
-            detectRange)
+        else if (currentPhase == 2)
         {
-            PlayIdle();
-            return;
+            int roll =
+            Random.Range(0, 100);
+
+            if (roll < 30)
+            {
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
+
+            else if (roll < 60)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
         }
 
-        //--------------------------------
-        // RANDOM MOVE
-        //--------------------------------
-
-        moveTimer -=
-        Time.deltaTime;
-
-        if (moveTimer <= 0)
-        {
-            moveTimer =
-            randomMoveInterval;
-
-            PickRandomPosition();
-        }
-
-        //--------------------------------
-        // LOOK PLAYER
-        //--------------------------------
-
-        Vector3 rot =
-        bossVisual.localEulerAngles;
-
-        if (target.position.x >
-            transform.position.x)
-            rot.y = 0;
         else
-            rot.y = 180;
-
-        bossVisual.localEulerAngles =
-        rot;
-
-        MoveBoss();
-
-        PlayIdle();
-    }
-
-    //--------------------------------
-    // MOVE
-    //--------------------------------
-
-    void PickRandomPosition()
-    {
-        Vector2 offset =
-        Random.insideUnitCircle *
-        randomMoveRadius;
-
-        Vector2 playerPos =
-        target.position;
-
-        randomTarget =
-        playerPos +
-        offset;
-
-        float distance =
-        Vector2.Distance(
-            randomTarget,
-            playerPos
-        );
-
-        if (distance <
-            keepDistance)
         {
-            Vector2 dir =
-            (
-                randomTarget -
-                playerPos
-            ).normalized;
+            int roll =
+            Random.Range(0, 100);
 
-            randomTarget =
-            playerPos +
-            dir *
-            keepDistance;
+            if (roll < 20)
+            {
+                yield return
+                StartCoroutine(
+                    MoveState()
+                );
+            }
+
+            else if (roll < 50)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
         }
+
+        switch (action)
+        {
+            case 0:
+
+                yield return
+                StartCoroutine(
+                    UseSkill1()
+                );
+
+                break;
+
+            case 1:
+
+                yield return
+                StartCoroutine(
+                    UseSkill2()
+                );
+
+                break;
+        }
+
+        isThinking = false;
     }
 
-    void MoveBoss()
+    IEnumerator MoveState()
     {
-        Vector2 dir =
-            (
-            randomTarget -
-            (Vector2)
-            transform.position
-            ).normalized;
-
-        rb.MovePosition(
-            rb.position +
-            dir *
-            moveSpeed *
-            Time.deltaTime
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                .8f,
+                1.5f
+            )
         );
     }
 
     //--------------------------------
-    // CAST SKILL
+    // CAST
     //--------------------------------
 
     IEnumerator CastSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        PlayCast();
-
-        yield return
-        new WaitForSeconds(
-            .5f
-        );
-
-        for (int i = 0;
+        for (
+            int i = 0;
             i < castCount;
-            i++)
+            i++
+        )
         {
-            SpawnCast();
+            Shoot();
+
+            yield return
+            new WaitForSeconds(
+                .3f
+            );
+
+            Instantiate(
+                bulletCastPrefab,
+                castPoint.position,
+                castPoint.rotation
+            );
 
             yield return
             new WaitForSeconds(
@@ -328,46 +295,9 @@ public class BossDarkController : MonoBehaviour
             );
         }
 
+        usingSkill = false;
+
         PlayIdle();
-
-        isCastingSkill = false;
-    }
-
-    void SpawnCast()
-    {
-        Instantiate(
-            bulletCastPrefab,
-            castPoint.position,
-            castPoint.rotation
-        );
-    }
-
-    void SpawnCircleBullet()
-    {
-        if (spawnBulletPrefab == null ||
-            spawnPoint == null)
-            return;
-
-        for (int i = 0;
-             i < spawnBulletCount;
-             i++)
-        {
-            float angle =
-                (360f / spawnBulletCount) * i;
-
-            Quaternion rot =
-                Quaternion.Euler(
-                    0,
-                    0,
-                    angle
-                );
-
-            Instantiate(
-                spawnBulletPrefab,
-                spawnPoint.position,
-                rot
-            );
-        }
     }
 
     //--------------------------------
@@ -376,36 +306,43 @@ public class BossDarkController : MonoBehaviour
 
     IEnumerator InvisibleSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
+
         isInvisible = true;
 
-        sprite.enabled = false;
-
-        bodyCollider.enabled = false;
-
-        anim.enabled = false;
+        SetInvisible(true);
 
         PickInvisibleTarget();
 
-        yield return
-        new WaitForSeconds(
+        float timer = 0;
+
+        while (
+            timer <
             invisibleDuration
-        );
+        )
+        {
+            MoveInvisible();
 
-        sprite.enabled = true;
+            timer +=
+            Time.deltaTime;
 
-        bodyCollider.enabled = true;
+            yield return null;
+        }
 
-        anim.enabled = true;
+        SetInvisible(false);
 
-        // hiện ra nổ đạn
         SpawnCircleBullet();
 
         PlayIdle();
 
         isInvisible = false;
-        isCastingSkill = false;
+
+        usingSkill = false;
     }
+
+    //--------------------------------
+    // INVISIBLE MOVE
+    //--------------------------------
 
     void MoveInvisible()
     {
@@ -413,7 +350,8 @@ public class BossDarkController : MonoBehaviour
             Vector2.Distance(
                 transform.position,
                 randomTarget
-            ) < 0.5f)
+            ) < .5f
+        )
         {
             PickInvisibleTarget();
         }
@@ -421,8 +359,7 @@ public class BossDarkController : MonoBehaviour
         Vector2 dir =
         (
             randomTarget -
-            (Vector2)
-            transform.position
+            rb.position
         ).normalized;
 
         rb.MovePosition(
@@ -438,119 +375,80 @@ public class BossDarkController : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             Vector2 pos =
-            (Vector2)
-            transform.position +
+            (Vector2)transform.position +
             Random.insideUnitCircle *
             randomMoveRadius;
 
-            Collider2D wall =
-            Physics2D.OverlapCircle(
+            //--------------------------------
+            // điểm nằm trong tường
+            //--------------------------------
+
+            if (
+                Physics2D.OverlapCircle(
+                    pos,
+                    .5f,
+                    wallLayer
+                )
+            )
+            {
+                continue;
+            }
+
+            //--------------------------------
+            // đường đi xuyên tường
+            //--------------------------------
+
+            RaycastHit2D hit =
+            Physics2D.Linecast(
+                transform.position,
                 pos,
-                .5f,
                 wallLayer
             );
 
-            if (wall == null)
+            if (hit.collider != null)
             {
-                randomTarget =
-                pos;
-                return;
+                continue;
             }
+
+            //--------------------------------
+
+            randomTarget = pos;
+            return;
         }
+
+        randomTarget =
+        transform.position;
     }
 
     //--------------------------------
-    // ANIMATION
+    // BULLET CIRCLE
     //--------------------------------
 
-    void PlayIdle()
+    void SpawnCircleBullet()
     {
-        anim.Play("idle");
-    }
-
-    void PlayCast()
-    {
-        anim.Play(
-            "cast",
-            0,
-            0
-        );
-    }
-
-    void PlayDeath()
-    {
-        anim.Play("death");
-    }
-
-    IEnumerator DeathRoutine()
-    {
-        AnimatorStateInfo state =
-            anim.GetCurrentAnimatorStateInfo(0);
-
-        yield return
-        new WaitForSeconds(
-            state.length
-        );
-
-        Destroy(gameObject);
-    }
-
-    //--------------------------------
-    // GIZMOS
-    //--------------------------------
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color =
-        Color.yellow;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRange
-        );
-
-        Gizmos.color =
-        Color.red;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            keepDistance
-        );
-
-        Gizmos.color =
-        Color.cyan;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            randomMoveRadius
-        );
-
-        Gizmos.color =
-        Color.green;
-
-        Gizmos.DrawSphere(
-            randomTarget,
-            .2f
-        );
-
-        Gizmos.color =
-        Color.magenta;
-
-        Gizmos.DrawLine(
-            transform.position,
-            randomTarget
-        );
-
-        if (spawnPoint != null)
+        for (
+            int i = 0;
+            i < spawnBulletCount;
+            i++
+        )
         {
-            Gizmos.color =
-                Color.blue;
+            float angle =
+            (360f /
+            spawnBulletCount)
+            * i;
 
-            Gizmos.DrawSphere(
+            Quaternion rot =
+            Quaternion.Euler(
+                0,
+                0,
+                angle
+            );
+
+            Instantiate(
+                spawnBulletPrefab,
                 spawnPoint.position,
-                .2f
+                rot
             );
         }
     }
 }
-

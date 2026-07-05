@@ -316,7 +316,7 @@ Transform:
   m_GameObject: {fileID: 5922061935708019749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 45.538925, y: -17.470062, z: 0}
+  m_LocalPosition: {x: 38.82, y: -2.97, z: 0}
   m_LocalScale: {x: 0.78787, y: 0.78787, z: 0.78787}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -363,22 +363,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf93de3cacae90e40bb62e6ffdb21737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anim: {fileID: 4801181886052171027}
-  sprite: {fileID: 6565258463793625397}
-  bossHeath: {fileID: 1328154370370441818}
-  moveSpeed: 5
-  detectRange: 20
-  keepDistance: 4
   randomMoveRadius: 7
   randomMoveInterval: 1
+  anim: {fileID: 4801181886052171027}
+  bossHeath: {fileID: 1328154370370441818}
+  bossVisual: {fileID: 3633283288196985582}
+  spriteRenderer: {fileID: 6565258463793625397}
+  hitColliders: []
+  sprites: []
+  moveSpeed: 10
+  detectRange: 20
+  keepDistance: 4
+  thinkMin: 0.5
+  thinkMax: 1.5
   bulletPrefab: {fileID: 4554662268799726002, guid: 652691a15305cb04da23b23b2f97874b, type: 3}
   firePoint: {fileID: 4481129972615789737}
   bulletCount: 5
   bulletInterval: 0.3
   flyBulletPrefab: {fileID: 3417836176469242662, guid: 1fd4f84cdf192d04685c8df7459a62ab, type: 3}
-  flyBulletCount: 15
+  flyBulletCount: 20
   flyDuration: 10
   flyRadius: 10
   flySpawnInterval: 0.3
-  skillInterval: 3
-  bossVisual: {fileID: 3633283288196985582}

@@ -63,13 +63,6 @@ public class Bullet : MonoBehaviour
             EnemyController controller =
                 col.GetComponent<EnemyController>();
 
-            if (controller != null)
-            {
-                controller.SetHitPosition(
-                    transform.position
-                );
-            }
-
             enemy.TakeDamage(
                 damage);
 

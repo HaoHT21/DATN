@@ -1,295 +1,228 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class BossRockController : MonoBehaviour
+public class BossRockController : BossController
 {
-    [Header("References")]
-    public Animator anim;
-    public BossHeath bossHeath;
-
-    [Header("Visual")]
-    public Transform bossVisual;
-
-    [Header("Movement")]
-    public float moveSpeed = 2f;
-
-    public float detectRange = 10f;
-    public float keepDistance = 4f;
-
-    public float randomMoveRadius = 3f;
-    public float randomMoveInterval = 2f;
-
-    [Header("Laser Skill")]
+    [Header("Laser")]
     public GameObject laserObject;
 
     public float laserDuration = 2f;
+    public int laserCastCount = 1;
+    public float laserInterval = .5f;
 
-    public int laserCastCount = 1; // số lần laser xuất hiện
-    public float laserInterval = .5f; // nghỉ giữa mỗi lần
-
-    [Header("Shoot Skill")]
+    [Header("Shoot")]
     public GameObject bulletPrefab;
 
     public Transform shootPoint;
-
     public int shootCount = 3;
-
     public float shootInterval = .3f;
 
-    [Header("Skill AI")]
-    public float skillInterval = 5f;
-
-    private float skillTimer;
-    private float moveTimer;
-
-    private Vector2 randomTarget;
-
-    private bool isCastingSkill;
-    private bool isDead;
-    private bool phase2;
-
-    private Transform target;
-    private Rigidbody2D rb;
-
     //--------------------------------
-    // SETUP
+    // PHASE
     //--------------------------------
 
-    void Awake()
+    protected override void OnPhaseChange(
+        int phase
+    )
     {
-        rb = GetComponent<Rigidbody2D>();
+        //--------------------------------
+        // phase 2
+        //--------------------------------
 
-        if (anim == null)
-            anim =
-            GetComponent<Animator>();
+        if (phase == 2)
+        {
+            shootCount += 5;
 
-        if (bossHeath == null)
-            bossHeath =
-            GetComponent<BossHeath>();
+            laserCastCount += 1;
+
+            moveSpeed += 5;
+        }
+
+        //--------------------------------
+        // phase 3
+        //--------------------------------
+
+        if (phase == 3)
+        {
+            shootCount += 5;
+
+            laserCastCount += 1;
+
+            moveSpeed += 5;
+        }
     }
 
-    void Start()
+    protected override void DisableEffects()
     {
-        GameObject player =
-            GameObject.FindGameObjectWithTag(
-                "Player"
+        if (laserObject != null)
+        {
+            laserObject.SetActive(
+                false
+            );
+        }
+    }
+
+    //--------------------------------
+    // Skill 1
+    //--------------------------------
+
+    protected override IEnumerator UseSkill1()
+    {
+        yield return LaserSkill();
+    }
+
+    //--------------------------------
+    // Skill 2
+    //--------------------------------
+
+    protected override IEnumerator UseSkill2()
+    {
+        yield return ShootSkill();
+    }
+
+    //--------------------------------
+    // THINK
+    //--------------------------------
+
+    protected override IEnumerator Think()
+    {
+        isThinking = true;
+
+        yield return new WaitForSeconds(
+            Random.Range(
+                thinkMin,
+                thinkMax
+            )
+        );
+
+        int action = 0;
+
+        //--------------------------------
+        // Phase 1
+        //--------------------------------
+
+        if (currentPhase == 1)
+        {
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (player != null)
-            target =
-            player.transform;
-    }
-
-    //--------------------------------
-    // UPDATE
-    //--------------------------------
-
-    void Update()
-    {
-        //--------------------------------
-        // DEATH
-        //--------------------------------
-
-        if (!isDead &&
-            bossHeath.currentHeath <= 0)
-        {
-            isDead = true;
-
-            StopAllCoroutines();
-
-            isCastingSkill = false;
-
-            if (laserObject != null)
-                laserObject.SetActive(false);
-
-            rb.linearVelocity =
-            Vector2.zero;
-
-            rb.simulated = false;
-
-            foreach (
-                Collider2D col
-                in GetComponents<Collider2D>())
+            if (roll < 50)
             {
-                col.enabled = false;
+                yield return StartCoroutine(
+                    MoveState()
+                );
             }
 
-            PlayDeath();
-
-            StartCoroutine(
-                DeathRoutine()
-            );
-
-            return;
-        }
-
-        if (isDead ||
-            target == null)
-            return;
-
-        //--------------------------------
-        // PHASE 2
-        //--------------------------------
-
-        if (!phase2 &&
-        bossHeath.currentHeath <=
-        bossHeath.maxHeath * .5f)
-        {
-            phase2 = true;
-
-            skillInterval = 2f;
-
-            shootCount += 10;
-
-            laserDuration += 1f;
-
-            laserCastCount += 1; // từ 1 -> 2 lần
-
-            moveSpeed += 5f;
-        }
-
-        //--------------------------------
-        // SKILL TIMER
-        //--------------------------------
-
-        if (!isCastingSkill)
-        {
-            skillTimer += Time.deltaTime;
-
-            if (skillTimer >= skillInterval)
+            else if (roll < 75)
             {
-                skillTimer = 0f;
+                action = 0;
+            }
 
-                int skill =
-                    Random.Range(0, 2);
-
-                if (skill == 0)
-                {
-                    StartCoroutine(
-                        LaserSkill()
-                    );
-                }
-                else
-                {
-                    StartCoroutine(
-                        ShootSkill()
-                    );
-                }
+            else
+            {
+                action = 1;
             }
         }
 
-        if (isCastingSkill)
-            return;
-
         //--------------------------------
-        // PLAYER RANGE
+        // Phase 2
         //--------------------------------
 
-        float distance =
-            Vector2.Distance(
-                transform.position,
-                target.position
+        else if (currentPhase == 2)
+        {
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (distance >
-            detectRange)
-        {
-            PlayIdle();
-            return;
+            if (roll < 30)
+            {
+                yield return StartCoroutine(
+                    MoveState()
+                );
+            }
+
+            else if (roll < 65)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
         }
 
         //--------------------------------
-        // RANDOM MOVE
+        // Phase 3
         //--------------------------------
 
-        moveTimer -=
-            Time.deltaTime;
-
-        if (moveTimer <= 0)
-        {
-            moveTimer =
-                randomMoveInterval;
-
-            PickRandomPosition();
-        }
-
-        //--------------------------------
-        // LOOK PLAYER
-        //--------------------------------
-
-        Vector3 rot =
-            bossVisual.localEulerAngles;
-
-        if (target.position.x >
-            transform.position.x)
-        {
-            rot.y = 0;
-        }
         else
         {
-            rot.y = 180;
-        }
-
-        bossVisual.localEulerAngles =
-            rot;
-
-        MoveBoss();
-
-        PlayIdle();
-    }
-
-    //--------------------------------
-    // MOVE
-    //--------------------------------
-
-    void PickRandomPosition()
-    {
-        Vector2 offset =
-            Random.insideUnitCircle *
-            randomMoveRadius;
-
-        Vector2 playerPos =
-            target.position;
-
-        randomTarget =
-            playerPos + offset;
-
-        float distance =
-            Vector2.Distance(
-                randomTarget,
-                playerPos
+            int roll =
+            Random.Range(
+                0,
+                100
             );
 
-        if (distance <
-            keepDistance)
-        {
-            Vector2 dir =
-                (randomTarget -
-                playerPos)
-                .normalized;
+            if (roll < 20)
+            {
+                yield return StartCoroutine(
+                    MoveState()
+                );
+            }
 
-            randomTarget =
-                playerPos +
-                dir *
-                keepDistance;
+            else if (roll < 50)
+            {
+                action = 0;
+            }
+
+            else
+            {
+                action = 1;
+            }
         }
+
+        //--------------------------------
+        // Execute
+        //--------------------------------
+
+        switch (action)
+        {
+            case 0:
+
+                yield return
+                StartCoroutine(
+                    UseSkill1()
+                );
+
+                break;
+
+            case 1:
+
+                yield return
+                StartCoroutine(
+                    UseSkill2()
+                );
+
+                break;
+        }
+
+        isThinking = false;
     }
 
-    void MoveBoss()
+    IEnumerator MoveState()
     {
-        Vector2 dir =
-        (
-        randomTarget -
-        (Vector2)
-        transform.position
-        ).normalized;
-
-        rb.MovePosition(
-            rb.position +
-            dir *
-            moveSpeed *
-            Time.deltaTime
+        yield return
+        new WaitForSeconds(
+            Random.Range(
+                .8f,
+                1.5f
+            )
         );
     }
 
@@ -299,49 +232,43 @@ public class BossRockController : MonoBehaviour
 
     IEnumerator LaserSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        rb.linearVelocity =
-            Vector2.zero;
-
-        for (int i = 0;
-             i < laserCastCount;
-             i++)
+        for (
+            int i = 0;
+            i < laserCastCount;
+            i++
+        )
         {
-            if (isDead)
-                yield break;
-
-            // phát animation mỗi lần
-            PlayLaser();
+            Laser();
 
             yield return
-            new WaitForSeconds(.5f);
+            new WaitForSeconds(
+                .5f
+            );
 
-            if (laserObject != null)
-                laserObject.SetActive(true);
+            laserObject.SetActive(
+                true
+            );
 
-            // thời gian laser tồn tại
             yield return
             new WaitForSeconds(
                 laserDuration
             );
 
-            if (laserObject != null)
-                laserObject.SetActive(false);
+            laserObject.SetActive(
+                false
+            );
 
-            // nghỉ giữa các lần bắn
-            if (i < laserCastCount - 1)
-            {
-                yield return
-                new WaitForSeconds(
-                    laserInterval
-                );
-            }
+            yield return
+            new WaitForSeconds(
+                laserInterval
+            );
         }
 
-        PlayIdle();
+        usingSkill = false;
 
-        isCastingSkill = false;
+        PlayIdle();
     }
 
     //--------------------------------
@@ -350,23 +277,43 @@ public class BossRockController : MonoBehaviour
 
     IEnumerator ShootSkill()
     {
-        isCastingSkill = true;
+        usingSkill = true;
 
-        for (int i = 0;
+        for (
+            int i = 0;
             i < shootCount;
-            i++)
+            i++
+        )
         {
-            if (isDead)
-                yield break;
-
-            PlayShoot();
+            Shoot();
 
             yield return
             new WaitForSeconds(
                 .3f
             );
 
-            SpawnBullet();
+            Vector2 dir =
+            (
+                target.position -
+                shootPoint.position
+            ).normalized;
+
+            float angle =
+            Mathf.Atan2(
+                dir.y,
+                dir.x
+            ) *
+            Mathf.Rad2Deg;
+
+            Instantiate(
+                bulletPrefab,
+                shootPoint.position,
+                Quaternion.Euler(
+                    0,
+                    0,
+                    angle
+                )
+            );
 
             yield return
             new WaitForSeconds(
@@ -374,115 +321,8 @@ public class BossRockController : MonoBehaviour
             );
         }
 
+        usingSkill = false;
+
         PlayIdle();
-
-        isCastingSkill =
-            false;
-    }
-
-    void SpawnBullet()
-    {
-        Vector2 dir =
-            (
-            target.position -
-            shootPoint.position
-            ).normalized;
-
-        float angle =
-            Mathf.Atan2(
-                dir.y,
-                dir.x
-            ) *
-            Mathf.Rad2Deg;
-
-        Instantiate(
-            bulletPrefab,
-            shootPoint.position,
-            Quaternion.Euler(
-                0,
-                0,
-                angle
-            )
-        );
-    }
-
-    //--------------------------------
-    // ANIMATION
-    //--------------------------------
-
-    void PlayIdle()
-    {
-        anim.Play("idle");
-    }
-
-    void PlayLaser()
-    {
-        anim.Play(
-            "laser_cast",
-            0,
-            0
-        );
-    }
-
-    void PlayShoot()
-    {
-        anim.Play(
-            "shoot",
-            0,
-            0
-        );
-    }
-
-    void PlayDeath()
-    {
-        anim.Play(
-            "death"
-        );
-    }
-
-    //--------------------------------
-    // DESTROY
-    //--------------------------------
-
-    IEnumerator DeathRoutine()
-    {
-        yield return
-        new WaitForSeconds(
-            anim.GetCurrentAnimatorStateInfo(0)
-            .length
-        );
-
-        Destroy(gameObject);
-    }
-
-    //--------------------------------
-    // GIZMOS
-    //--------------------------------
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color =
-            Color.yellow;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRange
-        );
-
-        Gizmos.color =
-            Color.red;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            keepDistance
-        );
-
-        Gizmos.color =
-            Color.cyan;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            randomMoveRadius
-        );
     }
 }

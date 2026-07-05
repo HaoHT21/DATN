@@ -28,6 +28,14 @@ public class ItemPickup : MonoBehaviour
 
         {
 
+            // --- ĐOẠN THÊM VÀO: NẾU ĐÂY LÀ BÌNH MÁU THÌ NHƯỜNG QUYỀN CHO HEALTHPOTION ---
+            if (GetComponent<HealthPotion>() != null)
+            {
+                return;
+            }
+            // ----------------------------------------------------------------------------
+
+
             PlayerController pc = other.GetComponent<PlayerController>();
 
             if (pc != null)
@@ -47,4 +55,3 @@ public class ItemPickup : MonoBehaviour
     }
 
 }
-
