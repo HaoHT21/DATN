@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5983535433531090390
 Transform:
   m_ObjectHideFlags: 0
@@ -80,7 +80,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.18116206, y: -0.0039458275}
+  m_Offset: {x: 0.18116206, y: -0.0056563467}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -90,7 +90,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8250134, y: 0.6203078}
+  m_Size: {x: 0.8250134, y: 0.65793765}
   m_EdgeRadius: 0
 --- !u!1 &4100882056036383914
 GameObject:
@@ -125,7 +125,7 @@ Transform:
   m_GameObject: {fileID: 4100882056036383914}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.71, y: 4.37, z: 0}
+  m_LocalPosition: {x: 40.733444, y: -17.106316, z: 0}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -336,7 +336,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
   minCoin: 1
-  maxCoin: 10
+  maxCoin: 25
 --- !u!114 &8689311037017913672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,7 +351,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: 3
   attackWindupTime: 0.3
-  dashSpeed: 15
+  dashSpeed: 20
   dashDuration: 0.3
   recoveryTime: 1
   attackHitbox: {fileID: 3346652723155055677}

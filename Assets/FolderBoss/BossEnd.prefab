@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 516771095219655125}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.53, y: 0, z: 0}
+  m_LocalPosition: {x: -0.35, y: 0.28, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -227,6 +227,8 @@ GameObject:
   - component: {fileID: 3475729594425125399}
   - component: {fileID: 1232122554848105542}
   - component: {fileID: 6031622529690365384}
+  - component: {fileID: 6077548557951783592}
+  - component: {fileID: 3427136304765542484}
   m_Layer: 0
   m_Name: BossEnd
   m_TagString: Boss
@@ -243,7 +245,7 @@ Transform:
   m_GameObject: {fileID: 3120480687593708142}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 29.66, y: -20.67, z: 0}
+  m_LocalPosition: {x: 148.6243, y: -35.59097, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -307,12 +309,16 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
-  detectBulletRadius: 10
-  dodgeDistance: 7
+  detectBulletRadius: 8
+  dodgeDistance: 8
   shootSkill: {fileID: 6894360569361221714}
   dashShootSkill: {fileID: 3475729594425125399}
   bulletRainSkill: {fileID: 1232122554848105542}
   teleportSkill: {fileID: 6031622529690365384}
+  maxDodgeCount: 50
+  manaFill: {fileID: 0}
+  manaUIRoot: {fileID: 0}
+  manaSmoothSpeed: 8
 --- !u!114 &6894360569361221714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,8 +369,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaRadius: 6
-  bulletPrefab: {fileID: 3417836176469242662, guid: 1fd4f84cdf192d04685c8df7459a62ab, type: 3}
-  bulletCount: 15
+  bulletPrefab: {fileID: 6035235758144762600, guid: f42d48a105179454984001d98e702654, type: 3}
+  bulletCount: 8
   spawnDelay: 0.1
   spawnHeight: 4
 --- !u!114 &6031622529690365384
@@ -385,6 +391,58 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
+--- !u!58 &6077548557951783592
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3120480687593708142}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.51930237, y: 0}
+  m_Radius: 66.97896
+--- !u!114 &3427136304765542484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3120480687593708142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e45e4978770e1a140891f32238f45cc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deathEffectPrefab: {fileID: 0}
+  executedSpawnPrefab: {fileID: 6427778196570114290, guid: a3c41dc2f28f1eb48a0ee001456aa08c, type: 3}
+  nextDialogueTriggerZone: {fileID: 0}
+  deathAnimationStateName: Death Animation
 --- !u!1 &4861554426174679520
 GameObject:
   m_ObjectHideFlags: 0

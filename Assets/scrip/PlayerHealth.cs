@@ -48,6 +48,14 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     public float manaRegenRate = 5f;
     private float manaRegenTimer;
 
+    [Header("--- Damage Effects ---")]
+    public float knockbackForce = 8f;
+    public float invincibleTime = 0.5f;
+    public float flashInterval = 0.08f;
+
+    private bool isInvincible = false;
+    private SpriteRenderer _sprite;
+
     public event Action<HealthChangeInfo> OnHealthChanged;
 
     [Header("Respawn Settings")]
@@ -66,11 +74,7 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         _rb = GetComponent<Rigidbody2D>();
         _playerController = GetComponent<PlayerController>();
         PlayerEffect effect = GetComponent<PlayerEffect>();
-
-        if (effect != null)
-        {
-            effect.ResetEffects();
-        }
+        _sprite = GetComponent<SpriteRenderer>();
 
         // Khởi tạo đầy cây máu và cây mana khi vào game
         currentHealth = maxHealth;
@@ -173,9 +177,11 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     }
 
     // --- LOGIC QUẢN LÝ MÁU (HP) ---
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage,
+    Vector2 hitDirection = default)
     {
-        if (IsDead) return;
+        if (IsDead || isInvincible)
+            return;
 
         // --- ĐỒNG BỘ MỚI: Gọi con khiên ra hấp thụ damage bằng ref ---
         PlayerShield shield = GetComponent<PlayerShield>();
@@ -194,12 +200,76 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         NotifyHealthChanged(before);
         UpdateUI(); // Cập nhật UI tụt máu khít khịt theo viền pixel
 
+        ApplyKnockback(hitDirection);
+
+        StartCoroutine(
+            DamageEffectRoutine()
+        );
+
         Debug.Log($"Player bị tấn công! Máu còn: {currentHealth}");
 
         if (currentHealth <= 0)
         {
             PlayerDie();
         }
+    }
+
+    IEnumerator DamageEffectRoutine()
+    {
+        isInvincible = true;
+
+        if (_playerController != null)
+        {
+            _playerController.isKnocked = true;
+        }
+
+        float knockTime = 0.15f;
+
+        yield return new WaitForSeconds(
+            knockTime
+        );
+
+        if (_playerController != null)
+        {
+            _playerController.isKnocked = false;
+        }
+
+        float timer = 0;
+
+        while (timer < invincibleTime)
+        {
+            if (_sprite != null)
+            {
+                _sprite.enabled =
+                    !_sprite.enabled;
+            }
+
+            yield return new WaitForSeconds(
+                flashInterval
+            );
+
+            timer += flashInterval;
+        }
+
+        if (_sprite != null)
+        {
+            _sprite.enabled = true;
+        }
+
+        isInvincible = false;
+    }
+
+    void ApplyKnockback(Vector2 direction)
+    {
+        if (_rb == null)
+            return;
+
+        _rb.linearVelocity = Vector2.zero;
+
+        _rb.AddForce(
+            direction.normalized * knockbackForce,
+            ForceMode2D.Impulse
+        );
     }
 
     public void Heal(int amount)
@@ -307,12 +377,6 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     private void PlayerDie()
     {
         IsDead = true;
-
-        PlayerEffect effect = GetComponent<PlayerEffect>();
-        if (effect != null)
-        {
-            effect.ResetEffects();
-        }
 
         if (_animator != null) _animator.SetBool("Dead", true);
 

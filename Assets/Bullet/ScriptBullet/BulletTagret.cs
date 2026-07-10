@@ -127,8 +127,11 @@ public class BulletTagret : MonoBehaviour
 
             if (player != null)
             {
+                Vector2 hitDirection = 
+                    moveDirection.normalized;
                 player.TakeDamage(
-                    damage
+                    damage,
+                    hitDirection
                 );
             }
 

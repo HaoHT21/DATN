@@ -215,6 +215,7 @@ MonoBehaviour:
   dropSound: {fileID: 0}
   visual: {fileID: 6381983249476783960}
   playerAvatar: {fileID: 0}
+  isKnocked: 0
   firePointXOffset: 0.355
   firePointYOffset: 0.353
 --- !u!114 &7690319049176068087
@@ -243,6 +244,9 @@ MonoBehaviour:
   currentMana: 100
   maxMana: 100
   manaRegenRate: 5
+  knockbackForce: 8
+  invincibleTime: 0.5
+  flashInterval: 0.08
   spawnPosition: {x: 36, y: -16.2, z: 0}
 --- !u!114 &6505054210949361691
 MonoBehaviour:
@@ -339,6 +343,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 100
   detectRadius: 10
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &5239651306176665823
 GameObject:
   m_ObjectHideFlags: 0

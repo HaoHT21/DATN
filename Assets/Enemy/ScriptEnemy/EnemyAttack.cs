@@ -82,16 +82,10 @@ public class EnemyAttack : MonoBehaviour
         // Hurt -> hủy attack
         //--------------------------------
 
-        if (
-            animator
-            .GetCurrentAnimatorStateInfo(0)
-            .IsName("hurt")
-        )
+        if (controller.IsHurting)
         {
-            CancelAttack();
             return;
         }
-
 
         Transform target =
             controller.Target;
@@ -226,6 +220,12 @@ public class EnemyAttack : MonoBehaviour
         if (
             distance <=
             attackRange
+            &&
+            !isPreparingAttack
+            &&
+            !isAttacking
+            &&
+            !isRecovering
         )
         {
             isPreparingAttack =
@@ -234,12 +234,12 @@ public class EnemyAttack : MonoBehaviour
             attackTimer =
                 attackWindupTime;
 
-            // khóa vị trí player
             lockedAttackPosition =
                 target.position;
 
             controller.LockMovement(
-                true);
+                true
+            );
 
             controller.StopMovement();
 
@@ -247,8 +247,15 @@ public class EnemyAttack : MonoBehaviour
                 lockedAttackPosition
             );
 
-            PlayAnimation(
-                "attack");
+            controller.PlayAnimation(
+                "attack"
+            );
+        }
+        else
+        {
+            controller.LockMovement(
+                false
+            );
         }
     }
 

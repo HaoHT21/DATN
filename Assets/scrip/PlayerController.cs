@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     [Header("Avatar")]
     public Sprite playerAvatar;
 
+    public bool isKnocked = false;
+
 
     [System.Serializable]
     public class WeaponItem
@@ -213,7 +215,18 @@ public class PlayerController : MonoBehaviour
 
 
 
-    private void FixedUpdate() => rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
+    private void FixedUpdate()
+    {
+        if (isKnocked)
+            return;
+
+        rb.MovePosition(
+            rb.position +
+            moveInput *
+            moveSpeed *
+            Time.fixedDeltaTime
+        );
+    }
 
 
 

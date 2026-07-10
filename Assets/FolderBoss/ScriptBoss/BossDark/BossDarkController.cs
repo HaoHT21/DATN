@@ -276,7 +276,7 @@ bool value
             i++
         )
         {
-            Shoot();
+            Cast();
 
             yield return
             new WaitForSeconds(

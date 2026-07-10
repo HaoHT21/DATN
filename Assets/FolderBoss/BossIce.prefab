@@ -73,8 +73,8 @@ Transform:
   m_GameObject: {fileID: 5708223457054644839}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 26.85, y: 8.28, z: 0}
-  m_LocalScale: {x: 3.8711402, y: 3.8711402, z: 3.8711402}
+  m_LocalPosition: {x: 156.84, y: -38.56, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 940777173559808279}
@@ -131,7 +131,7 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 5
   detectRange: 20
-  keepDistance: 7.03
+  keepDistance: 10
   thinkMin: 0.5
   thinkMax: 1.5
   icePrefab: {fileID: 9035861995818589019, guid: 445ef3660c83efb4395a4cf857f8ef19, type: 3}
@@ -206,7 +206,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -0.012, y: -0.025, z: 0}
-  m_LocalScale: {x: 1.1263701, y: 1.1263701, z: 1.1263701}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7021219057691180502}

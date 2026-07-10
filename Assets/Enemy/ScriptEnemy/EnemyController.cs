@@ -29,7 +29,7 @@ public class EnemyController : MonoBehaviour
     [Header("Knockback")]
     public float knockbackForce = 5f;
 
-    private Vector2 lastHitPosition;
+    private Vector2 hitDirection;
 
     [Header("Visual")]
     public Transform enemyVisual;
@@ -59,6 +59,7 @@ public class EnemyController : MonoBehaviour
     private Coroutine hurtCoroutine;
 
     public Transform Target => target;
+    public bool IsHurting => isHurting;
 
     public bool HasTarget =>
         target != null;
@@ -127,11 +128,12 @@ public class EnemyController : MonoBehaviour
         Wander();
     }
 
-    public void SetHitPosition(
-    Vector2 hitPosition)
+    public void SetHitDirection(
+    Vector2 direction
+)
     {
-        lastHitPosition =
-            hitPosition;
+        hitDirection =
+            direction.normalized;
     }
 
 
@@ -569,17 +571,10 @@ public class EnemyController : MonoBehaviour
         //--------------------------------
 
         isHurting = true;
-
-        //--------------------------------
-        // Tính hướng bật lùi
-        //--------------------------------
+        LockMovement(true);
 
         Vector2 dir =
-        (
-            (Vector2)
-            transform.position -
-            lastHitPosition
-        ).normalized;
+            hitDirection;
 
         //--------------------------------
         // Phát animation hurt
@@ -596,8 +591,8 @@ public class EnemyController : MonoBehaviour
         //--------------------------------
 
         rb.linearVelocity =
-        dir *
-        knockbackForce;
+        hitDirection * knockbackForce;
+
 
         //--------------------------------
         // Chờ thời gian hurt
@@ -619,6 +614,7 @@ public class EnemyController : MonoBehaviour
         // Mở lại AI
         //--------------------------------
 
+        LockMovement(false);
         isHurting =
         false;
 

@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 1278574788911176144}
   - component: {fileID: 3907255169835096717}
   - component: {fileID: 3715484722455062951}
-  - component: {fileID: 6016746862960790320}
+  - component: {fileID: 6044066407861670941}
+  - component: {fileID: 279957779199376981}
   m_Layer: 0
   m_Name: 'Slime '
   m_TagString: Enemy
@@ -31,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 6815145705966534051}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.769195, y: 6.42, z: 0}
+  m_LocalPosition: {x: 45.98297, y: -14.666857, z: 0}
   m_LocalScale: {x: 6, y: 6, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -204,7 +205,25 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
---- !u!114 &6016746862960790320
+--- !u!114 &6044066407861670941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6815145705966534051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6faa22f97622b08469d553a8420b1524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 3
+  attackWindupTime: 0.3
+  dashSpeed: 15
+  dashDuration: 0.3
+  recoveryTime: 1
+  attackHitbox: {fileID: 6906154346952907705}
+--- !u!114 &279957779199376981
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -217,15 +236,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectRange: 6
-  alertedRange: 20
   maxSearchTime: 2
-  moveSpeed: 5
-  wanderRadius: 3
-  wanderInterval: 2
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
-  hurtDuration: 0.3
+  moveSpeed: 3
+  wanderRadius: 3
+  wanderInterval: 2
+  alertedRange: 20
+  hurtDuration: 0.2
   knockbackForce: 5
   enemyVisual: {fileID: 4711513089070483500}
 --- !u!1 &6906154346952907705

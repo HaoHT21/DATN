@@ -135,7 +135,7 @@ Transform:
   m_GameObject: {fileID: 395731984811591517}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.773, y: 0.047000065, z: 0}
+  m_LocalPosition: {x: 0.773, y: 0.29, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -175,7 +175,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3738450169026145763}
@@ -413,8 +413,8 @@ Transform:
   m_GameObject: {fileID: 1882404717578487663}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.333, y: 0.01, z: 0}
-  m_LocalScale: {x: 4.05227, y: 4.05227, z: 4.05227}
+  m_LocalPosition: {x: 0.79, y: -0.08, z: 0}
+  m_LocalScale: {x: 17.033716, y: 17.033716, z: 17.033716}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5607647130264028617}
@@ -512,7 +512,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.06421435, y: -0.0116325915}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -522,7 +522,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.23, y: 0.18}
+  m_Size: {x: 0.3584289, y: 0.24115676}
   m_EdgeRadius: 0
 --- !u!114 &4026848364782679982
 MonoBehaviour:
@@ -564,8 +564,8 @@ Transform:
   m_GameObject: {fileID: 2225764924664185720}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 21.63, y: -2.16, z: 0}
-  m_LocalScale: {x: 3.7339547, y: 3.7339547, z: 3.7339547}
+  m_LocalPosition: {x: 214.2519, y: -1015.02716, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4850473318197736222}
@@ -622,7 +622,7 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 5
   detectRange: 10
-  keepDistance: 5.55
+  keepDistance: 5
   thinkMin: 0.5
   thinkMax: 1.5
   bulletPrefab: {fileID: 191531707892350666, guid: e4fcfcb52871e594da549d36db919bcf, type: 3}

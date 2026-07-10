@@ -63,13 +63,9 @@ public class BossSkillBulletRain : MonoBehaviour
             //--------------------------------
 
             Instantiate(
-                bulletPrefab,
-                spawnPos,
-                Quaternion.Euler(
-                    0,
-                    0,
-                    -90
-                )
+            bulletPrefab,
+            spawnPos,
+            Quaternion.identity
             );
 
             yield return

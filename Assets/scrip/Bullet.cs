@@ -57,14 +57,26 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        if (col.TryGetComponent<EnemyHeath>(
-    out var enemy))
+        if (col.TryGetComponent<EnemyHeath>(out var enemy))
         {
             EnemyController controller =
-                col.GetComponent<EnemyController>();
+                col.GetComponent<
+                EnemyController>();
+
+            if (
+                controller != null
+            )
+            {
+                controller
+                .SetHitDirection(
+                    _rb.linearVelocity
+                    .normalized
+                );
+            }
 
             enemy.TakeDamage(
-                damage);
+                damage
+            );
 
             HitEffect();
 

@@ -50,10 +50,7 @@ public class IceZone : MonoBehaviour
                 {
                     freezeActive = true;
 
-                    oldSpeed =
-                        playerEffect.currentMoveSpeed;
-
-                    playerEffect.currentMoveSpeed = 0;
+                    playerEffect.AddFreeze();
                 }
 
                 isFilling = false;
@@ -73,8 +70,7 @@ public class IceZone : MonoBehaviour
                 {
                     freezeActive = false;
 
-                    playerEffect.currentMoveSpeed =
-                        oldSpeed;
+                    playerEffect.RemoveFreeze();
                 }
 
                 isFilling = true;

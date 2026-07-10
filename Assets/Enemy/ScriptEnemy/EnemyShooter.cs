@@ -61,10 +61,14 @@ public class EnemyShooter : MonoBehaviour
             GetComponent<Rigidbody2D>();
     }
 
-        
-    private void Update()
+
+    void Update()
     {
-        fireTimer -= Time.deltaTime;
+        if (controller.IsHurting)
+            return;
+
+        fireTimer -=
+            Time.deltaTime;
 
         if (isAttacking)
             return;
@@ -83,65 +87,65 @@ public class EnemyShooter : MonoBehaviour
             dir.magnitude;
 
         controller.LookAt(
-        target.position);
+            target.position
+        );
 
-        // quá gần -> lùi
-        if (distance < retreatDistance)
+        //--------------------------------
+        // Quá gần -> lùi
+        //--------------------------------
+
+        if (
+            distance <
+            retreatDistance
+        )
         {
-            controller.LockMovement(true);
+            controller.LockMovement(
+                true
+            );
 
-            Retreat(dir);
+            rb.linearVelocity =
+                -dir.normalized *
+                retreatSpeed;
+
+            controller.PlayAnimation(
+                "run"
+            );
+
             return;
         }
 
-        // đứng bắn
-        if (distance <= attackDistance)
+        //--------------------------------
+        // Giữ khoảng cách + bắn
+        //--------------------------------
+
+        if (
+            distance <=
+            attackDistance
+        )
         {
-            controller.LockMovement(true);
-
-            Attack();
-            return;
-        }
-
-        // ngoài vùng bắn
-        controller.LockMovement(false);
-
-        isRetreating = false;
-        retreatTimer = 0;
-    }
-
-
-    void Retreat(Vector2 dir)
-    {
-        isRetreating = true;
-
-        retreatTimer +=
-            Time.deltaTime;
-
-        Vector2 moveDir =
-            -dir.normalized;
-
-        rb.linearVelocity =
-            moveDir *
-            retreatSpeed;
-
-        controller.PlayAnimation(
-    "idle");
-
-        // lùi quá lâu vẫn quay lại bắn
-        if (retreatTimer >=
-            retreatDuration)
-        {
-            retreatTimer = 0;
-
-            isRetreating = false;
+            controller.LockMovement(
+                true
+            );
 
             controller.StopMovement();
 
-            Attack();
-        }
-    }
+            controller.PlayAnimation(
+                "idle"
+            );
 
+            Attack();
+
+            return;
+        }
+
+        //--------------------------------
+        // Ngoài vùng -> cho chase
+        //--------------------------------
+
+        controller.LockMovement(
+            false
+        );
+    }
 
     void Attack()
     {

@@ -587,6 +587,10 @@ public abstract class BossController : MonoBehaviour
         anim.Play("spitfire");
     }
 
+    protected void Cast()
+    {
+        anim.Play("cast");
+    }
     protected void Summon()
     {
         anim.Play("summon");

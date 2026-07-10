@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3125000092158918498
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2197137027263569910, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_Name
+      value: ElfGirl Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 22.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -24.672447
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405987358527936614, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2197137027263569910, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5789483845066368506}
+    - targetCorrespondingSourceObject: {fileID: 2197137027263569910, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3351078569283556230}
+  m_SourcePrefab: {fileID: 100100000, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+--- !u!1 &3829176214251561108 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2197137027263569910, guid: 9f48f0501bd074b408234b7a505a793d, type: 3}
+  m_PrefabInstance: {fileID: 3125000092158918498}
+  m_PrefabAsset: {fileID: 0}
+--- !u!50 &5789483845066368506
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3829176214251561108}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &3351078569283556230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3829176214251561108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73c3178e0e47dd246a33506370a57a79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hostageId: hostage_01
+  rescueDialogue:
+  - nameCharacter1: 
+    avatarCharacter1: {fileID: 0}
+    contentForPanel1: 'Fk
+
+'
+    nameCharacter2: 
+    avatarCharacter2: {fileID: 0}
+    contentForPanel2: 'CC
+
+'
+  dialogueTypingSpeed: 0.05
+  postDialogueDelay: 0.5
+  rescueMode: 1
+  transferAfterRescue: 1
+  targetSceneName: Sanh
+  targetSpawnPointId: hostage_01
+  exitPoint: {fileID: 0}
+  moveSpeed: 5
+  stoppingDistance: 0.2
+  followDistance: 1.5
+  disappearDelay: 0.5
+  giveGemReward: 1
+  rewardGem: {fileID: 0}
+  gemGiftPrefab: {fileID: 0}
+  gemGiftSound: {fileID: 0}
+  houseSpawnPoint: {fileID: 0}
+  hostagePrefab: {fileID: 0}

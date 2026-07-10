@@ -76,7 +76,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.3190422, y: 3.3190422, z: 3.3190422}
+  m_LocalScale: {x: 6, y: 6, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5924164106070485754}
@@ -251,7 +251,7 @@ Transform:
   m_GameObject: {fileID: 4089336226447745358}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 300.43607, y: -39.468452, z: 0}
+  m_LocalPosition: {x: 137.85, y: -39.51, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -321,6 +321,10 @@ MonoBehaviour:
   dashShootSkill: {fileID: 0}
   bulletRainSkill: {fileID: 0}
   teleportSkill: {fileID: 0}
+  maxDodgeCount: 5
+  manaFill: {fileID: 0}
+  manaUIRoot: {fileID: 0}
+  manaSmoothSpeed: 8
   laserSkill: {fileID: 9088086194621550997}
   meteorSkill: {fileID: 8956958443766901584}
   cloneSkill: {fileID: 2324771469145477873}
@@ -356,7 +360,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 6273060983266658, guid: c3cae4633fa683d46a830224ed2f5711, type: 3}
   firePoint: {fileID: 2525138384356372608}
-  bulletCount: 100
+  bulletCount: 25
   bulletInterval: 0.1
   spreadAngle: 30
 --- !u!114 &2324771469145477873

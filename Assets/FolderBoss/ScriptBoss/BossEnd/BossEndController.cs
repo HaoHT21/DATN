@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class BossEndController : MonoBehaviour
@@ -62,6 +63,26 @@ public class BossEndController : MonoBehaviour
     protected bool isMoving;
     protected bool isDead;
 
+    [Header("Phase 3 Dodge")]
+
+    [Tooltip("Boss chỉ được phép né bao nhiêu lần")]
+    public int maxDodgeCount = 5;
+
+    private int currentDodgeCount = 0;
+
+    //--------------------------------
+    // UI Mana (Số lần né)
+    //--------------------------------
+
+    [Header("Boss Mana UI")]
+    public Image manaFill;
+    public Image manaUIRoot;
+
+    private float targetManaFill = 1f;
+    public float manaSmoothSpeed = 8f;
+
+    private bool canDodge = true;
+
     //--------------------------------
 
     void Awake()
@@ -72,6 +93,25 @@ public class BossEndController : MonoBehaviour
         if (anim == null)
             anim =
             GetComponent<Animator>();
+
+        //--------------------------------
+        // Auto Find UI Mana
+        //--------------------------------
+
+        manaUIRoot = FindImageByName("BossManaBar");
+        manaFill = FindImageByName("BossManaFill");
+
+        if (manaUIRoot != null)
+        {
+            manaUIRoot.gameObject.SetActive(false);
+        }
+
+        if (manaFill != null)
+        {
+            manaFill.gameObject.SetActive(false);
+            manaFill.fillAmount = 1f;
+        }
+
     }
 
     protected virtual void Start()
@@ -90,6 +130,19 @@ public class BossEndController : MonoBehaviour
 
     void Update()
     {
+        //--------------------------------
+        // Smooth Mana UI
+        //--------------------------------
+
+        if (manaFill != null)
+        {
+            manaFill.fillAmount = Mathf.Lerp(
+                manaFill.fillAmount,
+                targetManaFill,
+                manaSmoothSpeed * Time.deltaTime
+            );
+        }
+
         //--------------------------------
         // DEATH
         //--------------------------------
@@ -135,9 +188,14 @@ public class BossEndController : MonoBehaviour
         // Né đạn ưu tiên cao nhất
         //--------------------------------
 
+        //--------------------------------
+        // Phase 3 chỉ né nếu còn lượt
+        //--------------------------------
+
         if (
             currentPhase == 3 &&
-            !dodging
+            !dodging &&
+            canDodge
         )
         {
             DetectDangerBullet();
@@ -514,6 +572,24 @@ public class BossEndController : MonoBehaviour
         dodging = true;
         isMoving = true;
 
+        //--------------------------------
+        // Trừ số lần né
+        //--------------------------------
+
+        currentDodgeCount++;
+
+        //--------------------------------
+        // Update Mana UI
+        //--------------------------------
+
+        targetManaFill =
+        1f - (float)currentDodgeCount / maxDodgeCount;
+
+        if (currentDodgeCount >= maxDodgeCount)
+        {
+            canDodge = false;
+        }
+
         PlayRun();
 
         Vector2 bulletDir =
@@ -670,22 +746,17 @@ public class BossEndController : MonoBehaviour
     protected IEnumerator WalkToPlayer()
     {
         isMoving = true;
-
         PlayRun();
 
-        float timer =
-        Random.Range(
-            .5f,
-            1.5f
-        );
+        float timer = Random.Range(.5f, 1.5f);
 
         while (timer > 0)
         {
             Vector2 dir =
-            (
-            target.position -
-            transform.position
-            ).normalized;
+            (target.position - transform.position).normalized;
+
+            if (Physics2D.Raycast(rb.position, dir, 0.6f, wallLayer))
+                break;
 
             rb.MovePosition(
                 rb.position +
@@ -694,8 +765,7 @@ public class BossEndController : MonoBehaviour
                 Time.deltaTime
             );
 
-            timer -=
-            Time.deltaTime;
+            timer -= Time.deltaTime;
 
             yield return null;
         }
@@ -710,7 +780,6 @@ public class BossEndController : MonoBehaviour
     protected IEnumerator WalkBack()
     {
         isMoving = true;
-
         PlayRun();
 
         float timer = 1f;
@@ -718,10 +787,10 @@ public class BossEndController : MonoBehaviour
         while (timer > 0)
         {
             Vector2 dir =
-            (
-            transform.position -
-            target.position
-            ).normalized;
+            (transform.position - target.position).normalized;
+
+            if (Physics2D.Raycast(rb.position, dir, 0.6f, wallLayer))
+                break;
 
             rb.MovePosition(
                 rb.position +
@@ -730,8 +799,7 @@ public class BossEndController : MonoBehaviour
                 Time.deltaTime
             );
 
-            timer -=
-            Time.deltaTime;
+            timer -= Time.deltaTime;
 
             yield return null;
         }
@@ -746,19 +814,18 @@ public class BossEndController : MonoBehaviour
     protected IEnumerator DashBack()
     {
         isMoving = true;
-
         PlayRun();
 
         Vector2 dir =
-        (
-        transform.position -
-        target.position
-        ).normalized;
+        (transform.position - target.position).normalized;
 
         float timer = .3f;
 
         while (timer > 0)
         {
+            if (Physics2D.Raycast(rb.position, dir, 0.8f, wallLayer))
+                break;
+
             rb.MovePosition(
                 rb.position +
                 dir *
@@ -766,8 +833,7 @@ public class BossEndController : MonoBehaviour
                 Time.deltaTime
             );
 
-            timer -=
-            Time.deltaTime;
+            timer -= Time.deltaTime;
 
             yield return null;
         }
@@ -782,20 +848,20 @@ public class BossEndController : MonoBehaviour
     protected IEnumerator DashSide()
     {
         isMoving = true;
-
         PlayRun();
 
         Vector2 dir =
         Random.value > .5f
-        ?
-        Vector2.right
-        :
-        Vector2.left;
+        ? Vector2.right
+        : Vector2.left;
 
         float timer = .3f;
 
         while (timer > 0)
         {
+            if (Physics2D.Raycast(rb.position, dir, 0.8f, wallLayer))
+                break;
+
             rb.MovePosition(
                 rb.position +
                 dir *
@@ -803,8 +869,7 @@ public class BossEndController : MonoBehaviour
                 Time.deltaTime
             );
 
-            timer -=
-            Time.deltaTime;
+            timer -= Time.deltaTime;
 
             yield return null;
         }
@@ -923,6 +988,43 @@ public class BossEndController : MonoBehaviour
         Destroy(
             gameObject
         );
+    }
+
+    private Image FindImageByName(string imageName)
+    {
+        Image[] images = Resources.FindObjectsOfTypeAll<Image>();
+
+        foreach (Image img in images)
+        {
+            if (img.name == imageName)
+                return img;
+        }
+
+        return null;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        if (manaUIRoot != null)
+            manaUIRoot.gameObject.SetActive(true);
+
+        if (manaFill != null)
+            manaFill.gameObject.SetActive(true);
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        if (manaUIRoot != null)
+            manaUIRoot.gameObject.SetActive(false);
+
+        if (manaFill != null)
+            manaFill.gameObject.SetActive(false);
     }
 
     void PlayDeath()

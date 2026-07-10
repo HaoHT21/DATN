@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 1830961455073700085}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 298.3, y: -38.7, z: 0}
+  m_LocalPosition: {x: 145.53442, y: -39.586132, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -100,6 +100,10 @@ MonoBehaviour:
   dashShootSkill: {fileID: 0}
   bulletRainSkill: {fileID: 0}
   teleportSkill: {fileID: 0}
+  maxDodgeCount: 40
+  manaFill: {fileID: 0}
+  manaUIRoot: {fileID: 0}
+  manaSmoothSpeed: 8
   laserSkill: {fileID: 7954953657761412335}
   meteorSkill: {fileID: 4558270170833641727}
   cloneSkill: {fileID: 2961131956974957475}
@@ -118,7 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaRadius: 6
   laserPrefab: {fileID: 8600154408787042951, guid: 417aebdcdb04fea47875f7b7c331ec86, type: 3}
-  laserCount: 10
+  laserCount: 5
   spawnDelay: 0.3
   laserDuration: 3
 --- !u!114 &4558270170833641727
@@ -135,7 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 6273060983266658, guid: c3cae4633fa683d46a830224ed2f5711, type: 3}
   firePoint: {fileID: 7472228039890975071}
-  bulletCount: 50
+  bulletCount: 20
   bulletInterval: 0.1
   spreadAngle: 30
 --- !u!114 &2961131956974957475
@@ -235,7 +239,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.3190422, y: 3.3190422, z: 3.3190422}
+  m_LocalScale: {x: 6, y: 6, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8645708005949308450}
@@ -410,7 +414,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

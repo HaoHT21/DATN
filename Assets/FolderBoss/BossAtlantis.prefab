@@ -33,7 +33,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.06, y: -0.01, z: 0}
-  m_LocalScale: {x: 8.556321, y: 8.556321, z: 8.556321}
+  m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3633283288196985582}
@@ -316,8 +316,8 @@ Transform:
   m_GameObject: {fileID: 5922061935708019749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 38.82, y: -2.97, z: 0}
-  m_LocalScale: {x: 0.78787, y: 0.78787, z: 0.78787}
+  m_LocalPosition: {x: 149.1, y: -38.68, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4461908102491696086}
@@ -373,7 +373,7 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 10
   detectRange: 20
-  keepDistance: 4
+  keepDistance: 10
   thinkMin: 0.5
   thinkMax: 1.5
   bulletPrefab: {fileID: 4554662268799726002, guid: 652691a15305cb04da23b23b2f97874b, type: 3}

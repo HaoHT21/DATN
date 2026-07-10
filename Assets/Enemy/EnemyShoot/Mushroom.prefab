@@ -33,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 523964064610363045}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.86, y: 5.08, z: 0}
+  m_LocalPosition: {x: 28.51, y: -21.35, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
   minCoin: 1
-  maxCoin: 10
+  maxCoin: 25
 --- !u!114 &7041362842982210236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,7 +233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 7
+  detectRange: 10
   maxSearchTime: 2
   wallLayer:
     serializedVersion: 2
@@ -257,8 +257,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095eb8d33d236bd43a816648f09a98bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDistance: 6
-  retreatDistance: 2
+  attackDistance: 7
+  retreatDistance: 3
   retreatSpeed: 2
   retreatDuration: 1.5
   bulletsInCircle: 15

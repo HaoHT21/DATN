@@ -116,14 +116,12 @@ public class BulletCast : MonoBehaviour
 
         if (detectCollider != null)
             detectCollider.enabled = false;
-
-        StartCoroutine(DestroyAfterCast());
     }
 
     private IEnumerator WarningPhase()
     {
         // Thời gian cảnh báo
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
 
         anim.Play("bulletcast");
 
@@ -140,13 +138,9 @@ public class BulletCast : MonoBehaviour
 
         if (detectCollider != null)
             detectCollider.enabled = false;
-    }   
 
-    private System.Collections.IEnumerator DestroyAfterCast()
-    {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.2f);
         Destroy(gameObject);
-    }
-
+    }   
 
 }

@@ -11,7 +11,9 @@ public class PlayerEffect : MonoBehaviour
     [Header("Chỉ số hiện tại")]
     public float currentMoveSpeed;
 
-    private Coroutine freezeCoroutine;
+    private int freezeCount = 0;
+
+    private float slowMultiplier = 1f;
 
     private void Awake()
     {
@@ -23,7 +25,13 @@ public class PlayerEffect : MonoBehaviour
 
     void ApplyStats()
     {
-        player.moveSpeed = currentMoveSpeed;
+        float speed = baseMoveSpeed * slowMultiplier;
+
+        if (freezeCount > 0)
+            speed = 0;
+
+        currentMoveSpeed = speed;
+        player.moveSpeed = speed;
     }
 
     // Tăng tốc vĩnh viễn
@@ -38,6 +46,28 @@ public class PlayerEffect : MonoBehaviour
     {
         currentMoveSpeed -= amount;
         ApplyStats();
+    }
+
+    public void AddFreeze()
+    {
+        freezeCount++;
+
+        currentMoveSpeed = 0;
+        ApplyStats();
+    }
+
+    public void RemoveFreeze()
+    {
+        freezeCount--;
+
+        if (freezeCount < 0)
+            freezeCount = 0;
+
+        if (freezeCount == 0)
+        {
+            currentMoveSpeed = baseMoveSpeed;
+            ApplyStats();
+        }
     }
 
     // Buff có thời gian
@@ -59,32 +89,25 @@ public class PlayerEffect : MonoBehaviour
 
     public void Freeze(float duration)
     {
-        if (freezeCoroutine != null)
-            StopCoroutine(freezeCoroutine);
-
-        freezeCoroutine = StartCoroutine(FreezeRoutine(duration));
+        AddFreeze();
+        StartCoroutine(FreezeRoutine(duration));
     }
 
     private IEnumerator FreezeRoutine(float duration)
     {
-        currentMoveSpeed = 0;
-        ApplyStats();
-
         yield return new WaitForSeconds(duration);
-
-        freezeCoroutine = null;   // thêm dòng này
-        ResetEffects();
+        RemoveFreeze();
     }
 
-    public void ResetEffects()
-    {   
-        if (freezeCoroutine != null)
-        {
-            StopCoroutine(freezeCoroutine);
-            freezeCoroutine = null;
-        }
+    public void SetSlow(float percent)
+    {
+        slowMultiplier = 1f - percent;
+        ApplyStats();
+    }
 
-        currentMoveSpeed = baseMoveSpeed;
+    public void RemoveSlow()
+    {
+        slowMultiplier = 1f;
         ApplyStats();
     }
 }

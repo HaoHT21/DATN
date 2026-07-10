@@ -89,6 +89,9 @@ public class EnemyShotgun : MonoBehaviour
 
     void Update()
     {
+        if (controller.IsHurting)
+            return;
+
         fireTimer -=
             Time.deltaTime;
 
@@ -97,7 +100,6 @@ public class EnemyShotgun : MonoBehaviour
 
         if (!controller.HasTarget)
             return;
-
 
         Transform target =
             controller.Target;
@@ -109,11 +111,9 @@ public class EnemyShotgun : MonoBehaviour
         float distance =
             dir.magnitude;
 
-
         controller.LookAt(
             target.position
         );
-
 
         //--------------------------------
         // Quá gần -> lùi
@@ -128,14 +128,19 @@ public class EnemyShotgun : MonoBehaviour
                 true
             );
 
-            Retreat(dir);
+            rb.linearVelocity =
+                -dir.normalized *
+                retreatSpeed;
+
+            controller.PlayAnimation(
+                "run"
+            );
 
             return;
         }
 
-
         //--------------------------------
-        // Đứng bắn
+        // Giữ khoảng cách + bắn
         //--------------------------------
 
         if (
@@ -147,25 +152,24 @@ public class EnemyShotgun : MonoBehaviour
                 true
             );
 
+            controller.StopMovement();
+
+            controller.PlayAnimation(
+                "idle"
+            );
+
             Attack();
 
             return;
         }
 
-
         //--------------------------------
-        // Ngoài tầm
+        // Ngoài vùng -> cho chase
         //--------------------------------
 
         controller.LockMovement(
             false
         );
-
-        isRetreating =
-            false;
-
-        retreatTimer =
-            0;
     }
 
 

@@ -38,7 +38,14 @@ public class BulletDamage : MonoBehaviour
 
             if (player != null)
             {
-                player.TakeDamage(damage);
+
+                Vector2 hitDirection =
+                rb.linearVelocity.normalized;
+
+                player.TakeDamage(
+                    damage,
+                    hitDirection
+                );
             }
 
             Destroy(gameObject);

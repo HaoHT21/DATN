@@ -8,6 +8,9 @@ public class LookAtEnemy : MonoBehaviour
     private Transform target;
     private PlayerController player;
 
+    [Header("Vision")]
+    public LayerMask wallLayer;
+
     void Start()
     {
         player = GetComponentInParent<PlayerController>();
@@ -79,6 +82,14 @@ public class LookAtEnemy : MonoBehaviour
                 rotateSpeed *
                 Time.deltaTime
             );
+        Vector3 scale = transform.localScale;
+
+        if (direction.x < 0)
+            scale.y = -Mathf.Abs(scale.y);
+        else
+            scale.y = Mathf.Abs(scale.y);
+
+        transform.localScale = scale;
     }
 
     void FindNearestTarget()
@@ -118,14 +129,36 @@ public class LookAtEnemy : MonoBehaviour
                 );
 
             if (
-                distance <= detectRadius &&
-                distance < closestDistance
+            distance <= detectRadius &&
+            distance < closestDistance &&
+            CanSeeTarget(obj.transform)
             )
             {
                 closestDistance = distance;
                 closest = obj.transform;
             }
         }
+    }
+
+    private bool CanSeeTarget(Transform enemy)
+    {
+        Vector2 origin = transform.position;
+        Vector2 targetPos = enemy.position;
+
+        Vector2 direction =
+            (targetPos - origin).normalized;
+
+        float distance =
+            Vector2.Distance(origin, targetPos);
+
+        RaycastHit2D hit =
+            Physics2D.Raycast(
+                origin,
+                direction,
+                distance,
+                wallLayer);
+
+        return hit.collider == null;
     }
 
     private void OnDrawGizmosSelected()

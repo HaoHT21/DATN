@@ -41,6 +41,9 @@ public class HostageController : MonoBehaviour
     public GameObject gemGiftPrefab;
     public AudioClip gemGiftSound;
 
+    public Transform houseSpawnPoint;
+    public GameObject hostagePrefab;
+
     private Rigidbody2D _rb;
     private Animator _animator;
     private SpriteRenderer _sprite;
@@ -232,6 +235,15 @@ public class HostageController : MonoBehaviour
     private void DestroyHostage()
     {
         RegisterTransferIfNeeded();
+
+        if (hostagePrefab != null && houseSpawnPoint != null)
+        {
+            Instantiate(
+                hostagePrefab,
+                houseSpawnPoint.position,
+                houseSpawnPoint.rotation);
+        }
+
         Destroy(gameObject);
     }
 

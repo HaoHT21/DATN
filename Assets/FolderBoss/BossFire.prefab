@@ -125,8 +125,8 @@ Transform:
   m_GameObject: {fileID: 5087906397338590667}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: -0.365, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -2.5, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 598610014296102893}
@@ -365,8 +365,8 @@ Transform:
   m_GameObject: {fileID: 6773916424304130998}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 1.592, y: 0.04, z: 0}
-  m_LocalScale: {x: 6.1268945, y: 1.5693889, z: 1.5693889}
+  m_LocalPosition: {x: 6.4553, y: 0.7315, z: 0}
+  m_LocalScale: {x: 24.478386, y: 4.5121336, z: 1.5693889}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4506132486580365933}
@@ -535,8 +535,8 @@ Transform:
   m_GameObject: {fileID: 6905772719604878256}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 34.11, y: -8.95, z: 0}
-  m_LocalScale: {x: 4.8943176, y: 4.8943176, z: 4.8943176}
+  m_LocalPosition: {x: 122.07, y: -595.61, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3550328763618252734}
@@ -593,7 +593,7 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 10
   detectRange: 20
-  keepDistance: 4
+  keepDistance: 10
   thinkMin: 0.5
   thinkMax: 1.5
   fireballPrefab: {fileID: 7884107102201911381, guid: b713bf347cfaca945aa96ad5f355b487, type: 3}

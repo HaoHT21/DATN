@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
 public class IceBullet : MonoBehaviour
@@ -43,6 +44,10 @@ public class IceBullet : MonoBehaviour
 
             Hit();
             return;
+        }
+        if (col.CompareTag("Wall"))
+        {
+            Destroy(gameObject);
         }
     }
 
