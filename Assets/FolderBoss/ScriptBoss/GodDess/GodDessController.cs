@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GodDessController : BossEndController
 {
+    public CloneHealth cloneHealth;
+
     [Header("Goddess Skills")]
 
     public GoddessLaserSkill laserSkill;
@@ -25,8 +27,9 @@ public class GodDessController : BossEndController
 
         if (isClone)
         {
-            currentPhase =
-            fixedClonePhase;
+            currentPhase = fixedClonePhase;
+
+            cloneHealth = GetComponent<CloneHealth>();
         }
     }
 
@@ -155,16 +158,16 @@ public class GodDessController : BossEndController
                         100
                     );
 
-                    if (roll < 5)
+                    if (roll < 10)
                         action = 0;
 
-                    else if (roll < 10)
+                    else if (roll < 20)
                         action = 1;
 
-                    else if (roll < 30)
+                    else if (roll < 40)
                         action = 2;
 
-                    else if (roll < 50)
+                    else if (roll < 60)
                         action = 3;
 
                     else

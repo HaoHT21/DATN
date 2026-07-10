@@ -228,7 +228,6 @@ GameObject:
   - component: {fileID: 1232122554848105542}
   - component: {fileID: 6031622529690365384}
   - component: {fileID: 6077548557951783592}
-  - component: {fileID: 3427136304765542484}
   m_Layer: 0
   m_Name: BossEnd
   m_TagString: Boss
@@ -427,22 +426,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0.51930237, y: 0}
   m_Radius: 66.97896
---- !u!114 &3427136304765542484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3120480687593708142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e45e4978770e1a140891f32238f45cc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  deathEffectPrefab: {fileID: 0}
-  executedSpawnPrefab: {fileID: 6427778196570114290, guid: a3c41dc2f28f1eb48a0ee001456aa08c, type: 3}
-  nextDialogueTriggerZone: {fileID: 0}
-  deathAnimationStateName: Death Animation
 --- !u!1 &4861554426174679520
 GameObject:
   m_ObjectHideFlags: 0

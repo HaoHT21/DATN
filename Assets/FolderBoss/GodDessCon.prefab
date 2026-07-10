@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 3835972158724097381}
   - component: {fileID: 940979890872322964}
   - component: {fileID: 9056752068170996795}
-  - component: {fileID: 515200918500773978}
+  - component: {fileID: 6285354356238559560}
   m_Layer: 0
   m_Name: God
   m_TagString: Untagged
@@ -204,7 +204,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.28, y: 0.45}
   m_EdgeRadius: 0
---- !u!114 &515200918500773978
+--- !u!114 &6285354356238559560
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -213,14 +213,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1345772515480387094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 663b7c12a0dcc604981566a8ff7c6da7, type: 3}
+  m_Script: {fileID: 11500000, guid: 65696f5b2c0a72e428a1c9401b62d5c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHeath: 100
-  maxHeath: 100
-  healthFill: {fileID: 0}
-  healthUIRoot: {fileID: 0}
-  smoothSpeed: 8
+  maxHealth: 50
+  currentHealth: 0
 --- !u!1 &4089336226447745358
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,7 +296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 940979890872322964}
-  bossHeath: {fileID: 515200918500773978}
+  bossHeath: {fileID: 0}
   bossVisual: {fileID: 5924164106070485754}
   detectRange: 40
   keepDistance: 15
@@ -325,6 +322,7 @@ MonoBehaviour:
   manaFill: {fileID: 0}
   manaUIRoot: {fileID: 0}
   manaSmoothSpeed: 8
+  cloneHealth: {fileID: 6285354356238559560}
   laserSkill: {fileID: 9088086194621550997}
   meteorSkill: {fileID: 8956958443766901584}
   cloneSkill: {fileID: 2324771469145477873}

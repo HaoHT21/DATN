@@ -96,7 +96,17 @@ public class Bullet : MonoBehaviour
         }
 
         HitEffect();
+
+        if (col.TryGetComponent<CloneHealth>(out var clone))
+        {
+            clone.TakeDamage(damage);
+
+            HitEffect();
+            return;
+        }
     }
+
+
 
     private void HitEffect()
     {
