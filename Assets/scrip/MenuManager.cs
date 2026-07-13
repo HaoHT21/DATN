@@ -1,5 +1,6 @@
 ﻿using SceneTransition;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 public class MenuManager : MonoBehaviour
@@ -7,6 +8,9 @@ public class MenuManager : MonoBehaviour
     [Header("UI Panels")]
     public GameObject mainMenuUI;
     public GameObject settingPanel;
+
+    [Header("Buttons")]
+    [SerializeField] private Button continueButton;
 
     [Header("Intro Video Settings")]
     public VideoPlayer introVideo;
@@ -21,6 +25,9 @@ public class MenuManager : MonoBehaviour
     {
         if (settingPanel != null)
             settingPanel.SetActive(false);
+
+        if (continueButton != null)
+            continueButton.interactable = SaveGameService.HasSave();
 
         if (introVideo != null)
         {
@@ -52,6 +59,50 @@ public class MenuManager : MonoBehaviour
         }
 
         BeginTransitionToGame();
+    }
+
+    /// <summary>
+    /// New Game:
+    /// Xóa save cũ → load scene đầu tiên → tạo save mới sau khi scene load xong.
+    /// </summary>
+    public void NewGame()
+    {
+        SaveGameService.DeleteSave();
+        SaveGameRuntime.BeginNewGameCreateSaveAfterLoad();
+        PlayGame();
+    }
+
+    /// <summary>
+    /// Continue:
+    /// Load save → load scene đã lưu → restore dữ liệu → tiếp tục chơi.
+    /// </summary>
+    public void Continue()
+    {
+        SaveData data = SaveGameService.Load();
+        if (data == null || string.IsNullOrWhiteSpace(data.sceneName))
+            return;
+
+        if (_isEnteringGame)
+            return;
+
+        _isEnteringGame = true;
+
+        if (mainMenuUI != null)
+            mainMenuUI.SetActive(false);
+
+        SaveGameRuntime.BeginContinue(data);
+
+        if (SceneTransitionManager.Instance == null)
+        {
+            Debug.LogError(
+                "[MenuManager] Thiếu SceneTransitionSystem trong MainMenu. " +
+                "Không load thẳng để tránh bỏ qua fade — hãy thêm prefab Scene Transition.");
+            _isEnteringGame = false;
+            return;
+        }
+
+        SceneTransitionManager.Instance.LoadScene(
+            new SceneTransitionRequest(data.sceneName, transitionMode));
     }
 
     void OnVideoFinished(VideoPlayer vp)

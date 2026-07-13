@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     [System.Serializable]
     public class WeaponItem
     {
+        public int itemID;
         public Sprite icon;
         public GameObject visualPrefab;
         public GameObject pickupPrefab;
@@ -310,7 +311,7 @@ public class PlayerController : MonoBehaviour
 
 
 
-    public void PickupWeapon(GameObject visualPrefab, GameObject pickupPrefab, bool isGun, int dmg, GameObject bulletType, Sprite icon)
+    public void PickupWeapon(GameObject visualPrefab, GameObject pickupPrefab, bool isGun, int dmg, GameObject bulletType, Sprite icon, int itemID = 0)
 
     {
 
@@ -359,7 +360,7 @@ public class PlayerController : MonoBehaviour
         inventory.Add(new WeaponItem
 
         {
-
+            itemID = itemID,
             icon = icon,
 
             visualPrefab = spawned,

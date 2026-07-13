@@ -98,6 +98,8 @@ GameObject:
   - component: {fileID: 3081323650875300151}
   - component: {fileID: 1865533136511163898}
   - component: {fileID: 6699721217392881018}
+  - component: {fileID: -2101574352016953325}
+  - component: {fileID: 3393646116163120442}
   m_Layer: 0
   m_Name: GunRed
   m_TagString: Untagged
@@ -134,6 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemIcon: {fileID: -4609766415751863892, guid: 9ffeac622333a7b48958151d8853e051, type: 3}
+  itemID: 0
   weaponVisualPrefab: {fileID: 3502463425519907151}
   weaponPickupPrefab: {fileID: 3502463425519907151}
   bulletPrefab: {fileID: 5705882647281060972, guid: fe3caf0ae47de30429c3ae9067499ffd, type: 3}
@@ -175,3 +178,29 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &-2101574352016953325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3502463425519907151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10cbb2b0eef279946a2076df61729828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: af40e9bc57e34378916cf667786d6660
+--- !u!114 &3393646116163120442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3502463425519907151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a273b0cb7636e544875c9f7ebfd5640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collected: 0

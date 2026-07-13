@@ -7,6 +7,7 @@ public class ItemPickup : MonoBehaviour
 {
 
     public Sprite itemIcon;                // <--- Thêm biến này
+    public int itemID;
 
     public GameObject weaponVisualPrefab;
 
@@ -44,9 +45,12 @@ public class ItemPickup : MonoBehaviour
 
                 // Truyền thêm itemIcon vào đây
 
-                pc.PickupWeapon(weaponVisualPrefab, weaponPickupPrefab, isGun, damage, bulletPrefab, itemIcon);
+                pc.PickupWeapon(weaponVisualPrefab, weaponPickupPrefab, isGun, damage, bulletPrefab, itemIcon, itemID);
 
-                Destroy(gameObject);
+                if (TryGetComponent<CollectibleSaveable>(out var collectible))
+                    collectible.Collect();
+                else
+                    Destroy(gameObject);
 
             }
 
