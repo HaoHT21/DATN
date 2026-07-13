@@ -6,24 +6,21 @@ using UnityEngine;
 /// </summary>
 public static class GameSessionSave
 {
-    private const string ScoreKey = "PlayerScore";
-
     public static void SaveCurrentSession()
     {
-        PlayerStats stats = Object.FindFirstObjectByType<PlayerStats>();
-        if (stats != null)
-            PlayerPrefs.SetInt(ScoreKey, stats.Score);
-
-        PlayerPrefs.Save();
-        Debug.Log("[GameSessionSave] Đã lưu dữ liệu phiên chơi.");
+        SaveGameService.Save(SaveGameService.CaptureFromCurrentScene());
     }
 
     public static void LoadInto(PlayerStats stats)
     {
-        if (stats == null || !PlayerPrefs.HasKey(ScoreKey))
+        if (stats == null)
             return;
 
-        stats.Score = PlayerPrefs.GetInt(ScoreKey);
+        SaveData data = SaveGameService.Load();
+        if (data == null)
+            return;
+
+        stats.Score = data.score;
         stats.UpdateUI();
     }
 }

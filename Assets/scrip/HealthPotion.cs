@@ -4,6 +4,7 @@ public class HealthPotion : MonoBehaviour
 {
     [Header("Settings")]
     public int healAmount = 50;
+    public int itemID;
 
     [Header("Visuals")]
     public Sprite itemIcon;               // Kéo ảnh sprite bình máu vào đây trên Inspector
@@ -31,6 +32,7 @@ public class HealthPotion : MonoBehaviour
                 // 2. Tạo item để đưa vào danh sách của Player
                 PlayerController.WeaponItem newPotion = new PlayerController.WeaponItem
                 {
+                    itemID = this.itemID,
                     icon = this.itemIcon, // Gán icon để hiển thị chính xác trong Kholon
                     visualPrefab = visual, // Gán visual vừa tạo
                     pickupPrefab = this.pickupPrefab,
@@ -47,7 +49,10 @@ public class HealthPotion : MonoBehaviour
                 }
 
                 Debug.Log("Đã nhặt bình máu thành công!");
-                Destroy(gameObject);
+                if (TryGetComponent<CollectibleSaveable>(out var collectible))
+                    collectible.Collect();
+                else
+                    Destroy(gameObject);
             }
         }
     }

@@ -39,7 +39,10 @@ public class GemPickup : MonoBehaviour
 
         _collected = true;
         PlaySound(pickupSound);
-        Destroy(gameObject);
+        if (TryGetComponent<CollectibleSaveable>(out var collectible))
+            collectible.Collect();
+        else
+            Destroy(gameObject);
     }
 
     private void PlaySound(AudioClip clip)
