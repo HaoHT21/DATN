@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6298835502744754630}
   - component: {fileID: 1620363026753716813}
   - component: {fileID: 7445944310072031784}
+  - component: {fileID: 6998525304354020159}
+  - component: {fileID: -7702891800806835746}
   m_Layer: 0
   m_Name: Icon29_16_0
   m_TagString: Untagged
@@ -102,6 +104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemIcon: {fileID: 85507195301995835, guid: 632e2652c0c6a0b4a8c19c51db838454, type: 3}
+  itemID: 11
   weaponVisualPrefab: {fileID: 66688190058594256}
   weaponPickupPrefab: {fileID: 66688190058594256}
   bulletPrefab: {fileID: 7179005512404567193, guid: da29f409389553d42bfa29f69b8f593f, type: 3}
@@ -143,3 +146,29 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.16
+--- !u!114 &6998525304354020159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66688190058594256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10cbb2b0eef279946a2076df61729828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: ee406fe1d58043ec82af4e79b597223c
+--- !u!114 &-7702891800806835746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66688190058594256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a273b0cb7636e544875c9f7ebfd5640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collected: 0

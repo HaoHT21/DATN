@@ -5,9 +5,9 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Quản lý trạng thái gameplay toàn cục: pause, resume, thoát màn, thoát ứng dụng.
-/// Không chứa logic hiển thị UI — UIManager lắng nghe sự kiện và cập nhật giao diện.
+/// Không chứa logic hiển thị UI — PauseMenuUI / PauseMenuController lắng nghe sự kiện.
 /// </summary>
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IGamePauseService
 {
     public static GameManager Instance { get; private set; }
 
@@ -15,15 +15,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     [Header("Điều khiển")]
+    [Tooltip("ESC nội bộ — tắt khi PauseMenuController đã sở hữu ESC.")]
     [SerializeField] private bool togglePauseWithEscape = true;
 
     public GameState CurrentState { get; private set; } = GameState.Playing;
     public bool IsGameplayPaused => CurrentState == GameState.Paused;
+    public bool IsPaused => IsGameplayPaused;
 
     /// <summary>Phát khi chuyển Playing ↔ Paused.</summary>
     public event Action<GameState> OnStateChanged;
 
     private float _timeScaleBeforePause = 1f;
+    private bool _escapeOwnedByExternal;
+    private readonly IPauseInputGate _pauseInputGate = new DefaultPauseInputGate();
 
     private void Awake()
     {
@@ -44,7 +48,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (!togglePauseWithEscape)
+        if (!togglePauseWithEscape || _escapeOwnedByExternal)
+            return;
+
+        if (!_pauseInputGate.CanTogglePause)
             return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -56,15 +63,23 @@ public class GameManager : MonoBehaviour
         GameSessionSave.SaveCurrentSession();
     }
 
+    /// <summary>
+    /// Khi PauseMenuController gắn trong scene, gọi true để tránh ESC bị xử lý hai lần.
+    /// </summary>
+    public void SetEscapeOwnedByExternal(bool owned)
+    {
+        _escapeOwnedByExternal = owned;
+    }
+
     public void TogglePause()
     {
         if (IsGameplayPaused)
-            ResumeGame();
+            Resume();
         else
-            PauseGame();
+            Pause();
     }
 
-    public void PauseGame()
+    public void Pause()
     {
         if (IsGameplayPaused)
             return;
@@ -75,7 +90,7 @@ public class GameManager : MonoBehaviour
         AudioListener.pause = true;
     }
 
-    public void ResumeGame()
+    public void Resume()
     {
         if (!IsGameplayPaused)
             return;
@@ -85,9 +100,17 @@ public class GameManager : MonoBehaviour
         AudioListener.pause = false;
     }
 
-    public void ExitToMainMenu()
+    /// <summary>Alias tương thích API cũ.</summary>
+    public void PauseGame() => Pause();
+
+    /// <summary>Alias tương thích API cũ.</summary>
+    public void ResumeGame() => Resume();
+
+    public void ExitToMainMenu(bool saveSession = true)
     {
-        GameSessionSave.SaveCurrentSession();
+        if (saveSession)
+            GameSessionSave.SaveCurrentSession();
+
         RestoreTimeBeforeSceneLoad();
 
         if (SceneTransitionManager.Instance != null)

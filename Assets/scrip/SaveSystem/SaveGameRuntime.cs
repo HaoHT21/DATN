@@ -75,6 +75,9 @@ public sealed class SaveGameRuntime : MonoBehaviour
                 yield return null;
         }
 
+        // Đợi 1 frame để object InventoryData trùng (DontDestroyOnLoad) kịp Destroy.
+        yield return null;
+
         if (player != null)
             player.transform.position = data.GetPlayerPosition();
 
@@ -104,7 +107,38 @@ public sealed class SaveGameRuntime : MonoBehaviour
                 yield return null;
         }
 
+        yield return null;
+
+        // New Game: InventoryData là DontDestroyOnLoad — phải reset để không giữ đồ run cũ.
+        ResetPersistentInventory(player != null ? player.GetComponent<PlayerController>() : null);
+
         SaveGameService.Save(SaveGameService.CaptureFromCurrentScene());
+    }
+
+    private static void ResetPersistentInventory(PlayerController player)
+    {
+        if (InventoryData.Instance == null)
+            return;
+
+        if (InventoryData.Instance.sharedInventory != null)
+        {
+            foreach (var item in InventoryData.Instance.sharedInventory)
+            {
+                if (item != null && item.visualPrefab != null)
+                    Destroy(item.visualPrefab);
+            }
+
+            InventoryData.Instance.sharedInventory.Clear();
+        }
+
+        InventoryData.Instance.currentWeaponIndex = 0;
+
+        if (player != null)
+        {
+            player.ClearWeaponVisualsKeepMounts();
+            player.EnsureWeaponMounts();
+            player.UpdateWeaponVisuals();
+        }
     }
 
     private static void ApplySaveables(SaveData data)

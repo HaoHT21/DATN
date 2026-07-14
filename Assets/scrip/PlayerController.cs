@@ -116,8 +116,104 @@ public class PlayerController : MonoBehaviour
 
         rb.freezeRotation = true;
 
-        //FixFirePointPosition();
+        EnsureWeaponMounts();
 
+    }
+
+    /// <summary>
+    /// Bảo đảm weaponHolder + firePoint còn hợp lệ.
+    /// FirePoint/FP là child của WeaponHolder — không được xóa khi clear visual súng.
+    /// </summary>
+    public void EnsureWeaponMounts()
+    {
+        if (weaponHolder == null)
+        {
+            Transform foundHolder = transform.Find("WeaponHolder");
+            if (foundHolder != null)
+                weaponHolder = foundHolder;
+        }
+
+        if (firePoint != null)
+            return;
+
+        Transform foundFirePoint = null;
+        if (weaponHolder != null)
+        {
+            foundFirePoint = weaponHolder.Find("FirePoint");
+            if (foundFirePoint == null)
+                foundFirePoint = weaponHolder.Find("FP");
+        }
+
+        if (foundFirePoint == null)
+            foundFirePoint = transform.Find("FirePoint") ?? transform.Find("FP");
+
+        if (foundFirePoint == null)
+            foundFirePoint = FindDeepChild(transform, "FirePoint") ?? FindDeepChild(transform, "FP");
+
+        if (foundFirePoint != null)
+        {
+            firePoint = foundFirePoint;
+            return;
+        }
+
+        // Nếu đã bị Destroy trước đó — tạo lại dưới WeaponHolder.
+        Transform parent = weaponHolder != null ? weaponHolder : transform;
+        var go = new GameObject("FirePoint");
+        go.transform.SetParent(parent, false);
+        go.transform.localPosition = new Vector3(firePointXOffset, firePointYOffset, 0f);
+        go.transform.localRotation = Quaternion.identity;
+        go.transform.localScale = Vector3.one;
+        firePoint = go.transform;
+    }
+
+    /// <summary>
+    /// Xóa visual vũ khí dưới WeaponHolder, giữ lại FirePoint/FP.
+    /// </summary>
+    public void ClearWeaponVisualsKeepMounts()
+    {
+        EnsureWeaponMounts();
+        if (weaponHolder == null)
+            return;
+
+        for (int i = weaponHolder.childCount - 1; i >= 0; i--)
+        {
+            Transform child = weaponHolder.GetChild(i);
+            if (IsPersistentWeaponMount(child))
+                continue;
+
+            Destroy(child.gameObject);
+        }
+    }
+
+    private bool IsPersistentWeaponMount(Transform child)
+    {
+        if (child == null)
+            return true;
+
+        if (firePoint != null && child == firePoint)
+            return true;
+
+        string n = child.name;
+        return n == "FirePoint" || n == "FP";
+    }
+
+    private static Transform FindDeepChild(Transform parent, string childName)
+    {
+        if (parent == null)
+            return null;
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.name == childName)
+                return child;
+
+            Transform nested = FindDeepChild(child, childName);
+            if (nested != null)
+                return nested;
+        }
+
+        return null;
     }
 
 
@@ -125,6 +221,12 @@ public class PlayerController : MonoBehaviour
     private void Update()
 
     {
+        if (!GameplayInputGate.CanProcessInput)
+        {
+            moveInput = Vector2.zero;
+            _animator.SetBool("isWalking", false);
+            return;
+        }
 
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
@@ -218,7 +320,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isKnocked)
+        if (isKnocked || !GameplayInputGate.CanProcessInput)
             return;
 
         rb.MovePosition(
@@ -246,6 +348,9 @@ public class PlayerController : MonoBehaviour
         if (weapon.isGun && weapon.bulletPrefab != null)
 
         {
+            EnsureWeaponMounts();
+            if (firePoint == null)
+                return;
 
             if (AudioManager.Instance != null && shootSound != null)
 
@@ -347,10 +452,10 @@ public class PlayerController : MonoBehaviour
 
             spawned.transform.localScale = visualPrefab.transform.localScale;
 
+            // Prefab súng thường tự trỏ chính nó; cần bỏ collider/pickup và giữ renderer bật.
+            SanitizeHeldWeaponVisual(spawned);
 
-
-            // SỬA TẠI ĐÂY: Mặc định để false, hàm UpdateWeaponVisuals() bên dưới sẽ tự động kích hoạt lại nếu được chọn
-
+            // Mặc định tắt — UpdateWeaponVisuals() sẽ bật lại nếu đang được chọn.
             spawned.SetActive(false);
 
         }
@@ -391,7 +496,43 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    private static void SanitizeHeldWeaponVisual(GameObject spawned)
+    {
+        if (spawned == null)
+            return;
 
+        foreach (CollectibleSaveable c in spawned.GetComponentsInChildren<CollectibleSaveable>(true))
+            Destroy(c);
+
+        foreach (SaveableEntity c in spawned.GetComponentsInChildren<SaveableEntity>(true))
+            Destroy(c);
+
+        foreach (ItemPickup c in spawned.GetComponentsInChildren<ItemPickup>(true))
+            Destroy(c);
+
+        foreach (HealthPotion c in spawned.GetComponentsInChildren<HealthPotion>(true))
+            Destroy(c);
+
+        foreach (Collider2D c in spawned.GetComponentsInChildren<Collider2D>(true))
+            Destroy(c);
+
+        foreach (Collider c in spawned.GetComponentsInChildren<Collider>(true))
+            Destroy(c);
+
+        SpriteRenderer[] sprites = spawned.GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (sprites[i] != null)
+                sprites[i].enabled = true;
+        }
+
+        Renderer[] renderers = spawned.GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] != null)
+                renderers[i].enabled = true;
+        }
+    }
 
     void DropWeapon()
 
