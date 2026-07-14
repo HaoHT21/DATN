@@ -44,6 +44,9 @@ public class BossEndController : MonoBehaviour
 
     bool dodging;
 
+    [Header("UI")]
+    public bool enableManaUI = true;
+
     [Header("Skills")]
     public BossSkillShoot shootSkill;
 
@@ -98,6 +101,9 @@ public class BossEndController : MonoBehaviour
         // Auto Find UI Mana
         //--------------------------------
 
+        if (!enableManaUI)
+            return;
+
         manaUIRoot = FindImageByName("BossManaBar");
         manaFill = FindImageByName("BossManaFill");
 
@@ -134,14 +140,14 @@ public class BossEndController : MonoBehaviour
         // Smooth Mana UI
         //--------------------------------
 
-        if (manaFill != null)
+        if (enableManaUI && manaFill != null)
         {
             manaFill.fillAmount = Mathf.Lerp(
                 manaFill.fillAmount,
                 targetManaFill,
                 manaSmoothSpeed * Time.deltaTime
             );
-        }
+        }   
 
         //--------------------------------
         // DEATH
@@ -982,7 +988,7 @@ public class BossEndController : MonoBehaviour
     {
         yield return
         new WaitForSeconds(
-            2f
+            1f
         );
 
         Destroy(
@@ -1005,6 +1011,8 @@ public class BossEndController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!enableManaUI)
+            return;
         if (!other.CompareTag("Player"))
             return;
 
@@ -1017,6 +1025,8 @@ public class BossEndController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        if (!enableManaUI)
+            return;
         if (!other.CompareTag("Player"))
             return;
 

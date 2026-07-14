@@ -63,6 +63,7 @@ GameObject:
   - component: {fileID: 7568146674080746594}
   - component: {fileID: 130490417035745084}
   - component: {fileID: 1711221770472209958}
+  - component: {fileID: 3149200097321076951}
   m_Layer: 0
   m_Name: GolemBlue
   m_TagString: Enemy
@@ -264,18 +265,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 10
-  maxSearchTime: 2
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 512
   moveSpeed: 3
-  wanderRadius: 4
-  wanderInterval: 2
-  alertedRange: 20
   hurtDuration: 0.3
   knockbackForce: 5
   enemyVisual: {fileID: 5072043034472910610}
+  nextWaypointDistance: 0.2
+  updateRate: 0.25
 --- !u!114 &130490417035745084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,4 +310,35 @@ MonoBehaviour:
   firePoint: {fileID: 325776252484216190}
   bulletsPerShot: 1
   spreadAngle: 0
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   enemyVisual: {fileID: 5072043034472910610}
+--- !u!114 &3149200097321076951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6727794421984774414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1

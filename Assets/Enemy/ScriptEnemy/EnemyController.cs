@@ -1,27 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Pathfinding;
 
+[RequireComponent(typeof(Seeker))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyController : MonoBehaviour
 {
-    [Header("Detection")]
-    public float detectRange = 6f;
-
-    [Header("Search")]
-    public float maxSearchTime = 2f;
-
-    [Header("Vision")]
-    public LayerMask wallLayer;
-
     [Header("Movement")]
     public float moveSpeed = 3f;
-
-    [Header("Wander")]
-    public float wanderRadius = 3f;
-    public float wanderInterval = 2f;
-
-    [Header("Alert")]
-    public float alertedRange = 20f;
 
     [Header("Animation")]
     public float hurtDuration = 0.2f;
@@ -34,25 +20,27 @@ public class EnemyController : MonoBehaviour
     [Header("Visual")]
     public Transform enemyVisual;
 
+    private Seeker seeker;
+
+    private Path path;
+
+    private int currentWaypoint;
+
+    public float nextWaypointDistance = 0.2f;
+
+    public float updateRate = 0.25f;
+
 
     private Rigidbody2D rb;
     private Animator animator;
     private EnemyHeath health;
 
     private Transform target;
-    private Vector2 lastKnownPlayerPosition;
-    private Vector2 wanderTarget;
 
-    private bool searchingPlayer;
-    private bool isWaiting;
     private bool isHurting;
     private bool isDead;
     private bool isAlerted;
     private bool movementLocked;
-
-    private float originalDetectRange;
-    private float searchTimer;
-    private float wanderTimer;
 
     private string currentAnim;
 
@@ -72,19 +60,13 @@ public class EnemyController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         health = GetComponent<EnemyHeath>();
-
-        originalDetectRange = detectRange;
+        seeker = GetComponent<Seeker>();
 
         if (health != null)
         {
             health.OnHurt += HandleHurt;
-            health.OnHurt += AlertNearestPlayer;
             health.OnDeath += HandleDeath;
         }
-
-        wanderTimer = wanderInterval;
-
-        PickNewWanderPoint();
 
         PlayAnimation("idle");
     }
@@ -94,9 +76,16 @@ public class EnemyController : MonoBehaviour
         if (health != null)
         {
             health.OnHurt -= HandleHurt;
-            health.OnHurt -= AlertNearestPlayer;
             health.OnDeath -= HandleDeath;
         }
+    }
+
+    private void Start()
+    {
+        InvokeRepeating(
+        nameof(UpdatePath),
+        0f,
+        updateRate);
     }
 
     private void Update()
@@ -109,23 +98,86 @@ public class EnemyController : MonoBehaviour
 
         FindPlayer();
 
-        // Bị khóa thì không chạy AI di chuyển
         if (movementLocked)
             return;
 
         if (target != null)
         {
             ChasePlayer();
-            return;
         }
-
-        if (searchingPlayer)
+        else
         {
-            SearchLastPosition();
+            StopMovement();
+            PlayAnimation("idle");
+        }
+    }
+
+    void UpdatePath()
+    {
+        if (movementLocked)
+            return;
+
+        if (target == null)
+            return;
+
+        if (!seeker.IsDone())
+            return;
+
+        seeker.StartPath(
+            rb.position,
+            target.position,
+            OnPathComplete);
+    }
+
+    void OnPathComplete(Path p)
+    {
+        if (p.error)
+            return;
+
+        path = p;
+
+        currentWaypoint = 0;
+    }
+
+    private void FixedUpdate()
+    {
+        if (movementLocked)
+            return;
+
+        FollowPath();
+    }
+
+    void FollowPath()
+    {
+        if (path == null)
+            return;
+
+        if (currentWaypoint >= path.vectorPath.Count)
+        {
+            rb.linearVelocity = Vector2.zero;
             return;
         }
 
-        Wander();
+        Vector2 next =
+            path.vectorPath[currentWaypoint];
+
+        Vector2 dir =
+            (next - rb.position).normalized;
+
+        rb.linearVelocity =
+            dir * moveSpeed;
+
+        Flip(dir);
+
+        PlayAnimation("run");
+
+        if (Vector2.Distance(
+            rb.position,
+            next)
+            < nextWaypointDistance)
+        {
+            currentWaypoint++;
+        }
     }
 
     public void SetHitDirection(
@@ -140,6 +192,10 @@ public class EnemyController : MonoBehaviour
     public void StopMovement()
     {
         rb.linearVelocity = Vector2.zero;
+
+        path = null;
+
+        currentWaypoint = 0;
     }
 
     public void LockMovement(bool value)
@@ -179,122 +235,19 @@ public class EnemyController : MonoBehaviour
         );
     }
 
-    bool CanSeePlayer(Transform player)
-    {
-        Vector2 origin =
-            transform.position;
-
-        Vector2 targetPos =
-            player.position;
-
-        Vector2 direction =
-            (targetPos - origin)
-            .normalized;
-
-        float distance =
-            Vector2.Distance(
-                origin,
-                targetPos
-            );
-
-        RaycastHit2D hit =
-            Physics2D.Raycast(
-                origin,
-                direction,
-                distance,
-                wallLayer
-            );
-
-        return hit.collider == null;
-    }
-
-
     void FindPlayer()
     {
-        GameObject[] players =
-            GameObject.FindGameObjectsWithTag(
-                "Player"
-            );
-
-        float closest =
-            detectRange;
-
-        Transform foundTarget =
-            null;
-
-        foreach (GameObject player in players)
-        {
-            float distance =
-                Vector2.Distance(
-                    transform.position,
-                    player.transform.position
-                );
-
-            if (
-                distance <= closest &&
-                CanSeePlayer(player.transform)
-            )
-            {
-                closest =
-                    distance;
-
-                foundTarget =
-                    player.transform;
-            }
-        }
-
-        if (foundTarget != null)
-        {
-            target =
-                foundTarget;
-
-            lastKnownPlayerPosition =
-                target.position;
-
-            searchingPlayer =
-                false;
-        }
-        else
-        {
-            if (target != null)
-            {
-                searchingPlayer =
-                    true;
-
-                searchTimer =
-                    maxSearchTime;
-            }
-
-            target = null;
-        }
-    }
-
-
-    void AlertNearestPlayer()
-    {
-        isAlerted = true;
-
-        detectRange =
-            alertedRange;
-
-        GameObject player =
-            GameObject.FindGameObjectWithTag(
-                "Player"
-            );
-
-        if (player == null)
+        if (target != null)
             return;
 
-        target =
-            player.transform;
+        GameObject player =
+            GameObject.FindGameObjectWithTag("Player");
 
-        lastKnownPlayerPosition =
-            player.transform.position;
-
-        searchingPlayer =
-            false;
+        if (player != null)
+        {
+            target = player.transform;
+        }
     }
-
 
     void ChasePlayer()
     {
@@ -311,176 +264,6 @@ public class EnemyController : MonoBehaviour
 
         PlayAnimation("run");
     }
-
-
-    void SearchLastPosition()
-    {
-        searchTimer -=
-            Time.deltaTime;
-
-        Vector2 dir =
-            (
-                lastKnownPlayerPosition -
-                (Vector2)transform.position
-            ).normalized;
-
-        rb.linearVelocity =
-            dir * moveSpeed;
-
-        Flip(dir);
-
-        PlayAnimation("run");
-
-        if (
-            Vector2.Distance(
-                transform.position,
-                lastKnownPlayerPosition
-            ) < 0.2f
-            ||
-            searchTimer <= 0
-        )
-        {
-            searchingPlayer =
-                false;
-
-            isAlerted =
-                false;
-
-            detectRange =
-                originalDetectRange;
-
-            rb.linearVelocity =
-                Vector2.zero;
-
-            PlayAnimation("idle");
-
-            PickNewWanderPoint();
-        }
-    }
-
-
-    void Wander()
-    {
-        float distance =
-            Vector2.Distance(
-                transform.position,
-                wanderTarget
-            );
-
-        if (distance < 0.1f)
-        {
-            rb.linearVelocity =
-                Vector2.zero;
-
-            PlayAnimation("idle");
-
-            if (!isWaiting)
-            {
-                isWaiting =
-                    true;
-
-                wanderTimer =
-                    wanderInterval;
-            }
-
-            wanderTimer -=
-                Time.deltaTime;
-
-            if (wanderTimer <= 0)
-            {
-                isWaiting =
-                    false;
-
-                PickNewWanderPoint();
-            }
-
-            return;
-        }
-
-        Vector2 dir =
-            (
-                wanderTarget -
-                (Vector2)transform.position
-            ).normalized;
-
-        rb.linearVelocity =
-            dir * moveSpeed * 0.5f;
-
-        Flip(dir);
-
-        PlayAnimation("run");
-    }
-
-
-    void PickNewWanderPoint()
-    {
-        const int maxTry =
-            10;
-
-        for (
-            int i = 0;
-            i < maxTry;
-            i++
-        )
-        {
-            Vector2 random =
-                Random.insideUnitCircle *
-                wanderRadius;
-
-            Vector2 point =
-                (Vector2)
-                transform.position +
-                random;
-
-            //--------------------------------
-            // Kiểm tra có vật cản
-            //--------------------------------
-
-            Vector2 dir =
-                (
-                    point -
-                    (Vector2)
-                    transform.position
-                ).normalized;
-
-            float distance =
-                Vector2.Distance(
-                    transform.position,
-                    point
-                );
-
-            RaycastHit2D hit =
-                Physics2D.Raycast(
-                    transform.position,
-                    dir,
-                    distance,
-                    wallLayer
-                );
-
-            //--------------------------------
-            // Không có tường
-            //--------------------------------
-
-            if (
-                hit.collider ==
-                null
-            )
-            {
-                wanderTarget =
-                    point;
-
-                return;
-            }
-        }
-
-        //--------------------------------
-        // fallback
-        //--------------------------------
-
-        wanderTarget =
-            transform.position;
-    }
-
 
     void Flip(Vector2 dir)
     {
@@ -658,18 +441,5 @@ public class EnemyController : MonoBehaviour
             isAlerted
             ? Color.red
             : Color.yellow;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRange
-        );
-
-        Gizmos.color =
-            Color.cyan;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            wanderRadius
-        );
     }
 }

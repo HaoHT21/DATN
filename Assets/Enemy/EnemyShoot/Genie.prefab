@@ -63,6 +63,7 @@ GameObject:
   - component: {fileID: 3780046889495264020}
   - component: {fileID: 1634136886719048576}
   - component: {fileID: 5155498748442005768}
+  - component: {fileID: 4905980691949070790}
   m_Layer: 0
   m_Name: Genie
   m_TagString: Enemy
@@ -264,18 +265,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 10
-  maxSearchTime: 2
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 512
   moveSpeed: 3
-  wanderRadius: 3
-  wanderInterval: 2
-  alertedRange: 20
   hurtDuration: 0.3
   knockbackForce: 5
   enemyVisual: {fileID: 4437224375825967064}
+  nextWaypointDistance: 0.2
+  updateRate: 0.25
 --- !u!114 &1634136886719048576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,6 +299,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shotMode: 1
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   attackDistance: 6
   retreatDistance: 3
   retreatSpeed: 2
@@ -318,3 +316,31 @@ MonoBehaviour:
   bulletInterval: 0.1
   bulletPrefab: {fileID: 1606719665924462886, guid: 36ff60e12c13dc14bb1d3b43ce752841, type: 3}
   firePoint: {fileID: 8942083613431030833}
+--- !u!114 &4905980691949070790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7203229692839817076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1

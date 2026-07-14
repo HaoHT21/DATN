@@ -11,16 +11,13 @@ public class IceZone : MonoBehaviour
     public GameObject EffectIceBar;
     public Image EffectIceFill;
 
-    private PlayerEffect playerEffect;
+    private EffectManager playerEffect;
 
     private bool playerInside;
     private bool isFilling = true;
     private bool freezeActive = false;
 
     private float value = 0f;
-
-    // lưu tốc độ cũ
-    private float oldSpeed;
 
     void Start()
     {
@@ -77,15 +74,6 @@ public class IceZone : MonoBehaviour
             }
         }
 
-        // áp dụng tốc độ
-        if (playerEffect != null)
-        {
-            playerEffect.SendMessage(
-                "ApplyStats",
-                SendMessageOptions.DontRequireReceiver
-            );
-        }
-
         // cập nhật UI
         if (EffectIceFill != null)
             EffectIceFill.fillAmount = value;
@@ -98,7 +86,7 @@ public class IceZone : MonoBehaviour
             playerInside = true;
 
             playerEffect =
-                other.GetComponent<PlayerEffect>();
+                other.GetComponent<EffectManager>();
 
             if (EffectIceBar != null)
                 EffectIceBar.SetActive(true);
@@ -111,16 +99,11 @@ public class IceZone : MonoBehaviour
         {
             playerInside = false;
 
-            // trả tốc nếu đang đóng băng
             if (freezeActive && playerEffect != null)
             {
-                playerEffect.currentMoveSpeed =
-                    oldSpeed;
+                freezeActive = false;
 
-                playerEffect.SendMessage(
-                    "ApplyStats",
-                    SendMessageOptions.DontRequireReceiver
-                );
+                playerEffect.RemoveFreeze();
             }
 
             freezeActive = false;

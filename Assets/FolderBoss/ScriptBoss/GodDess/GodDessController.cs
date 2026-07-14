@@ -3,8 +3,6 @@ using System.Collections;
 
 public class GodDessController : BossEndController
 {
-    public CloneHealth cloneHealth;
-
     [Header("Goddess Skills")]
 
     public GoddessLaserSkill laserSkill;
@@ -27,9 +25,8 @@ public class GodDessController : BossEndController
 
         if (isClone)
         {
-            currentPhase = fixedClonePhase;
-
-            cloneHealth = GetComponent<CloneHealth>();
+            currentPhase =
+            fixedClonePhase;
         }
     }
 

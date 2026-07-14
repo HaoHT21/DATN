@@ -15,6 +15,15 @@ public class BossDecisionTrigger : MonoBehaviour
     public string deathAnimationStateName = "Death Animation";
 
     private bool isTriggered = false;
+    void Start()
+    {
+        BossHeath hp = GetComponent<BossHeath>();
+
+        if (hp != null)
+        {
+            hp.OnDeath += ActivateDecisionSequence;
+        }
+    }
 
     // 1. Kích hoạt chuỗi logic khi Boss hết máu (Được gọi từ BossHealth)
     public void ActivateDecisionSequence()

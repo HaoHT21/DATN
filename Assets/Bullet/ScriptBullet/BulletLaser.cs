@@ -7,11 +7,18 @@ public class BulletLaser : MonoBehaviour
     public float aimTime = 1f;      // Thời gian ngắm
     public float showTime = 1f;     // Hiện object trong bao lâu
 
-    [Header("Object")]
-    public GameObject targetObject; // Object sẽ hiện sau khi khóa hướng
-
     [Header("Delay")]
     public float spawnDelay = .5f;
+
+    [Header("Laser")]
+    public LineRenderer line;
+    public LayerMask hitLayer;      // Player + Wall
+
+    public int damage = 10;
+
+    [Header("Warning")]
+    public GameObject warningHeartPrefab;
+    private GameObject warningHeart;
 
     private Transform player;
     private bool lockRotation;
@@ -23,9 +30,17 @@ public class BulletLaser : MonoBehaviour
         if (p != null)
             player = p.transform;
 
-        // Ẩn object lúc đầu
-        if (targetObject != null)
-            targetObject.SetActive(false);
+        line.enabled = false;
+
+        warningHeart =
+        Instantiate(
+            warningHeartPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+
+        warningHeart.transform.SetParent(transform);
+        warningHeart.transform.localPosition = Vector3.zero;
 
         StartCoroutine(LockRoutine());
     }
@@ -73,10 +88,10 @@ public class BulletLaser : MonoBehaviour
         // Bắn
         //--------------------------------
 
-        if (targetObject != null)
-            targetObject.SetActive(
-                true
-            );
+        if (warningHeart != null)
+            Destroy(warningHeart);
+
+        FireLaser();
 
         //--------------------------------
         // Giữ laser
@@ -93,5 +108,46 @@ public class BulletLaser : MonoBehaviour
         Destroy(
             gameObject
         );
+    }
+
+    void FireLaser()
+    {
+        line.enabled = true;
+
+        Vector2 dir = transform.right;
+
+        RaycastHit2D hit =
+            Physics2D.Raycast(
+                transform.position,
+                dir,
+                50f,
+                hitLayer
+            );
+
+        Vector3 endPoint;
+
+        if (hit)
+        {
+            endPoint = hit.point;
+
+            if (hit.collider.CompareTag("Player"))
+            {
+                PlayerHealth hp =
+                    hit.collider.GetComponent<PlayerHealth>();
+
+                if (hp != null)
+                    hp.TakeDamage(damage);
+            }
+        }
+        else
+        {
+            endPoint =
+                transform.position +
+                (Vector3)dir * 50f;
+        }
+
+        line.positionCount = 2;
+        line.SetPosition(0, transform.position);
+        line.SetPosition(1, endPoint);
     }
 }

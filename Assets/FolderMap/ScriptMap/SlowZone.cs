@@ -15,7 +15,7 @@ public class SlowZone : MonoBehaviour
     public GameObject effectBar;
     public Image effectFill;
 
-    private PlayerEffect playerEffect;
+    private EffectManager playerEffect;
 
     private bool playerInside;
     private bool isFilling = true;
@@ -87,7 +87,7 @@ public class SlowZone : MonoBehaviour
 
         playerInside = true;
 
-        playerEffect = other.GetComponent<PlayerEffect>();
+        playerEffect = other.GetComponent<EffectManager>();
 
         if (effectBar != null)
             effectBar.SetActive(true);

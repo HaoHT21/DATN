@@ -38,6 +38,9 @@ public class EnemyShooter : MonoBehaviour
     [Range(0, 180)]
     public float spreadAngle = 30f;
 
+    [Header("Vision")]
+    public LayerMask wallLayer;
+
 
     [Header("Visual")]
     public Transform enemyVisual;
@@ -119,8 +122,8 @@ public class EnemyShooter : MonoBehaviour
         //--------------------------------
 
         if (
-            distance <=
-            attackDistance
+        distance <= attackDistance &&
+        CanShootPlayer(target)
         )
         {
             controller.LockMovement(
@@ -232,6 +235,32 @@ public class EnemyShooter : MonoBehaviour
                 firePoint.position,
                 rot);
         }
+    }
+
+    bool CanShootPlayer(Transform player)
+    {
+        Vector2 origin =
+            firePoint.position;
+
+        Vector2 targetPos =
+            player.position;
+
+        Vector2 dir =
+            (targetPos - origin).normalized;
+
+        float distance =
+            Vector2.Distance(
+                origin,
+                targetPos);
+
+        RaycastHit2D hit =
+            Physics2D.Raycast(
+                origin,
+                dir,
+                distance,
+                wallLayer);
+
+        return hit.collider == null;
     }
 
     private void OnDrawGizmosSelected()

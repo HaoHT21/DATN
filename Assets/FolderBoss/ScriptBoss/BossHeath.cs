@@ -21,6 +21,10 @@ public class BossHeath : MonoBehaviour
     private float targetFill;
     public float smoothSpeed = 8f;
 
+    [Header("UI")]
+    public bool enableHealthUI = true;
+    public bool enableManaUI = true;
+
     private Image FindImageByName(string imageName)
     {
         Image[] images =
@@ -40,6 +44,9 @@ public class BossHeath : MonoBehaviour
     }
     void Awake()
     {
+        if (!enableHealthUI)
+            return;
+
         Debug.Log("===== AUTO FIND UI =====");
 
         healthUIRoot = FindImageByName("BossHealthBar");
@@ -55,6 +62,8 @@ public class BossHeath : MonoBehaviour
     void Start()
     {
         currentHeath = maxHeath;
+        if (!enableHealthUI)
+            return;
 
         targetFill = 1f;
 
@@ -80,7 +89,7 @@ public class BossHeath : MonoBehaviour
         targetFill = (float)currentHeath / maxHeath;
     }
 
-    public void TakeDamage(int damage, string dealerTag)
+    public void TakeDamage(int damage)
     {
         if (isDead) return;
 
@@ -90,7 +99,7 @@ public class BossHeath : MonoBehaviour
         {
             currentHeath = 0;
             isDead = true;
-
+            Debug.Log("Boss Death");
             OnDeath?.Invoke(); // THÊM DÒNG NÀY
 
             SendMessage(
@@ -104,17 +113,10 @@ public class BossHeath : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (enableHealthUI && healthFill != null)
         {
-            TakeDamage(50, "Test");
-        }
-
-        if (healthFill != null)
-        {
-            float current = healthFill.fillAmount;
-
             healthFill.fillAmount = Mathf.Lerp(
-                current,
+                healthFill.fillAmount,
                 targetFill,
                 smoothSpeed * Time.deltaTime
             );
@@ -123,6 +125,8 @@ public class BossHeath : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!enableHealthUI)
+            return;
         if (!other.CompareTag("Player"))
             return;
 
@@ -140,6 +144,8 @@ public class BossHeath : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        if (!enableHealthUI)
+            return;
         if (other.CompareTag("Player"))
         {
             if (healthUIRoot != null)

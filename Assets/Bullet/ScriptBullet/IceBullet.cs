@@ -37,7 +37,7 @@ public class IceBullet : MonoBehaviour
         {
             player.TakeDamage(damage);
 
-            if (col.TryGetComponent(out PlayerEffect effect))
+            if (col.TryGetComponent(out EffectManager effect))
             {
                 effect.Freeze(freezeDuration);
             }

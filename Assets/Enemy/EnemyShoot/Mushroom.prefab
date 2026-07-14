@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2221342032409102529}
   - component: {fileID: 7041362842982210236}
   - component: {fileID: 4831985956637926194}
+  - component: {fileID: 3164872784372937469}
   m_Layer: 0
   m_Name: Mushroom
   m_TagString: Enemy
@@ -233,18 +234,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 10
-  maxSearchTime: 2
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 512
   moveSpeed: 3
-  wanderRadius: 4
-  wanderInterval: 2
-  alertedRange: 20
   hurtDuration: 0.3
   knockbackForce: 5
   enemyVisual: {fileID: 5534657054360650839}
+  nextWaypointDistance: 0.2
+  updateRate: 0.25
 --- !u!114 &4831985956637926194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +252,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 095eb8d33d236bd43a816648f09a98bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   attackDistance: 7
   retreatDistance: 3
   retreatSpeed: 2
@@ -266,6 +264,34 @@ MonoBehaviour:
   attackDuration: 0.3
   bulletPrefab: {fileID: 8282301630644044267, guid: aec8d33c2ba1f7a4c9b5316f0cf271af, type: 3}
   firePoint: {fileID: 5534657054360650839}
+--- !u!114 &3164872784372937469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523964064610363045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1 &5358994287948849772
 GameObject:
   m_ObjectHideFlags: 0

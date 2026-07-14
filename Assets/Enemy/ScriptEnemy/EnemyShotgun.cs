@@ -12,6 +12,9 @@ public class EnemyShotgun : MonoBehaviour
     [Header("Mode")]
     public ShotMode shotMode;
 
+    [Header("Vision")]
+    public LayerMask wallLayer;
+
     [Header("Distance")]
 
     [Tooltip("Khoảng cách đứng bắn")]
@@ -120,24 +123,22 @@ public class EnemyShotgun : MonoBehaviour
         //--------------------------------
 
         if (
-            distance <
-            retreatDistance
+        distance <= attackDistance &&
+        CanShootPlayer(target)
         )
         {
-            controller.LockMovement(
-                true
-            );
+            controller.LockMovement(true);
 
-            rb.linearVelocity =
-                -dir.normalized *
-                retreatSpeed;
+            controller.StopMovement();
 
-            controller.PlayAnimation(
-                "run"
-            );
+            controller.PlayAnimation("idle");
+
+            Attack();
 
             return;
         }
+
+        controller.LockMovement(false);
 
         //--------------------------------
         // Giữ khoảng cách + bắn
@@ -404,23 +405,56 @@ public class EnemyShotgun : MonoBehaviour
         }
     }
 
+    bool CanShootPlayer(Transform player)
+    {
+        if (firePoint == null)
+            return false;
+
+        Vector2 origin = firePoint.position;
+        Vector2 targetPos = player.position;
+
+        Vector2 dir =
+            (targetPos - origin).normalized;
+
+        float distance =
+            Vector2.Distance(
+                origin,
+                targetPos);
+
+        RaycastHit2D hit =
+            Physics2D.Raycast(
+                origin,
+                dir,
+                distance,
+                wallLayer);
+
+        return hit.collider == null;
+    }
+
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color =
-            Color.red;
+        if (controller != null &&
+            controller.HasTarget &&
+            firePoint != null)
+        {
+            Gizmos.color =
+                CanShootPlayer(controller.Target)
+                ? Color.red
+                : Color.gray;
 
+            Gizmos.DrawLine(
+                firePoint.position,
+                controller.Target.position);
+        }
+
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(
             transform.position,
-            attackDistance
-        );
+            attackDistance);
 
-
-        Gizmos.color =
-            Color.magenta;
-
+        Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(
             transform.position,
-            retreatDistance
-        );
+            retreatDistance);
     }
 }

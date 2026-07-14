@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
-
 using System.Collections.Generic;
-
 using System;
 
-
-
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(SpriteRenderer))]
-
 public class PlayerController : MonoBehaviour
 {
     [Header("Cài đặt cơ bản")]
     public float moveSpeed = 5f;
+
+    [HideInInspector]
     public float attackRate = 0.5f;
+
     public Transform weaponHolder;
     public Transform firePoint;
     public float weaponRotationOffset = -45f;
@@ -30,6 +28,9 @@ public class PlayerController : MonoBehaviour
     public Sprite playerAvatar;
 
     public bool isKnocked = false;
+
+    [Header("Status")]
+    public bool reverseControl;
 
 
     [System.Serializable]
@@ -87,17 +88,6 @@ public class PlayerController : MonoBehaviour
 
     private float _attackTimer;
 
-    //private float gunScaleValue = 0.5f;
-
-
-
-    [Header("Ép vị trí đầu nòng")]
-
-    [SerializeField] private float firePointXOffset = 0.355f;
-
-    [SerializeField] private float firePointYOffset = 0.353f;
-
-
 
     private void Awake()
 
@@ -127,6 +117,12 @@ public class PlayerController : MonoBehaviour
 
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
+        if (reverseControl)
+        {
+            Debug.Log("Reverse Control ON");
+            moveInput = -moveInput;
+        }
+
         if (moveInput.x != 0)
 
         {
@@ -154,32 +150,6 @@ public class PlayerController : MonoBehaviour
                 }
 
             }
-
-            //if (visual != null)
-
-            //{
-
-            //    Vector3 scale = visual.localScale;
-
-            //    scale.x = _sprite.flipX ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-
-            //    visual.localScale = scale;
-
-            //}
-
-            //if (weaponHolder != null)
-
-            //{
-
-            //    float s = gunScaleValue;
-
-            //    //weaponHolder.localRotation = Quaternion.Euler(0, 0, !_sprite.flipX ? weaponRotationOffset : 180f - weaponRotationOffset);
-
-            //    //weaponHolder.localScale = new Vector3(s, !_sprite.flipX ? s : -s, s);
-
-            //}
-
-            //FixFirePointPosition();
 
         }
 
@@ -335,21 +305,13 @@ public class PlayerController : MonoBehaviour
         GameObject spawned = null;
 
         if (visualPrefab != null)
-
         {
-
             spawned = Instantiate(visualPrefab, weaponHolder);
-
             spawned.transform.localPosition = Vector3.zero;
-
             spawned.transform.localRotation = Quaternion.identity;
-
             spawned.transform.localScale = visualPrefab.transform.localScale;
 
-
-
             // SỬA TẠI ĐÂY: Mặc định để false, hàm UpdateWeaponVisuals() bên dưới sẽ tự động kích hoạt lại nếu được chọn
-
             spawned.SetActive(false);
 
         }
@@ -357,32 +319,20 @@ public class PlayerController : MonoBehaviour
 
 
         inventory.Add(new WeaponItem
-
         {
-
             icon = icon,
-
             visualPrefab = spawned,
-
             pickupPrefab = pickupPrefab,
-
             isGun = isGun,
-
             damage = dmg,
-
             bulletPrefab = bulletType,
-
             isPotion = false,
-
             healAmount = 0
-
         });
 
 
 
         currentWeaponIndex = inventory.Count - 1;
-
-
 
         // Gọi hàm này để cập nhật trạng thái SetActive(true) cho vũ khí vừa nhặt!
 
@@ -409,7 +359,6 @@ public class PlayerController : MonoBehaviour
 
 
     void RemoveWeapon(int index)
-
     {
 
         if (inventory == null || index < 0 || index >= inventory.Count) return;
@@ -494,18 +443,6 @@ public class PlayerController : MonoBehaviour
             currentWeaponIndex =
                 Mathf.Max(0, inventory.Count - 1);
         }
-
         UpdateWeaponVisuals();
     }
-
-
-
-    //void FixFirePointPosition()
-
-    //{
-
-    //    if (firePoint != null) { firePoint.localPosition = new Vector3(firePointXOffset, firePointYOffset, 0); firePoint.localRotation = Quaternion.identity; }
-
-    //}
-
 }

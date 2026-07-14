@@ -53,6 +53,8 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     public float invincibleTime = 0.5f;
     public float flashInterval = 0.08f;
 
+    private bool skillInvincible = false;
+
     private bool isInvincible = false;
     private SpriteRenderer _sprite;
 
@@ -73,7 +75,7 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         _playerController = GetComponent<PlayerController>();
-        PlayerEffect effect = GetComponent<PlayerEffect>();
+        EffectManager effect = GetComponent<EffectManager>();
         _sprite = GetComponent<SpriteRenderer>();
 
         // Khởi tạo đầy cây máu và cây mana khi vào game
@@ -180,7 +182,7 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     public void TakeDamage(int damage,
     Vector2 hitDirection = default)
     {
-        if (IsDead || isInvincible)
+        if (IsDead || isInvincible || skillInvincible)
             return;
 
         // --- ĐỒNG BỘ MỚI: Gọi con khiên ra hấp thụ damage bằng ref ---
@@ -438,5 +440,15 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         }
 
         Debug.Log("ĐÃ HỒI SINH TẠI SẢNH THÀNH CÔNG!");
+    }
+
+    public void SetInvincible(bool value)
+    {
+        skillInvincible = value;
+    }
+
+    public bool IsInvincible()
+    {
+        return skillInvincible;
     }
 }

@@ -87,8 +87,7 @@ public class Bullet : MonoBehaviour
         if (col.TryGetComponent<BossHeath>(out var boss))
         {
             boss.TakeDamage(
-                damage,
-                gameObject.tag
+                damage
             );
 
             HitEffect();
@@ -96,14 +95,6 @@ public class Bullet : MonoBehaviour
         }
 
         HitEffect();
-
-        if (col.TryGetComponent<CloneHealth>(out var clone))
-        {
-            clone.TakeDamage(damage);
-
-            HitEffect();
-            return;
-        }
     }
 
 

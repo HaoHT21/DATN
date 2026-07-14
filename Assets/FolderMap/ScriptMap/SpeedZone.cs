@@ -14,7 +14,7 @@ public class SpeedZone : MonoBehaviour
     public GameObject EffectWindBar;
     public Image EffectWindFill;
 
-    private PlayerEffect playerEffect;
+    private EffectManager playerEffect;
 
     private bool playerInside;
     private bool isFilling = true;
@@ -94,7 +94,7 @@ public class SpeedZone : MonoBehaviour
             playerInside = true;
 
             playerEffect =
-                other.GetComponent<PlayerEffect>();
+                other.GetComponent<EffectManager>();
 
             if (EffectWindBar != null)
                 EffectWindBar.SetActive(true);

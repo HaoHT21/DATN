@@ -19,8 +19,7 @@ public class NPCRandomPatrol : MonoBehaviour
     [Header("Timeout")]
     public float reachTimeout = 3f;
 
-    [Header("Animator")]
-    public Animator animator;
+    private NPCAnimation npcAnimation;
 
     private Rigidbody2D rb;
 
@@ -30,11 +29,13 @@ public class NPCRandomPatrol : MonoBehaviour
 
     private float timer;
 
-    public 
+    private NPCController controller;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        controller = GetComponent<NPCController>();
+        npcAnimation = GetComponent<NPCAnimation>();
     }
 
     void Start()
@@ -46,26 +47,39 @@ public class NPCRandomPatrol : MonoBehaviour
     {
         while (true)
         {
+            if (!controller.IsPatrol())
+            {
+                hasTarget = false;
+                yield return null;
+                continue;
+            }
+
             yield return GenerateNewPoint();
 
             timer = 0;
 
-            animator.Play("run");
+            npcAnimation.PlayRun();
 
             while (hasTarget)
             {
+                if (!controller.IsPatrol())
+                {
+                    hasTarget = false;
+
+                    rb.linearVelocity = Vector2.zero;
+
+                    npcAnimation.PlayIdle();
+
+                    break;
+                }
+
                 timer += Time.deltaTime;
 
                 Vector2 direction =
                 (targetPoint - (Vector2)transform.position).normalized;
 
                 // Xoay theo hướng di chuyển
-                RotateCharacter(direction.x);
-
-                rb.MovePosition(
-                    rb.position +
-                    direction * moveSpeed * Time.fixedDeltaTime
-                );
+                controller.RotateCharacter(direction.x);
 
                 rb.MovePosition(
                     rb.position +
@@ -87,7 +101,7 @@ public class NPCRandomPatrol : MonoBehaviour
                 yield return new WaitForFixedUpdate();
             }
 
-            animator.Play("idle");
+            npcAnimation.PlayIdle();
 
             rb.linearVelocity = Vector2.zero;
 
@@ -134,14 +148,6 @@ public class NPCRandomPatrol : MonoBehaviour
             targetPoint = random;
             hasTarget = true;
         }
-    }
-
-    void RotateCharacter(float moveX)
-    {
-        if (moveX > 0)
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-        else if (moveX < 0)
-            transform.rotation = Quaternion.Euler(0, 180, 0);
     }
 
 #if UNITY_EDITOR
