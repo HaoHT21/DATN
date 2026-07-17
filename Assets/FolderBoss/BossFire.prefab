@@ -106,12 +106,12 @@ GameObject:
   - component: {fileID: 973053089727750152}
   - component: {fileID: 8264079799232386199}
   - component: {fileID: 6225637507032798071}
-  - component: {fileID: 7380730617928704466}
   - component: {fileID: 2145800433613339440}
   - component: {fileID: 8732696295604344687}
+  - component: {fileID: 2726026789766261642}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,7 +125,7 @@ Transform:
   m_GameObject: {fileID: 5087906397338590667}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: -2.5, z: 0}
+  m_LocalPosition: {x: -0.09, y: 0.41, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -225,6 +225,8 @@ MonoBehaviour:
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
+  enableHealthUI: 1
+  enableManaUI: 1
 --- !u!114 &6225637507032798071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,42 +241,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalTags:
   - PortalOrange
---- !u!58 &7380730617928704466
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5087906397338590667}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: -0.044030625, y: 0.5349968}
-  m_Radius: 2.9382272
 --- !u!61 &2145800433613339440
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -309,17 +275,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.027307674, y: 0.36935714}
+  m_Offset: {x: 0.01383929, y: -0.17130262}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.475, y: -0.00952381}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.8, y: 1.05}
     newSize: {x: 0.8, y: 1.05}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.60025394, y: 0.7187142}
+  m_Size: {x: 0.5502285, y: 0.69947374}
   m_EdgeRadius: 0
 --- !u!114 &8732696295604344687
 MonoBehaviour:
@@ -336,6 +302,42 @@ MonoBehaviour:
   coinPrefab: {fileID: 2980099975768727967, guid: b3a39dfcc75496147910557731291d8a, type: 3}
   minCoin: 1
   maxCoin: 1
+--- !u!58 &2726026789766261642
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5087906397338590667}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.00000011920929, y: -0.000000014901161}
+  m_Radius: 3.02
 --- !u!1 &6773916424304130998
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,6 +521,7 @@ GameObject:
   - component: {fileID: 598610014296102893}
   - component: {fileID: 250480150715581898}
   - component: {fileID: 580362323087546027}
+  - component: {fileID: -5515870386049257433}
   m_Layer: 0
   m_Name: BossFire
   m_TagString: Boss
@@ -535,7 +538,7 @@ Transform:
   m_GameObject: {fileID: 6905772719604878256}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 122.07, y: -595.61, z: 0}
+  m_LocalPosition: {x: 6.4, y: 0.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -593,7 +596,9 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 10
   detectRange: 20
-  keepDistance: 10
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   thinkMin: 0.5
   thinkMax: 1.5
   fireballPrefab: {fileID: 7884107102201911381, guid: b713bf347cfaca945aa96ad5f355b487, type: 3}
@@ -605,3 +610,18 @@ MonoBehaviour:
   spitFireDuration: 1
   spitFireCount: 1
   spitFireInterval: 0.5
+--- !u!114 &-5515870386049257433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6905772719604878256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26a1fc586e7b83845aa0896b554a13fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireballShootSound: {fileID: 8300000, guid: 9dec216d53ea15043a09131dc00234ff, type: 3}
+  spitFireLoopSound: {fileID: 0}
+  soundVolume: 100

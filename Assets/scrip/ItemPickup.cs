@@ -1,18 +1,34 @@
 ﻿using UnityEngine;
 
+
+
 public class ItemPickup : MonoBehaviour
+
 {
+
     public Sprite itemIcon;                // <--- Thêm biến này
+    public int itemID;
+
     public GameObject weaponVisualPrefab;
+
     public GameObject weaponPickupPrefab;
+
     public GameObject bulletPrefab;
+
     public bool isGun;
+
     public int damage = 25;
 
+
+
     private void OnTriggerEnter2D(Collider2D other)
+
     {
+
         if (other.CompareTag("Player"))
+
         {
+
             // --- ĐOẠN THÊM VÀO: NẾU ĐÂY LÀ BÌNH MÁU THÌ NHƯỜNG QUYỀN CHO HEALTHPOTION ---
             if (GetComponent<HealthPotion>() != null)
             {
@@ -20,12 +36,21 @@ public class ItemPickup : MonoBehaviour
             }
             // ----------------------------------------------------------------------------
 
+
             PlayerController pc = other.GetComponent<PlayerController>();
+
             if (pc != null)
+
             {
+
                 // Truyền thêm itemIcon vào đây
-                pc.PickupWeapon(weaponVisualPrefab, weaponPickupPrefab, isGun, damage, bulletPrefab, itemIcon); 
-                Destroy(gameObject);
+
+                pc.PickupWeapon(weaponVisualPrefab, weaponPickupPrefab, isGun, damage, bulletPrefab, itemIcon, itemID);
+
+                if (TryGetComponent<CollectibleSaveable>(out var collectible))
+                    collectible.Collect();
+                else
+                    Destroy(gameObject);
 
             }
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class NauseaZone : MonoBehaviour
+public class RedZone : MonoBehaviour
 {
     [Header("Thời gian")]
     public float fillTime = 10f;

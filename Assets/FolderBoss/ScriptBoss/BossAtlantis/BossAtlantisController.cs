@@ -29,18 +29,9 @@ public class BossAtlantisController : BossController
     {
         if (phase == 2)
         {
-            bulletCount += 1;
+            bulletCount += 2;
 
             flyBulletCount += 20;
-
-            moveSpeed += 5;
-        }
-
-        if (phase == 3)
-        {
-            bulletCount += 1;
-
-            flyBulletCount += 25;
 
             moveSpeed += 5;
         }
@@ -96,30 +87,6 @@ public class BossAtlantisController : BossController
             }
 
             else if (roll < 75)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        else if (currentPhase == 2)
-        {
-            int roll =
-            Random.Range(0, 100);
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 60)
             {
                 action = 0;
             }

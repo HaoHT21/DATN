@@ -138,6 +138,9 @@ public class BulletTargetEnemy : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.isTrigger)
+            return;
+
         if (other.CompareTag("Wall"))
         {
             Destroy(gameObject);
@@ -146,8 +149,8 @@ public class BulletTargetEnemy : MonoBehaviour
 
         if (other.CompareTag("Enemy"))
         {
-            EnemyHealth enemy =
-                other.GetComponent<EnemyHealth>();
+            EnemyHeath enemy =
+                other.GetComponent<EnemyHeath>();
 
             if (enemy != null)
             {
@@ -160,14 +163,15 @@ public class BulletTargetEnemy : MonoBehaviour
 
         if (other.CompareTag("Boss"))
         {
-            BossHeath boss =
-                other.GetComponent<BossHeath>();
+            Debug.Log("Boss Trigger");
+
+            BossHeath boss = other.GetComponent<BossHeath>();
+
+            Debug.Log(boss);
 
             if (boss != null)
             {
-                boss.TakeDamage(
-                    damage
-                );
+                boss.TakeDamage(damage);
             }
 
             Destroy(gameObject);

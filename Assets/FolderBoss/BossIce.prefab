@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 7021219057691180502}
   - component: {fileID: 2148417760029462318}
   - component: {fileID: 7468756312660685486}
+  - component: {fileID: 5660807663466339765}
   m_Layer: 0
   m_Name: BossIce
   m_TagString: Untagged
@@ -73,7 +74,7 @@ Transform:
   m_GameObject: {fileID: 5708223457054644839}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 156.84, y: -38.56, z: 0}
+  m_LocalPosition: {x: 0.96373343, y: -4.3769765, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -131,7 +132,9 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 5
   detectRange: 20
-  keepDistance: 10
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   thinkMin: 0.5
   thinkMax: 1.5
   icePrefab: {fileID: 9035861995818589019, guid: 445ef3660c83efb4395a4cf857f8ef19, type: 3}
@@ -140,8 +143,23 @@ MonoBehaviour:
   iceCount: 15
   attackIcePrefab: {fileID: 2253353001783897143, guid: fb8ead5dd91167d4e8c524b164aab8ea, type: 3}
   attackIcePoint: {fileID: 8994751653521422405}
-  attackIceCount: 10
+  attackIceCount: 3
   attackIceInterval: 0.3
+--- !u!114 &5660807663466339765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5708223457054644839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fe66d2359508fd48963e9e491c83bf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  iceBurstSound: {fileID: 8300000, guid: 7921f9b277618374ab1c24781b84f16e, type: 3}
+  attackIceShootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
+  soundVolume: 100
 --- !u!1 &6043361020347587515
 GameObject:
   m_ObjectHideFlags: 0
@@ -305,6 +323,8 @@ MonoBehaviour:
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
+  enableHealthUI: 1
+  enableManaUI: 1
 --- !u!61 &6999660479923168649
 BoxCollider2D:
   m_ObjectHideFlags: 0

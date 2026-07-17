@@ -35,11 +35,9 @@ public class BossMinoController : BossController
     {
         if (phase == 2)
         {
-            bulletCount += 5;
+            bulletCount += 3;
 
             shootCount += 2;
-
-            chargeSpeed += 100;
 
             chargeDuration -= 0.2f;
 
@@ -48,20 +46,6 @@ public class BossMinoController : BossController
             moveSpeed += 5;
         }
 
-        if (phase == 3)
-        {
-            bulletCount += 5;
-
-            shootCount += 2;
-
-            chargeSpeed += 100;
-
-            chargeDuration -= 0.2f;
-
-            redBullCount += 1;
-
-            moveSpeed += 5;
-        }
     }
 
     protected override void DisableEffects()
@@ -127,33 +111,6 @@ public class BossMinoController : BossController
             }
 
             else if (roll < 75)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        else if (currentPhase == 2)
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 50)
             {
                 action = 0;
             }

@@ -35,15 +35,6 @@ public class BossSlimeController : BossController
 
             moveSpeed += 5;
         }
-
-        if (phase == 3)
-        {
-            bulletCount += 10;
-            summonCount += 2;
-            jumpAttackCount += 2;
-
-            moveSpeed += 5;
-        }
     }
 
     //--------------------------------
@@ -115,38 +106,6 @@ public class BossSlimeController : BossController
 
         //--------------------------------
         // Phase 2
-        //--------------------------------
-
-        else if (currentPhase == 2)
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 30)
-                yield return StartCoroutine(
-                    MoveState()
-                );
-
-            //--------------------------------
-            // 30% bắn
-            //--------------------------------
-
-            else if (roll < 70)
-                action = 0;
-
-            //--------------------------------
-            // 20% summon
-            //--------------------------------
-
-            else
-                action = 1;
-        }
-
-        //--------------------------------
-        // Phase 3
         //--------------------------------
 
         else

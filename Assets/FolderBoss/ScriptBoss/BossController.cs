@@ -8,6 +8,7 @@ public abstract class BossController : MonoBehaviour
     public float randomMoveRadius = 3f;
     public float randomMoveInterval = 2f;
 
+
     protected Vector2 randomTarget;
     protected float moveTimer;
 
@@ -22,7 +23,7 @@ public abstract class BossController : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 3f;
     public float detectRange = 15f;
-    public float keepDistance = 5f;
+    public LayerMask wallLayer;
 
     [Header("Thinking")]
     public float thinkMin = .5f;
@@ -73,6 +74,8 @@ public abstract class BossController : MonoBehaviour
         if (player != null)
             target =
             player.transform;
+
+        PickRandomPosition();
     }
 
     protected virtual void Update()
@@ -216,43 +219,6 @@ public abstract class BossController : MonoBehaviour
             }
         }
 
-        //--------------------------------
-        // phase 3
-        //--------------------------------
-
-        else
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 65)
-            {
-                yield return
-                StartCoroutine(
-                    UseSkill1()
-                );
-            }
-
-            else
-            {
-                yield return
-                StartCoroutine(
-                    UseSkill2()
-                );
-            }
-        }
-
         isThinking = false;
     }
 
@@ -281,31 +247,16 @@ public abstract class BossController : MonoBehaviour
 
     protected virtual void MoveLogic()
     {
-        if (
-            target == null ||
-            movementLocked
-        )
+        if (target == null || movementLocked || usingSkill)
             return;
 
         moveTimer -= Time.deltaTime;
 
-        if (moveTimer <= 0)
+        if (moveTimer <= 0f)
         {
-            moveTimer =
-            randomMoveInterval;
+            moveTimer = randomMoveInterval;
 
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            currentMove =
-            roll < 70
-            ?
-            MoveType.KeepDistance
-            :
-            MoveType.Approach;
+            PickRandomPosition();
         }
 
         MoveBoss();
@@ -313,86 +264,34 @@ public abstract class BossController : MonoBehaviour
 
     protected virtual void PickRandomPosition()
     {
-        Vector2 offset =
-        Random.insideUnitCircle *
-        randomMoveRadius;
+        const int maxTry = 20;
 
-        Vector2 playerPos =
-        target.position;
-
-        randomTarget =
-        playerPos +
-        offset;
-
-        float distance =
-        Vector2.Distance(
-            randomTarget,
-            playerPos
-        );
-
-        //--------------------------------
-        // giữ khoảng cách với player
-        //--------------------------------
-
-        if (distance < keepDistance)
+        for (int i = 0; i < maxTry; i++)
         {
-            Vector2 dir =
-            (
-                randomTarget -
-                playerPos
-            ).normalized;
+            Vector2 candidate =
+                (Vector2)transform.position +
+                Random.insideUnitCircle * randomMoveRadius;
 
-            randomTarget =
-            playerPos +
-            dir *
-            keepDistance;
+            // Có tường chắn giữa boss và điểm này không?
+            if (!Physics2D.Linecast(transform.position, candidate, wallLayer))
+            {
+                randomTarget = candidate;
+                return;
+            }
         }
+
+        // Nếu thử nhiều lần vẫn không tìm được thì đứng yên
+        randomTarget = transform.position;
     }
 
     protected virtual void MoveBoss()
     {
         Vector2 dir =
-        Vector2.zero;
+            randomTarget - rb.position;
 
-        Vector2 toPlayer =
-        (
-            target.position -
-            transform.position
-        ).normalized;
-
-        float distance =
-        Vector2.Distance(
-            transform.position,
-            target.position
-        );
-
-        //--------------------------------
-        // Giữ khoảng cách
-        //--------------------------------
-
-        if (currentMove ==
-            MoveType.KeepDistance)
-        {
-            float offset =
-            distance -
-            keepDistance;
-
-            dir =
-            toPlayer *
-            offset;
-        }
-
-        //--------------------------------
-        // Áp sát
-        //--------------------------------
-
-        else if (
-            currentMove ==
-            MoveType.Approach)
-        {
-            dir =
-            toPlayer;
-        }
+        // Đã tới nơi
+        if (dir.magnitude < 0.1f)
+            return;
 
         rb.MovePosition(
             rb.position +
@@ -420,19 +319,9 @@ public abstract class BossController : MonoBehaviour
         bossHeath.maxHeath;
 
         if (
-            hpPercent <= .35f &&
-            currentPhase < 3
-        )
-        {
-            currentPhase = 3;
-
-            OnPhaseChange(3);
-        }
-
-        else if (
-            hpPercent <= .7f &&
-            currentPhase < 2
-        )
+        hpPercent <= .5f &&
+        currentPhase < 2
+        )       
         {
             currentPhase = 2;
 
@@ -620,13 +509,6 @@ public abstract class BossController : MonoBehaviour
         Gizmos.DrawWireSphere(
             transform.position,
             detectRange
-        );
-
-        // Keep Distance
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            keepDistance
         );
 
         // Random Move Radius

@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 6635721563282199606}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,6 +132,8 @@ MonoBehaviour:
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
+  enableHealthUI: 1
+  enableManaUI: 1
 --- !u!58 &8729292966050954060
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -300,6 +302,7 @@ GameObject:
   - component: {fileID: 3236165864425022088}
   - component: {fileID: 5385509058379210578}
   - component: {fileID: 9030698952213860846}
+  - component: {fileID: -354063715549574903}
   m_Layer: 0
   m_Name: 'BossSlime '
   m_TagString: Boss
@@ -316,7 +319,7 @@ Transform:
   m_GameObject: {fileID: 8399829915083563723}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 164.33, y: -39.35, z: 0}
+  m_LocalPosition: {x: 1.8574953, y: 5.320339, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -373,7 +376,9 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 2
   detectRange: 20
-  keepDistance: 5
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   thinkMin: 0.5
   thinkMax: 1.5
   bulletPrefab: {fileID: 8282301630644044267, guid: aec8d33c2ba1f7a4c9b5316f0cf271af, type: 3}
@@ -384,3 +389,18 @@ MonoBehaviour:
   summonCount: 5
   summonRadius: 5
   summonLifeTime: 6
+--- !u!114 &-354063715549574903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8399829915083563723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecb5acb70ea95414b82221617025df0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpAttackBurstSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
+  summonSlimeSound: {fileID: 8300000, guid: 7ff3741383216634fa9af8001ffa0672, type: 3}
+  soundVolume: 100

@@ -133,37 +133,6 @@ public class BossFireController : BossController
         // PHASE 2
         //--------------------------------
 
-        else if (currentPhase == 2)
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 60)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        //--------------------------------
-        // PHASE 3
-        //--------------------------------
-
         else
         {
             int roll =

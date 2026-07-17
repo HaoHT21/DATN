@@ -53,8 +53,6 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     public float invincibleTime = 0.5f;
     public float flashInterval = 0.08f;
 
-    private bool skillInvincible = false;
-
     private bool isInvincible = false;
     private SpriteRenderer _sprite;
 
@@ -69,6 +67,8 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     private Animator _animator;
     private Rigidbody2D _rb;
     private PlayerController _playerController; // Khóa súng ống khi chết để tránh lỗi dính đạn
+
+    private bool skillInvincible = false;
 
     private void Awake()
     {

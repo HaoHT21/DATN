@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 6499099978013659382}
   - component: {fileID: 7997161187975671400}
   - component: {fileID: 2140205452632206757}
+  - component: {fileID: 2172102549851379979}
+  - component: {fileID: 2117906530452980673}
   m_Layer: 0
   m_Name: GunYellow
   m_TagString: Untagged
@@ -47,9 +49,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemIcon: {fileID: -5123827470915145351, guid: 30cad6ec0da012e4ea863eb37fdae8df, type: 3}
+  itemID: 0
   weaponVisualPrefab: {fileID: 2265177511531135276}
   weaponPickupPrefab: {fileID: 2265177511531135276}
-  bulletPrefab: {fileID: 7366965093356886000, guid: 4cf8713462e520b41b6cf6f55015aa6d, type: 3}
+  bulletPrefab: {fileID: 3660357215955241804, guid: bbf282be6635d7045b0666bb6ebe6c9a, type: 3}
   isGun: 1
   damage: 50
 --- !u!58 &2140205452632206757
@@ -88,6 +91,32 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &2172102549851379979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2265177511531135276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10cbb2b0eef279946a2076df61729828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 76f121de18314bafa07d50a09685ecf3
+--- !u!114 &2117906530452980673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2265177511531135276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a273b0cb7636e544875c9f7ebfd5640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collected: 0
 --- !u!1 &9107977400647071232
 GameObject:
   m_ObjectHideFlags: 0

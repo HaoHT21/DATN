@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 4040670307918360707}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,6 +110,8 @@ MonoBehaviour:
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
+  enableHealthUI: 1
+  enableManaUI: 1
 --- !u!114 &2885012254561249394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,6 +256,7 @@ GameObject:
   - component: {fileID: 7504817822580109076}
   - component: {fileID: 3659546913121818091}
   - component: {fileID: 90994562717640253}
+  - component: {fileID: 367585546929212198}
   m_Layer: 0
   m_Name: BossDark
   m_TagString: Boss
@@ -270,7 +273,7 @@ Transform:
   m_GameObject: {fileID: 3023948101480405388}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 32.162247, y: -21.727385, z: 0}
+  m_LocalPosition: {x: -7.0354333, y: -2.8575826, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -329,21 +332,39 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 5
   detectRange: 20
-  keepDistance: 10
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   thinkMin: 0.5
   thinkMax: 1.5
   bulletCastPrefab: {fileID: 6035235758144762600, guid: f42d48a105179454984001d98e702654, type: 3}
   castPoint: {fileID: 8583973896195866896}
-  castCount: 5
+  castCount: 2
   castInterval: 0.5
   invisibleDuration: 4
-  invisibleMoveSpeed: 20
+  invisibleMoveSpeed: 10
   spawnBulletPrefab: {fileID: 467079513599447265, guid: c87e57c2b61430b4e908070ebcf73e60, type: 3}
   spawnPoint: {fileID: 5182542988469131853}
   spawnBulletCount: 15
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
+--- !u!114 &367585546929212198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3023948101480405388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b19e4594c92ffbb41bba5ed405683162, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  castShootSound: {fileID: 8300000, guid: 102e9766a9064434b838b51c8a11b0d6, type: 3}
+  invisibleEnterSound: {fileID: 8300000, guid: 4c80623f06ea4e34da4e9c88288839b8, type: 3}
+  circleBurstSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
+  soundVolume: 100
 --- !u!1 &3611413556769118090
 GameObject:
   m_ObjectHideFlags: 0

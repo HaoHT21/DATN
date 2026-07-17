@@ -3,8 +3,15 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider2D))]
-public class TreasureChest : MonoBehaviour
+public class TreasureChest : MonoBehaviour, ISaveable
 {
+    [System.Serializable]
+    private sealed class SaveState
+    {
+        public int state;
+        public bool lootSpawned;
+    }
+
     [Header("Tham chiếu")]
     public Animator chestAnimator;
     public Collider2D interactionTrigger;
@@ -156,6 +163,38 @@ public class TreasureChest : MonoBehaviour
                 if (interactionTrigger != null)
                     interactionTrigger.enabled = false;
                 break;
+        }
+    }
+
+    public object CaptureState()
+    {
+        return new SaveState
+        {
+            state = (int)State,
+            lootSpawned = _lootSpawned
+        };
+    }
+
+    public void RestoreState(object state)
+    {
+        if (state is not SaveState s)
+            return;
+
+        State = (ChestState)s.state;
+        _lootSpawned = s.lootSpawned;
+
+        ApplyStateVisuals();
+
+        if (State == ChestState.Opened || State == ChestState.Opening)
+        {
+            if (interactionUI != null)
+                interactionUI.Hide();
+
+            if (chestAnimator != null && !string.IsNullOrEmpty(openTriggerName))
+            {
+                chestAnimator.ResetTrigger(openTriggerName);
+                chestAnimator.Play(openTriggerName, 0, 1f);
+            }
         }
     }
 

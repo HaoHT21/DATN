@@ -7,10 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Cài đặt cơ bản")]
     public float moveSpeed = 5f;
-
-    [HideInInspector]
     public float attackRate = 0.5f;
-
     public Transform weaponHolder;
     public Transform firePoint;
     public float weaponRotationOffset = -45f;
@@ -18,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Âm thanh")]
     public AudioClip shootSound;
+    [Range(0f, 100f)] public float shootVolume = 100f; // Thanh trượt chỉnh âm lượng bắn súng từ 0 đến 100 ngoài Inspector
     public AudioClip healSound;
     public AudioClip dropSound;
 
@@ -30,12 +28,13 @@ public class PlayerController : MonoBehaviour
     public bool isKnocked = false;
 
     [Header("Status")]
-    public bool reverseControl;
+    public bool reverseControl = false;
 
 
     [System.Serializable]
     public class WeaponItem
     {
+        public int itemID;
         public Sprite icon;
         public GameObject visualPrefab;
         public GameObject pickupPrefab;
@@ -63,13 +62,9 @@ public class PlayerController : MonoBehaviour
     }
 
     public int currentWeaponIndex
-
     {
-
         get => InventoryData.Instance != null ? InventoryData.Instance.currentWeaponIndex : 0;
-
         set { if (InventoryData.Instance != null) InventoryData.Instance.currentWeaponIndex = value; }
-
     }
 
 
@@ -87,6 +82,17 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveInput;
 
     private float _attackTimer;
+
+    //private float gunScaleValue = 0.5f;
+
+
+
+    [Header("Ép vị trí đầu nòng")]
+
+    [SerializeField] private float firePointXOffset = 0.355f;
+
+    [SerializeField] private float firePointYOffset = 0.353f;
+
 
 
     private void Awake()
@@ -119,7 +125,6 @@ public class PlayerController : MonoBehaviour
 
         if (reverseControl)
         {
-            Debug.Log("Reverse Control ON");
             moveInput = -moveInput;
         }
 
@@ -150,6 +155,32 @@ public class PlayerController : MonoBehaviour
                 }
 
             }
+
+            //if (visual != null)
+
+            //{
+
+            //    Vector3 scale = visual.localScale;
+
+            //    scale.x = _sprite.flipX ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+
+            //    visual.localScale = scale;
+
+            //}
+
+            //if (weaponHolder != null)
+
+            //{
+
+            //    float s = gunScaleValue;
+
+            //    //weaponHolder.localRotation = Quaternion.Euler(0, 0, !_sprite.flipX ? weaponRotationOffset : 180f - weaponRotationOffset);
+
+            //    //weaponHolder.localScale = new Vector3(s, !_sprite.flipX ? s : -s, s);
+
+            //}
+
+            //FixFirePointPosition();
 
         }
 
@@ -194,60 +225,60 @@ public class PlayerController : MonoBehaviour
             rb.position +
             moveInput *
             moveSpeed *
-            Time.fixedDeltaTime
+            moveFixedDeltaTime()
         );
     }
+
+    private float moveFixedDeltaTime() => Time.fixedDeltaTime;
 
 
 
     public void PerformAttack()
-
     {
-
         if (inventory == null || inventory.Count == 0) return;
-
         var weapon = inventory[currentWeaponIndex];
-
         _attackTimer = attackRate;
 
-
-
         if (weapon.isGun && weapon.bulletPrefab != null)
-
         {
+            // CHỈ SỬA KHÚC NÀY: Khởi tạo AudioSource 2D thủ công để tiếng súng to rõ, không bị nhỏ do khoảng cách Camera
+            if (shootSound != null)
+            {
+                GameObject tempAudio = new GameObject("TempShootAudio");
+                tempAudio.transform.position = transform.position;
+                AudioSource aSource = tempAudio.AddComponent<AudioSource>();
 
-            if (AudioManager.Instance != null && shootSound != null)
+                aSource.clip = shootSound;
+                aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn
 
-                AudioManager.Instance.PlaySound(shootSound);
+                // Quy đổi mượt mà từ hệ 0-100 ngoài Inspector về hệ 0.0-1.0 chuẩn Unity
+                aSource.volume = Mathf.Clamp01(shootVolume / 100f);
 
+                // ==========================================
+                // LONG MẠCH: Gán tiếng bắn súng đi qua đúng kênh CombatSFX của Audio Mixer
+                if (AudioStaticManager.Instance != null)
+                {
+                    aSource.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+                }
+                // ==========================================
 
+                aSource.Play();
+                Destroy(tempAudio, shootSound.length); // Phát xong tự hủy Object tạm
+            }
 
             GameObject b = Instantiate(
-
-            weapon.bulletPrefab,
-
-            firePoint.position,
-
-            firePoint.rotation
-
+                weapon.bulletPrefab,
+                firePoint.position,
+                firePoint.rotation
             );
-
             if (b.TryGetComponent<Bullet>(out var bs)) bs.damage = weapon.damage;
-
         }
-
         else if (weapon.isPotion)
-
         {
-
             PlayerHealth ph = GetComponent<PlayerHealth>();
-
             if (ph != null) { ph.Heal(weapon.healAmount); RemoveWeapon(currentWeaponIndex); }
-
         }
-
         else { _animator.SetTrigger("Attack"); }
-
     }
 
 
@@ -280,7 +311,7 @@ public class PlayerController : MonoBehaviour
 
 
 
-    public void PickupWeapon(GameObject visualPrefab, GameObject pickupPrefab, bool isGun, int dmg, GameObject bulletType, Sprite icon)
+    public void PickupWeapon(GameObject visualPrefab, GameObject pickupPrefab, bool isGun, int dmg, GameObject bulletType, Sprite icon, int itemID = 0)
 
     {
 
@@ -305,13 +336,21 @@ public class PlayerController : MonoBehaviour
         GameObject spawned = null;
 
         if (visualPrefab != null)
+
         {
+
             spawned = Instantiate(visualPrefab, weaponHolder);
+
             spawned.transform.localPosition = Vector3.zero;
+
             spawned.transform.localRotation = Quaternion.identity;
+
             spawned.transform.localScale = visualPrefab.transform.localScale;
 
+
+
             // SỬA TẠI ĐÂY: Mặc định để false, hàm UpdateWeaponVisuals() bên dưới sẽ tự động kích hoạt lại nếu được chọn
+
             spawned.SetActive(false);
 
         }
@@ -319,20 +358,32 @@ public class PlayerController : MonoBehaviour
 
 
         inventory.Add(new WeaponItem
+
         {
+            itemID = itemID,
             icon = icon,
+
             visualPrefab = spawned,
+
             pickupPrefab = pickupPrefab,
+
             isGun = isGun,
+
             damage = dmg,
+
             bulletPrefab = bulletType,
+
             isPotion = false,
+
             healAmount = 0
+
         });
 
 
 
         currentWeaponIndex = inventory.Count - 1;
+
+
 
         // Gọi hàm này để cập nhật trạng thái SetActive(true) cho vũ khí vừa nhặt!
 
@@ -359,6 +410,7 @@ public class PlayerController : MonoBehaviour
 
 
     void RemoveWeapon(int index)
+
     {
 
         if (inventory == null || index < 0 || index >= inventory.Count) return;
@@ -443,6 +495,17 @@ public class PlayerController : MonoBehaviour
             currentWeaponIndex =
                 Mathf.Max(0, inventory.Count - 1);
         }
+
         UpdateWeaponVisuals();
     }
+
+
+
+    //void FixFirePointPosition()
+
+    //{
+
+    //    if (firePoint != null) { firePoint.localPosition = new Vector3(firePointXOffset, firePointYOffset, 0); firePoint.localRotation = Quaternion.identity; }
+
+    //}
 }

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6613855501534451203}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -214,7 +214,6 @@ MonoBehaviour:
   smoothSpeed: 8
   enableHealthUI: 1
   enableManaUI: 1
-  deathAnimationStateName: Death Animation
 --- !u!1 &3120480687593708142
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,6 +229,7 @@ GameObject:
   - component: {fileID: 3475729594425125399}
   - component: {fileID: 1232122554848105542}
   - component: {fileID: 6031622529690365384}
+  - component: {fileID: -5823705804316105600}
   m_Layer: 0
   m_Name: BossEnd
   m_TagString: Boss
@@ -393,6 +393,23 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
+--- !u!114 &-5823705804316105600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3120480687593708142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3bcf692d980d394596984ffcaf0eef0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shootNormalSound: {fileID: 8300000, guid: 664a1df7d4ff52f42843b55e87912f9e, type: 3}
+  dashShootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
+  bulletRainSound: {fileID: 8300000, guid: 102e9766a9064434b838b51c8a11b0d6, type: 3}
+  teleportSound: {fileID: 8300000, guid: 4c80623f06ea4e34da4e9c88288839b8, type: 3}
+  soundVolume: 100
 --- !u!1 &4861554426174679520
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 7954953657761412335}
   - component: {fileID: 4558270170833641727}
   - component: {fileID: 2961131956974957475}
+  - component: {fileID: 5238437159006624504}
   m_Layer: 0
   m_Name: GodDess
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,6 +97,7 @@ MonoBehaviour:
     m_Bits: 512
   detectBulletRadius: 10
   dodgeDistance: 7
+  enableManaUI: 1
   shootSkill: {fileID: 0}
   dashShootSkill: {fileID: 0}
   bulletRainSkill: {fileID: 0}
@@ -104,7 +106,6 @@ MonoBehaviour:
   manaFill: {fileID: 0}
   manaUIRoot: {fileID: 0}
   manaSmoothSpeed: 8
-  cloneHealth: {fileID: 0}
   laserSkill: {fileID: 7954953657761412335}
   meteorSkill: {fileID: 4558270170833641727}
   cloneSkill: {fileID: 2961131956974957475}
@@ -163,6 +164,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   maxTry: 10
+--- !u!114 &5238437159006624504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830961455073700085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5131a331787db7e489a4141e6cbecd3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserLoopSound: {fileID: 8300000, guid: 8b799a38f3d32c247bea92c25ce2abf9, type: 3}
+  meteorRainSound: {fileID: 8300000, guid: 7ac0049ded358f04ab9a4c8777ac21c7, type: 3}
+  cloneSkillSound: {fileID: 8300000, guid: 7ff3741383216634fa9af8001ffa0672, type: 3}
+  soundVolume: 100
 --- !u!1 &3758182812950591034
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,9 +399,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 500
   maxHeath: 500
+  isFinalBoss: 1
+  cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
+  enableHealthUI: 1
+  enableManaUI: 1
 --- !u!58 &6406492950883577575
 CircleCollider2D:
   m_ObjectHideFlags: 0

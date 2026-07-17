@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4771119784679979070}
   - component: {fileID: 6454910713266590159}
   - component: {fileID: 1025348016193689015}
+  - component: {fileID: 8845740285372074596}
   m_Layer: 0
   m_Name: Summon
   m_TagString: Enemy
@@ -32,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 2359222360881132017}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.498457, y: -7.0744963, z: 0}
+  m_LocalPosition: {x: 6.6659265, y: -2.7992241, z: 0}
   m_LocalScale: {x: 5.1268563, y: 5.1268563, z: 5.1268563}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -201,18 +202,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 6
-  maxSearchTime: 2
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 512
   moveSpeed: 3
-  wanderRadius: 3
-  wanderInterval: 2
-  alertedRange: 20
   hurtDuration: 0.2
   knockbackForce: 5
   enemyVisual: {fileID: 5435255626168514078}
+  nextWaypointDistance: 0.2
+  updateRate: 0.25
 --- !u!114 &6454910713266590159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,11 +220,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1dd8b7b05527429c89d4e3583c418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDistance: 4
+  attackDistance: 8
   retreatDistance: 2
   retreatSpeed: 2
   retreatDuration: 1.5
-  fireRate: 4
+  fireRate: 3
   attackDuration: 0.3
   burstCount: 3
   burstInterval: 0.3
@@ -237,6 +232,9 @@ MonoBehaviour:
   firePoint: {fileID: 8778679867893842952}
   bulletsPerShot: 1
   spreadAngle: 0
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   enemyVisual: {fileID: 5435255626168514078}
 --- !u!114 &1025348016193689015
 MonoBehaviour:
@@ -254,6 +252,34 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+--- !u!114 &8845740285372074596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2359222360881132017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1 &7545844921616473371
 GameObject:
   m_ObjectHideFlags: 0

@@ -31,21 +31,11 @@ public class BossIceController : BossController
 
             iceCount += 10;
 
-            attackIceCount += 5;
+            attackIceCount += 2;
 
             moveSpeed += 5;
         }
 
-        if (phase == 3)
-        {
-            iceBurstCount += 2;
-
-            iceCount += 10;
-
-            attackIceCount += 5;
-
-            moveSpeed += 5;
-        }
     }
 
     //--------------------------------
@@ -117,37 +107,6 @@ public class BossIceController : BossController
 
         //--------------------------------
         // PHASE 2
-        //--------------------------------
-
-        else if (currentPhase == 2)
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 60)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        //--------------------------------
-        // PHASE 3
         //--------------------------------
 
         else

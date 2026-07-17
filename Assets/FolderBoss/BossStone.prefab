@@ -282,7 +282,7 @@ GameObject:
   - component: {fileID: 4514018028854357111}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -411,6 +411,8 @@ MonoBehaviour:
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
+  enableHealthUI: 1
+  enableManaUI: 1
 --- !u!114 &4292008385535015244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -519,6 +521,7 @@ GameObject:
   - component: {fileID: 6056916006279979147}
   - component: {fileID: 5423722872995112170}
   - component: {fileID: 1437756781338978572}
+  - component: {fileID: 6558298004381797572}
   m_Layer: 6
   m_Name: BossStone
   m_TagString: Boss
@@ -535,7 +538,7 @@ Transform:
   m_GameObject: {fileID: 5262982958826072117}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 190.14833, y: -1259.8577, z: 0}
+  m_LocalPosition: {x: 8.113827, y: 7.331303, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -592,7 +595,9 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 10
   detectRange: 20
-  keepDistance: 10
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   thinkMin: 0.5
   thinkMax: 1.5
   laserObject: {fileID: 1670726290336928554}
@@ -601,5 +606,20 @@ MonoBehaviour:
   laserInterval: 0.5
   bulletPrefab: {fileID: 7003757456173169599, guid: 6e713be34df268d49a9aaf887fba2d78, type: 3}
   shootPoint: {fileID: 7210416305132043211}
-  shootCount: 5
+  shootCount: 2
   shootInterval: 0.3
+--- !u!114 &6558298004381797572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5262982958826072117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 553ca3fda4842944188be5da283fc4fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rockShootSound: {fileID: 8300000, guid: fc29740fcd39c3c4facb03952a2feb50, type: 3}
+  laserLoopSound: {fileID: 8300000, guid: 8b799a38f3d32c247bea92c25ce2abf9, type: 3}
+  soundVolume: 100

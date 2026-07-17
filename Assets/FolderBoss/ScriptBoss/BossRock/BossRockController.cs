@@ -37,19 +37,6 @@ public class BossRockController : BossController
 
             moveSpeed += 5;
         }
-
-        //--------------------------------
-        // phase 3
-        //--------------------------------
-
-        if (phase == 3)
-        {
-            shootCount += 5;
-
-            laserCastCount += 1;
-
-            moveSpeed += 5;
-        }
     }
 
     protected override void DisableEffects()
@@ -129,36 +116,6 @@ public class BossRockController : BossController
 
         //--------------------------------
         // Phase 2
-        //--------------------------------
-
-        else if (currentPhase == 2)
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 30)
-            {
-                yield return StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 65)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        //--------------------------------
-        // Phase 3
         //--------------------------------
 
         else

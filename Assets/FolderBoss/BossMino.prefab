@@ -274,6 +274,8 @@ MonoBehaviour:
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
+  enableHealthUI: 1
+  enableManaUI: 1
 --- !u!58 &291947406110064290
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -548,6 +550,7 @@ GameObject:
   - component: {fileID: 3738450169026145763}
   - component: {fileID: 4286626260386019110}
   - component: {fileID: 7536416907198798687}
+  - component: {fileID: -6730315901157025249}
   m_Layer: 0
   m_Name: BossMino
   m_TagString: Untagged
@@ -564,7 +567,7 @@ Transform:
   m_GameObject: {fileID: 2225764924664185720}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 214.2519, y: -1015.02716, z: 0}
+  m_LocalPosition: {x: 6.549744, y: -5.762308, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -622,7 +625,9 @@ MonoBehaviour:
   sprites: []
   moveSpeed: 5
   detectRange: 10
-  keepDistance: 5
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   thinkMin: 0.5
   thinkMax: 1.5
   bulletPrefab: {fileID: 191531707892350666, guid: e4fcfcb52871e594da549d36db919bcf, type: 3}
@@ -631,12 +636,28 @@ MonoBehaviour:
   shootCount: 3
   shootInterval: 0.3
   redBullEffect: {fileID: 1882404717578487663}
-  chargeSpeed: 300
+  chargeSpeed: 200
   chargeDuration: 2
   redBullCount: 1
   redBullInterval: 1
   retreatDistance: 6
   retreatSpeed: 100
+--- !u!114 &-6730315901157025249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2225764924664185720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cddf84dbcac1dc41b730218b23ae4e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shootSpreadSound: {fileID: 8300000, guid: 664a1df7d4ff52f42843b55e87912f9e, type: 3}
+  chargeRoarSound: {fileID: 8300000, guid: 71e9e5717c2deb741a0e23d28e5e5f20, type: 3}
+  chargeRunLoopSound: {fileID: 8300000, guid: 5ff4baf21fd1ef74bb6879988d1f20bc, type: 3}
+  soundVolume: 100
 --- !u!1 &3387488644321189197
 GameObject:
   m_ObjectHideFlags: 0

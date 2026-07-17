@@ -27,16 +27,7 @@ public class BossBloodController : BossController
     {
         if (phase == 2)
         {
-            bulletCount += 1;
-
-            summonCount += 2;
-
-            moveSpeed += 5;
-        }
-
-        if (phase == 3)
-        {
-            bulletCount += 3;
+            bulletCount += 2;
 
             summonCount += 2;
 
@@ -113,37 +104,6 @@ public class BossBloodController : BossController
 
         //--------------------------------
         // Phase2
-        //--------------------------------
-
-        else if (currentPhase == 2)
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 60)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        //--------------------------------
-        // Phase3
         //--------------------------------
 
         else

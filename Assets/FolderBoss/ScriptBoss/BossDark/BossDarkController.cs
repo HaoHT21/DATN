@@ -98,22 +98,9 @@ bool value
     {
         if (phase == 2)
         {
-            castCount += 3;
-
-            invisibleMoveSpeed += 5;
+            castCount += 2;
 
             spawnBulletCount += 10;
-
-            moveSpeed += 5;
-        }
-
-        if (phase == 3)
-        {
-            castCount += 5;
-
-            invisibleMoveSpeed += 5;
-
-            spawnBulletCount += 15;
 
             moveSpeed += 5;
         }
@@ -169,30 +156,6 @@ bool value
             }
 
             else if (roll < 75)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        else if (currentPhase == 2)
-        {
-            int roll =
-            Random.Range(0, 100);
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 60)
             {
                 action = 0;
             }

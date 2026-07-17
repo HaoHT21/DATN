@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class BossHeath : MonoBehaviour
 {
@@ -9,6 +10,11 @@ public class BossHeath : MonoBehaviour
     public int maxHeath = 500;
 
     public event Action OnDeath;
+    [Header("Boss Settings")]
+    public bool isFinalBoss = false; // Tích chọn ô này trong Inspector cho con Boss cuối
+    [Tooltip("Tên scene Cutscene bạn muốn chạy")]
+    public string cutsceneSceneName = "CutScene"; // Nhập tên scene cutscene ở đây
+
 
     [Header("UI Health Bar")]
     public Image healthFill;
@@ -106,6 +112,15 @@ public class BossHeath : MonoBehaviour
                 "OnBossDeath",
                 SendMessageOptions.DontRequireReceiver
             );
+
+            // =================================================================
+            // CHỈ CẦN CHUYỂN CẢNH SANG CUTSCENE LÀ XONG, KHÔNG CẦN FLOW MANAGER
+            // =================================================================
+            if (isFinalBoss)
+            {
+                SceneManager.LoadScene(cutsceneSceneName);
+            }
+            // =================================================================
         }
 
         targetFill = (float)currentHeath / maxHeath;
