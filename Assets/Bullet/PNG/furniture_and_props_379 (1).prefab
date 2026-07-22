@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1437501121259550529}
   - component: {fileID: -298287023378786045}
   - component: {fileID: -3415726376644313314}
+  - component: {fileID: -5799784110210350956}
   m_Layer: 0
   m_Name: furniture_and_props_379 (1)
   m_TagString: Untagged
@@ -103,6 +104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healAmount: 50
+  itemID: 0
   itemIcon: {fileID: -299452057, guid: 57384e3e200e7894ab6388c334a13241, type: 3}
   potionVisualPrefab: {fileID: 2069273909986275505}
   pickupPrefab: {fileID: 2069273909986275505}
@@ -165,8 +167,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemIcon: {fileID: -299452057, guid: 57384e3e200e7894ab6388c334a13241, type: 3}
+  itemID: 0
   weaponVisualPrefab: {fileID: 2069273909986275505}
   weaponPickupPrefab: {fileID: 2069273909986275505}
   bulletPrefab: {fileID: 0}
   isGun: 1
   damage: 0
+--- !u!114 &-5799784110210350956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069273909986275505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdaf4e288fd1a854ab48de7eed786a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healSounds:
+  - {fileID: 8300000, guid: a2b359c27ffa40547848d66a8fd6b4c3, type: 3}
+  soundVolume: 100

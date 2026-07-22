@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1399394411877641328
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2451865447034403163}
+  m_Layer: 6
+  m_Name: Visual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2451865447034403163
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399394411877641328}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.11, y: -0.02, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 648056157905702390}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4131297871508864436
 GameObject:
   m_ObjectHideFlags: 0
@@ -24,7 +55,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4131297871508864436}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.26206294, w: 0.9650508}
+  m_LocalRotation: {x: 0, y: 0, z: -0.26206294, w: 0.9650508}
   m_LocalPosition: {x: 0.946, y: 0.602, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -66,9 +97,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 30.820898, y: -24.414934, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2451865447034403163}
   - {fileID: 8146975798726531265}
   - {fileID: 2054903602886582}
   m_Father: {fileID: 0}
@@ -241,8 +273,13 @@ MonoBehaviour:
   firePoint: {fileID: 7215689092370949328}
   weaponRotationOffset: -45
   shootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
+  shootVolume: 100
   healSound: {fileID: 0}
   dropSound: {fileID: 0}
+  visual: {fileID: 0}
+  playerAvatar: {fileID: 0}
+  isKnocked: 0
+  reverseControl: 0
   firePointXOffset: 0.355
   firePointYOffset: 0.353
 --- !u!114 &6886154326849564434
@@ -271,6 +308,9 @@ MonoBehaviour:
   currentMana: 100
   maxMana: 100
   manaRegenRate: 5
+  knockbackForce: 8
+  invincibleTime: 0.5
+  flashInterval: 0.08
   spawnPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &1281836696527421952
 MonoBehaviour:
@@ -287,6 +327,8 @@ MonoBehaviour:
   firePoint: {fileID: 2054903602886582}
   firePrefab: {fileID: 4864578961204150700, guid: c07da7a4f2b8034488c10b7a2589eabe, type: 3}
   cooldown: 7
+  fireSkillSound: {fileID: 8300000, guid: 9dec216d53ea15043a09131dc00234ff, type: 3}
+  skillVolume: 100
 --- !u!114 &1342797692353999333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,6 +344,9 @@ MonoBehaviour:
   chargeSkillPrefab: {fileID: 3464739385295137411, guid: a3accf7acfa46274fa5a5571a0418991, type: 3}
   cooldown: 3
   timeToCharge: 0.3
+  chargeSound: {fileID: 8300000, guid: c363c3a9504e84241b6b3a6368ba463f, type: 3}
+  enemyHitSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
+  skillVolume: 100
 --- !u!114 &-4637535052865219214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,6 +362,9 @@ MonoBehaviour:
   deathSkillPrefab: {fileID: 7079357090929073917, guid: 2c5a3d7181a2b9e4685fc8132a7398bb, type: 3}
   cooldown: 4
   timeToCharge: 0.9
+  chargeSound: {fileID: 8300000, guid: c363c3a9504e84241b6b3a6368ba463f, type: 3}
+  enemyHitSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
+  skillVolume: 100
 --- !u!1 &8199200520320596336
 GameObject:
   m_ObjectHideFlags: 0

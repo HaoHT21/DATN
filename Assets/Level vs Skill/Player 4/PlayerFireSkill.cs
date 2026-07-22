@@ -10,6 +10,10 @@ public class PlayerFireSkill : MonoBehaviour
     public float cooldown = 7f;
     private float _cooldownTimer = 0f;
 
+    [Header("--- CẤU HÌNH ÂM THANH CHIÊU THỨC ---")]
+    public AudioClip fireSkillSound;     // Ô kéo thả file nhạc tiếng lửa bùng lên (.mp3, .wav)
+    [Range(0f, 100f)] public float skillVolume = 100f; // Thanh trượt chỉnh to nhỏ từ 0 đến 100 ngoài Inspector
+
     private SpriteRenderer _sprite;
     private GameObject currentFireInstance; // Lưu vết cục lửa đang phun trên Map
     private Transform finalFirePoint;
@@ -74,6 +78,29 @@ public class PlayerFireSkill : MonoBehaviour
         }
 
         Vector3 spawnPos = (finalFirePoint != null) ? finalFirePoint.position : transform.position;
+
+        // CHỈ SỬA KHÚC NÀY: Khởi tạo AudioSource 2D thủ công để tiếng lửa bùng cháy to rõ, đè bẹp nhạc nền
+        if (fireSkillSound != null)
+        {
+            GameObject tempAudio = new GameObject("TempFireSkillAudio");
+            tempAudio.transform.position = transform.position;
+            AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+            aSource.clip = fireSkillSound;
+            aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn (nghe rõ mồn một bất kể camera xa gần)
+            aSource.volume = Mathf.Clamp01(skillVolume / 100f); // Quy đổi mượt từ hệ 100 về hệ 1.0 chuẩn Unity
+
+            // ==========================================
+            // LONG MẠCH: Gán âm thanh bùng lửa đi qua đúng kênh CombatSFX của Audio Mixer
+            if (AudioStaticManager.Instance != null)
+            {
+                aSource.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+            }
+            // ==========================================
+
+            aSource.Play();
+            Destroy(tempAudio, fireSkillSound.length); // Phát xong tự dọn dẹp Object tạm
+        }
 
         // Đẻ lửa ra độc lập ngoài Map (Không làm con Player để tránh lỗi méo Collider do Scale của Player)
         currentFireInstance = Instantiate(firePrefab, spawnPos, Quaternion.identity);

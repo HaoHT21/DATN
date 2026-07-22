@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class DeathBulletLogic : MonoBehaviour
 {
@@ -6,6 +7,10 @@ public class DeathBulletLogic : MonoBehaviour
     public float flySpeed = 11f;
     public int damage = 90; // Sát thương cực lớn
     public LayerMask enemyLayer;
+
+    // CHÈN THÊM 2 DÒNG NÀY ĐỂ NHẬN DỮ LIỆU ÂM THANH TỪ PLAYERDEATHSKILL TRUYỀN SANG
+    [HideInInspector] public AudioClip hitSound;
+    [HideInInspector] public float soundVolume = 1f;
 
     private Rigidbody2D rb;
     private Animator anim;
@@ -60,6 +65,21 @@ public class DeathBulletLogic : MonoBehaviour
     {
         _hasExploded = true;
         if (rb != null) rb.linearVelocity = Vector2.zero; // Dừng lại tại người quái/Boss để nổ
+
+        // CHÈN ĐOẠN NÀY: Phát âm thanh căm phẫn "TỬ" dạng 2D to rõ (bỏ qua khoảng cách Camera xa gần)
+        if (hitSound != null)
+        {
+            GameObject tempAudio = new GameObject("TempDeathHitAudio");
+            tempAudio.transform.position = transform.position;
+            AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+            aSource.clip = hitSound;
+            aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn để đè bẹp nhạc nền
+            aSource.volume = soundVolume; // Ăn theo volume chung của Manager truyền qua
+
+            aSource.Play();
+            Destroy(tempAudio, hitSound.length); // Phát xong tự dọn dẹp Object tạm khỏi Hierarchy
+        }
 
         if (anim != null) anim.Play("Death_Fire"); // Chạy dải ảnh nổ đầu lâu bốc lửa (31 - 49)
 

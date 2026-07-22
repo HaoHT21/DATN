@@ -14,12 +14,12 @@ public class VolumeSettings : MonoBehaviour
 
     private void Start()
     {
-        // Tải lại cài đặt âm lượng đã lưu (mặc định là 0f - âm thanh gốc)
-        float savedCombat = PlayerPrefs.GetFloat("CombatVolume", 0f);
-        float savedMusic = PlayerPrefs.GetFloat("MusicVolume", 0f);
-        float savedEnv = PlayerPrefs.GetFloat("EnvVolume", 0f);
+        // Tải lại cài đặt âm lượng đã lưu (mặc định là 1f - âm thanh gốc to nhất)
+        float savedCombat = PlayerPrefs.GetFloat("CombatVolume", 1f);
+        float savedMusic = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        float savedEnv = PlayerPrefs.GetFloat("EnvVolume", 1f);
 
-        // Đưa giá trị lên thanh trượt UI
+        // Đưa giá trị tuyến tính (0 -> 1) lên thanh trượt UI
         combatSlider.value = savedCombat;
         musicSlider.value = savedMusic;
         envSlider.value = savedEnv;
@@ -37,31 +37,46 @@ public class VolumeSettings : MonoBehaviour
 
     public void SetCombatVolume(float value)
     {
-        // Nếu kéo slider về tối thiểu (-80) thì tắt hẳn âm thanh tránh tiếng rè rè của dB
-        if (value <= -79f)
-            audioMixer.SetFloat("combatVol", -80f);
+        // Chuyển đổi giá trị Slider từ tuyến tính (0 -> 1) sang Logarit (Decibel)
+        if (value <= 0.0001f)
+        {
+            audioMixer.SetFloat("combatVol", -80f); // Tắt hẳn tiếng khi kéo về hết bên trái
+        }
         else
-            audioMixer.SetFloat("combatVol", value);
+        {
+            float dB = Mathf.Log10(value) * 20f;
+            audioMixer.SetFloat("combatVol", dB);
+        }
 
         PlayerPrefs.SetFloat("CombatVolume", value);
     }
 
     public void SetMusicVolume(float value)
     {
-        if (value <= -79f)
+        if (value <= 0.0001f)
+        {
             audioMixer.SetFloat("musicVol", -80f);
+        }
         else
-            audioMixer.SetFloat("musicVol", value);
+        {
+            float dB = Mathf.Log10(value) * 20f;
+            audioMixer.SetFloat("musicVol", dB);
+        }
 
         PlayerPrefs.SetFloat("MusicVolume", value);
     }
 
     public void SetEnvVolume(float value)
     {
-        if (value <= -79f)
+        if (value <= 0.0001f)
+        {
             audioMixer.SetFloat("envVol", -80f);
+        }
         else
-            audioMixer.SetFloat("envVol", value);
+        {
+            float dB = Mathf.Log10(value) * 20f;
+            audioMixer.SetFloat("envVol", dB);
+        }
 
         PlayerPrefs.SetFloat("EnvVolume", value);
     }

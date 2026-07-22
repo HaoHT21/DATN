@@ -211,11 +211,13 @@ MonoBehaviour:
   firePoint: {fileID: 8901015696989878722}
   weaponRotationOffset: -45
   shootSound: {fileID: 8300000, guid: 474f5b12833b9124aaca040c989f2e58, type: 3}
+  shootVolume: 100
   healSound: {fileID: 0}
   dropSound: {fileID: 0}
   visual: {fileID: 6381983249476783960}
   playerAvatar: {fileID: 0}
   isKnocked: 0
+  reverseControl: 0
   firePointXOffset: 0.355
   firePointYOffset: 0.353
 --- !u!114 &7690319049176068087
@@ -263,6 +265,8 @@ MonoBehaviour:
   buffVfxPrefab: {fileID: 685253278740951906, guid: b966050f6ff2ddb48a0bb9e7cbb92e27, type: 3}
   skillDuration: 8
   cooldown: 15
+  buffLoopSound: {fileID: 8300000, guid: fa4a7c0f8c9817c40a61226cad56fe23, type: 3}
+  skillVolume: 100
   skillManaCost: 20
   isBuffActive: 0
 --- !u!114 &8214208570305237682
@@ -281,6 +285,8 @@ MonoBehaviour:
   icePrefab: {fileID: 2426034877008958509, guid: d518028d7f2c15d48a948fe9faa2f892, type: 3}
   firePoint: {fileID: 0}
   manaCost: 30
+  iceCastSound: {fileID: 8300000, guid: 7921f9b277618374ab1c24781b84f16e, type: 3}
+  skillVolume: 100
   castRange: 4
 --- !u!114 &2161616668489108450
 MonoBehaviour:
@@ -294,6 +300,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c1041834332fd64a8a5cbafcac3a55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseAttackRate: 0.5
+  currentAttackRate: 0
   baseMoveSpeed: 7
   currentMoveSpeed: 0
 --- !u!1 &4906071308131334777
