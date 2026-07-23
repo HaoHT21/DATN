@@ -7,6 +7,10 @@ public class PlayerBuffSkill : MonoBehaviour
     public float skillDuration = 8f;   // Thời gian tác dụng (8 giây)
     public float cooldown = 15f;       // Thời gian hồi chiêu (15 giây)
 
+    [Header("--- CẤU HÌNH ÂM THANH BUFF ---")]
+    public AudioClip buffLoopSound;      // Ô kéo file âm thanh vòng năng lượng duy trì (Aura, Shield Loop)
+    [Range(0f, 100f)] public float skillVolume = 100f; // Thanh trượt chỉnh to nhỏ từ 0 đến 100 ngoài Inspector
+
     [Header("Cấu hình tiêu tốn Mana")]
     [Tooltip("Số lượng Mana tiêu hao mỗi lần bấm nút bật Buff")]
     public int skillManaCost = 20;     // Mặc định tốn 20 Mana, thích tăng giảm tùy ý mày ngoài Inspector
@@ -16,6 +20,7 @@ public class PlayerBuffSkill : MonoBehaviour
 
     private float _cooldownTimer;
     private PlayerHealth _playerHealth; // Cầu nối để check và trừ mana
+    private AudioSource _activeBuffAudio; // Biến tạm quản lý tiếng vòng năng lượng đang bám theo người
 
     void Awake()
     {
@@ -57,6 +62,30 @@ public class PlayerBuffSkill : MonoBehaviour
         isBuffActive = true;
         _cooldownTimer = cooldown;
 
+        // CHỈ SỬA KHÚC NÀY: Khởi tạo nguồn âm thanh 2D chạy lặp (Loop) bám cứng theo Player
+        if (buffLoopSound != null)
+        {
+            GameObject buffAudioObj = new GameObject("TempBuffLoopSound");
+            buffAudioObj.transform.position = transform.position;
+            buffAudioObj.transform.SetParent(transform); // Găm làm con của Player để di chuyển theo real-time
+
+            _activeBuffAudio = buffAudioObj.AddComponent<AudioSource>();
+            _activeBuffAudio.clip = buffLoopSound;
+            _activeBuffAudio.spatialBlend = 0f; // Khóa âm thanh dạng 2D to rõ (đè bẹp nhạc nền)
+            _activeBuffAudio.volume = Mathf.Clamp01(skillVolume / 100f); // Quy đổi hệ 100 về chuẩn 1.0 của Unity
+            _activeBuffAudio.loop = true; // Bật lặp liên tục trong suốt 8 giây gồng buff
+
+            // ==========================================
+            // LONG MẠCH: Gán âm thanh vòng lặp gồng Buff đi qua đúng kênh CombatSFX của Audio Mixer
+            if (AudioStaticManager.Instance != null)
+            {
+                _activeBuffAudio.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+            }
+            // ==========================================
+
+            _activeBuffAudio.Play();
+        }
+
         // Sinh ra vòng hiệu ứng phép thuật tại vị trí Player
         if (buffVfxPrefab != null)
         {
@@ -77,6 +106,13 @@ public class PlayerBuffSkill : MonoBehaviour
     void DeactivateBuff()
     {
         isBuffActive = false;
+
+        // CHỈ SỬA KHÚC NÀY: Khi hết thời gian buff, xóa bỏ ngay object âm thanh lặp để dập tắt tiếng kêu
+        if (_activeBuffAudio != null)
+        {
+            Destroy(_activeBuffAudio.gameObject);
+        }
+
         Debug.Log("Hết thời gian Buff! Sát thương súng trở lại bình thường.");
     }
 

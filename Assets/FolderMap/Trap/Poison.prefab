@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6428064925942969595}
   - component: {fileID: 6960666451031918216}
   - component: {fileID: 8966604338550422009}
+  - component: {fileID: -341995488049470647}
+  - component: {fileID: 3978896102697779130}
   m_Layer: 9
   m_Name: Poison
   m_TagString: Untagged
@@ -149,3 +151,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 1
   poisonAreaPrefab: {fileID: 6471939960268831734, guid: 4d62de184e32ac04184acd1a10a83683, type: 3}
+--- !u!114 &-341995488049470647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6042344097657795695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a4a2689fccdb114eaa04c819a7b2402, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loopSound: {fileID: 0}
+  soundVolume: 1
+  audioDuration: 5
+--- !u!114 &3978896102697779130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6042344097657795695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5c70f969c9cbcb4bb435a60a73cbc22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poisonSplashSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
+  poisonPoolLoopSound: {fileID: 8300000, guid: 2d5f4acb87855c8428d94bb695a010e9, type: 3}
+  soundVolume: 100
+  poolAudioDuration: 5

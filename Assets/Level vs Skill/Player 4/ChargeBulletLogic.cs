@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class ChargeBulletLogic : MonoBehaviour
 {
@@ -6,6 +7,10 @@ public class ChargeBulletLogic : MonoBehaviour
     public float flySpeed = 12f;
     public int damage = 80;
     public LayerMask enemyLayer;
+
+    // CHÈN THÊM 2 DÒNG NÀY ĐỂ NHẬN DỮ LIỆU ÂM THANH TỪ POISONCHARGESKILL TRUYỀN SANG
+    [HideInInspector] public AudioClip hitSound;
+    [HideInInspector] public float soundVolume = 1f;
 
     private Rigidbody2D rb;
     private Animator anim;
@@ -65,6 +70,21 @@ public class ChargeBulletLogic : MonoBehaviour
 
         // Dừng vật lý ngay lập tức, đứng khựng lại tại người con quái/Boss để nổ
         if (rb != null) rb.linearVelocity = Vector2.zero;
+
+        // CHÈN ĐOẠN NÀY: Phát âm thanh va chạm nổ tung tóe dạng 2D to rõ, đè bẹp nhạc nền
+        if (hitSound != null)
+        {
+            GameObject tempAudio = new GameObject("TempChargeHitAudio");
+            tempAudio.transform.position = transform.position;
+            AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+            aSource.clip = hitSound;
+            aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn (bỏ qua khoảng cách Camera xa gần)
+            aSource.volume = soundVolume; // Ăn theo volume chung của Manager truyền qua
+
+            aSource.Play();
+            Destroy(tempAudio, hitSound.length); // Phát xong tự dọn dẹp Object tạm khỏi Hierarchy
+        }
 
         // BÂY GIỜ MỚI CHO CHẠY ANIMATION NỔ TUNG (Từ frame 9 đến 16)
         if (anim != null)

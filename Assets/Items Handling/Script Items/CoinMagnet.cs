@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
+using System;
 
 public class CoinMagnet : MonoBehaviour
 {
     [Header("Cấu hình Coin")]
     [SerializeField] private int coinValue = 1;
     public AudioClip coinPickupSound;
+
+    [Header("--- CẤU HÌNH ÂM LƯỢNG XU ---")]
+    [Range(0f, 100f)] public float soundVolume = 100f; // Thanh trượt chỉnh âm lượng từ 0 đến 100 ngoài Inspector
 
     [Header("Khoảng hút")]
     public float detectRange = 3f;
@@ -72,13 +77,28 @@ public class CoinMagnet : MonoBehaviour
 
     void CollectCoin()
     {
-        // 1. PHÁT ÂM THANH NHẶT XU
-        if (AudioManager.Instance != null && coinPickupSound != null)
+        // Khởi tạo AudioSource 2D thủ công và gán qua kênh envGroup (kênh bẫy / môi trường)
+        if (coinPickupSound != null)
         {
-            AudioManager.Instance.PlaySound(coinPickupSound);
+            GameObject tempAudio = new GameObject("TempCoinAudio");
+            tempAudio.transform.position = transform.position;
+            AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+            aSource.clip = coinPickupSound;
+            aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn
+            aSource.volume = Mathf.Clamp01(soundVolume / 100f); // Quy đổi chuẩn hệ 0-100 về 0.0-1.0 của Unity
+
+            // Gán thẳng đi qua kênh envGroup giống hệt bên TrapAudio
+            if (AudioStaticManager.Instance != null)
+            {
+                aSource.outputAudioMixerGroup = AudioStaticManager.Instance.envGroup;
+            }
+
+            aSource.Play();
+            Destroy(tempAudio, coinPickupSound.length); // Phát xong tự hủy Object tạm
         }
 
-        // 2. CỘNG XU VÀO STATS (Sử dụng Singleton Instance thay vì GetComponent)
+        // 2. CỘNG XU VÀO STATS (Sử dụng Singleton Instance thay vì GetComponent - GIỮ NGUYÊN)
         if (PlayerStats.Instance != null)
         {
             PlayerStats.Instance.AddCoin(coinValue);

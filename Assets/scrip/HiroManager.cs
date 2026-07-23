@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class HiroManager : MonoBehaviour
 {
     public static HiroManager Instance;
@@ -58,3 +62,19 @@ public class HiroManager : MonoBehaviour
         return null;
     }
 }
+
+// =========================================================================
+// NÚT BẤM RESET DỮ LIỆU SHOP TRÊN THANH MENU UNITY (CHỈ DÙNG TRONG EDITOR)
+// =========================================================================
+#if UNITY_EDITOR
+public class ShopTestEditor
+{
+    [MenuItem("Tools/Reset Shop Data (Xoa PlayerPrefs)")]
+    public static void ResetShopData()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("<color=yellow>[TEST SHOP]</color> Đã xóa sạch dữ liệu mua Hero! Giờ chạy game sẽ trở về trạng thái chưa mua.");
+    }
+}
+#endif

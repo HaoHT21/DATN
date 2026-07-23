@@ -10,6 +10,10 @@ public class PlayerShield : MonoBehaviour
     public int shieldManaCost = 20;       // Mana tiêu hao
     public float duration = 5f;           // Thời gian tồn tại của khiên
 
+    [Header("--- CẤU HÌNH ÂM THANH KHIÊN ---")]
+    public AudioClip shieldActivateSound; // Ô kéo thả file nhạc kích hoạt khiên (.mp3, .wav)
+    [Range(0f, 100f)] public float skillVolume = 100f; // Thanh trượt chỉnh to nhỏ từ 0 đến 100 ngoài Inspector
+
     [Header("--- Chỉ số chống chịu ---")]
     public int maxShieldHP = 50;          // Chắn tối đa 50 dame
     private int currentShieldHP;
@@ -91,6 +95,29 @@ public class PlayerShield : MonoBehaviour
         if (shieldPrefab != null)
         {
             spawnedShield = Instantiate(shieldPrefab, shieldSpawnPoint.position, Quaternion.identity);
+        }
+
+        // CHỈ SỬA KHÚC NÀY: Khởi tạo AudioSource 2D thủ công để tiếng bật khiên nổ to rõ, đè bẹp nhạc nền
+        if (shieldActivateSound != null)
+        {
+            GameObject tempAudio = new GameObject("TempShieldActivateAudio");
+            tempAudio.transform.position = transform.position;
+            AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+            aSource.clip = shieldActivateSound;
+            aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn (bỏ qua khoảng cách Camera)
+            aSource.volume = Mathf.Clamp01(skillVolume / 100f); // Quy đổi hệ 100 về hệ 1.0 chuẩn Unity
+
+            // ==========================================
+            // LONG MẠCH: Gán âm thanh kích hoạt khiên đi qua đúng kênh CombatSFX của Audio Mixer
+            if (AudioStaticManager.Instance != null)
+            {
+                aSource.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+            }
+            // ==========================================
+
+            aSource.Play();
+            Destroy(tempAudio, shieldActivateSound.length); // Chạy xong tự dọn dẹp Object tạm khỏi Hierarchy
         }
 
         Debug.Log($"<color=green>[Khiên]</color> Kích hoạt thành công tại vị trí {shieldSpawnPoint.name}!");

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4543496275382703082}
   - component: {fileID: -8684342668625516858}
   - component: {fileID: -1416218261448774585}
+  - component: {fileID: -3449675238666150799}
   m_Layer: 10
   m_Name: BulletIce
   m_TagString: Untagged
@@ -202,3 +203,17 @@ MonoBehaviour:
   damage: 5
   freezeDuration: 2
   hitEffectPrefab: {fileID: 5969681148550091503, guid: 2738650cd44c540459be9635e7b43b7b, type: 3}
+--- !u!114 &-3449675238666150799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9035861995818589019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb8c97b6300ba9e45b0fd6b7116f3ddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitSound: {fileID: 0}
+  soundVolume: 1
