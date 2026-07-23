@@ -68,7 +68,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: VampireGirl
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8107489374993155366, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
+      propertyPath: hostagePrefab
+      value: 
+      objectReference: {fileID: 6728578809639322683, guid: a1fb2b10ab6f935408b1ed43c3fe94b7, type: 3}
+    - target: {fileID: 8271129871718053091, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 9.13
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7875493771331401122, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
+    - {fileID: 8764326165178283025, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
+    - {fileID: 4470429351146639937, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
+    - {fileID: 6842075235842828577, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
+    - {fileID: 3872877473902992588, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
+    - {fileID: 8091903974703569479, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
+    - {fileID: 2868170512876424707, guid: 9d24f2e8ded45344c8830c2d4a7196e4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -86,21 +101,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1067150528039011889, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1817763363828155862, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2394119066800130835, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_Name
-      value: Cage (8) Variant
+      value: Cage (8)
       objectReference: {fileID: 0}
     - target: {fileID: 3904051250798556514, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: hostage
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4031014876059559756, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6801044185567955227, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 19.08
+      value: 46.608
       objectReference: {fileID: 0}
     - target: {fileID: 6801044185567955227, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -29.86
+      value: -42.79834
       objectReference: {fileID: 0}
     - target: {fileID: 6801044185567955227, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -112,15 +139,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6801044185567955227, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6801044185567955227, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6801044185567955227, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6801044185567955227, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -133,6 +160,18 @@ PrefabInstance:
     - target: {fileID: 6801044185567955227, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8153516957456038729, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
+      propertyPath: m_SortingOrder
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673793133197663522, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1.136
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673793133197663522, guid: 41243b4e6503a4c45bb01dcaa3f0784e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.21
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

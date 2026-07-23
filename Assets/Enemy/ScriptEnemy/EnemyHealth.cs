@@ -35,12 +35,16 @@ public class EnemyHealth : MonoBehaviour, IHealthProvider
         enemyAI = GetComponent<EnemyAI>();
 
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        if (GetComponent<SimpleEnemyHealthBar>() == null)
+            gameObject.AddComponent<SimpleEnemyHealthBar>();
     }
 
     public void TakeDamage(int damage)
     {
         if (isDead) return;
 
+        int previous = currentHealth;
         currentHealth -= damage;
 
         Debug.Log("Current HP: " + currentHealth);
@@ -52,9 +56,12 @@ public class EnemyHealth : MonoBehaviour, IHealthProvider
 
         if (currentHealth <= 0)
         {
+            currentHealth = 0;
             Debug.Log("Enemy Dead");
             StartCoroutine(DieSequence());
         }
+
+        NotifyHealthChanged(previous);
     }
 
     private IEnumerator DieSequence()
@@ -94,9 +101,19 @@ public class EnemyHealth : MonoBehaviour, IHealthProvider
     {
         if (isDead) return;
 
+        int previous = currentHealth;
         currentHealth += amount;
         currentHealth = Mathf.Min(currentHealth, maxHealth);
 
-        OnHealthChanged?.Invoke(new HealthChangeInfo());
+        NotifyHealthChanged(previous);
+    }
+
+    private void NotifyHealthChanged(int previousHealth)
+    {
+        OnHealthChanged?.Invoke(
+            new HealthChangeInfo(
+                currentHealth,
+                maxHealth,
+                currentHealth - previousHealth));
     }
 }
