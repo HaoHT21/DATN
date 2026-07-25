@@ -120,8 +120,8 @@ public class InventoryUI : MonoBehaviour
 
         // --- CHỖ ĐÃ SỬA: ĐỊNH NGHĨA LẠI MÀU SẮC ĐỂ TRÁNH LỖI TÀNG HÌNH Ô NỀN ---
         Color highlightColor = new Color(1f, 0.92f, 0.01f, 1f); // Màu vàng hiện rõ khi được chọn làm vũ khí chính
-        Color normalColor = new Color(0, 0, 0, 0);          // ĐỔI THÀNH 1f: Ô có đồ nhưng không chọn vẫn hiện nền gỗ rõ ràng 100%
-        Color emptyColor = new Color(0f, 0f, 0f, 0f);           // ĐỔI THÀNH 1f: Khung ô gỗ trống trải vẫn giữ nguyên để không bị tàng hình
+        Color normalColor = Color.black;         // ĐỔI THÀNH 1f: Ô có đồ nhưng không chọn vẫn hiện nền gỗ rõ ràng 100%
+        Color emptyColor = Color.black;            // ĐỔI THÀNH 1f: Khung ô gỗ trống trải vẫn giữ nguyên để không bị tàng hình
 
         for (int i = 0; i < iconDisplays.Length; i++)
         {

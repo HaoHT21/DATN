@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3471504648838530101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 914192693433980010}
+  m_Layer: 6
+  m_Name: Visual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &914192693433980010
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3471504648838530101}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.03, y: -0.01, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6686373672772960915}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4181594781261911039
 GameObject:
   m_ObjectHideFlags: 0
@@ -65,9 +96,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 34.392784, y: -24.13188, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 914192693433980010}
   - {fileID: 4511642502359376585}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -247,6 +279,9 @@ MonoBehaviour:
   currentMana: 100
   maxMana: 100
   manaRegenRate: 5
+  knockbackForce: 8
+  invincibleTime: 0.5
+  flashInterval: 0.08
   spawnPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &-274200790610879012
 MonoBehaviour:
@@ -266,8 +301,13 @@ MonoBehaviour:
   firePoint: {fileID: 7037432308308840290}
   weaponRotationOffset: -45
   shootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
+  shootVolume: 100
   healSound: {fileID: 0}
   dropSound: {fileID: 0}
+  visual: {fileID: 0}
+  playerAvatar: {fileID: 0}
+  isKnocked: 0
+  reverseControl: 0
   firePointXOffset: 0.355
   firePointYOffset: 0.353
 --- !u!114 &8813690502322760516
@@ -284,10 +324,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   splatterSkillPrefab: {fileID: 9102177267407252235, guid: bf549a9c6f9552548805a9aea085e665, type: 3}
   splatterCooldown: 1.5
+  splatterCastSound: {fileID: 0}
+  splatterHitSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
   poisonProjectilePrefab: {fileID: 3045699094172907557, guid: 4548961946e158540bba534f46ca320c, type: 3}
   poisonCooldown: 3
+  poisonCastSound: {fileID: 0}
+  poisonHitSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
   energySkillPrefab: {fileID: 2257653794705168774, guid: ff26906e5e57a1b43b8ffbddea176374, type: 3}
   energyCooldown: 2
+  energyCastSound: {fileID: 0}
+  energyHitSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
+  skillVolume: 62.3
 --- !u!1 &6914342177101449231
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,7 +360,7 @@ Transform:
   m_GameObject: {fileID: 6914342177101449231}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.4300003, y: 1.2770004, z: 0}
+  m_LocalPosition: {x: 0.43, y: 0.03, z: 0}
   m_LocalScale: {x: 1.2752202, y: 1.2752202, z: 1.2752202}
   m_ConstrainProportionsScale: 0
   m_Children: []

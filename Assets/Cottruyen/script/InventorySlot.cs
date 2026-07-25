@@ -3,28 +3,52 @@ using UnityEngine.EventSystems;
 
 public class InventorySlot : MonoBehaviour, IPointerClickHandler
 {
-    [Header("Số thứ tự của ô này (Ô đầu tiên là 0, 1, 2...)")]
+    [Header("Số thứ tự của ô này (0, 1, 2...)")]
     public int slotIndex;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (InventoryData.Instance == null || InventoryData.Instance.sharedInventory == null) return;
+        Debug.Log($"[InventorySlot] Đã bấm chuột vào ô: {slotIndex} | Nút: {eventData.button}");
 
-        // KIỂM TRA NẾU NGƯỜI CHƠI NHẤN CHUỘT PHẢI
+        if (InventoryData.Instance == null)
+        {
+            Debug.LogError("[InventorySlot] Lỗi: Không tìm thấy InventoryData.Instance trong Scene!");
+            return;
+        }
+
+        if (InventoryData.Instance.sharedInventory == null)
+        {
+            Debug.LogError("[InventorySlot] Lỗi: sharedInventory đang bị null!");
+            return;
+        }
+
+        // Kiểm tra nhấn chuột phải (Right Click)
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            // CHỈ XỬ LÝ NẾU LÀ Ô THUỘC KHOLON (Slot Index bắt đầu từ 4 trở lên)
+            Debug.Log("[InventorySlot] Đã nhận diện CHUỘT PHẢI!");
+
             if (slotIndex >= 0 && slotIndex < InventoryData.Instance.sharedInventory.Count)
             {
-                // Chỉ hiển thị Menu nếu tại vị trí ô này thực sự đang chứa vũ khí (không bị null)
                 if (InventoryData.Instance.sharedInventory[slotIndex] != null)
                 {
                     if (SlotContextMenu.Instance != null)
                     {
-                        // Mở Menu tại tọa độ chuột và truyền chính xác index (bắt đầu từ 4)
+                        Debug.Log($"[InventorySlot] Thành công! Đang gọi Menu cho ô index: {slotIndex}");
                         SlotContextMenu.Instance.ShowMenu(slotIndex, eventData.position);
                     }
+                    else
+                    {
+                        Debug.LogError("[InventorySlot] Lỗi: SlotContextMenu.Instance đang bị NULL! Bạn đã gắn script SlotContextMenu vào GameObject nào trong Scene chưa?");
+                    }
                 }
+                else
+                {
+                    Debug.LogWarning($"[InventorySlot] Ô số {slotIndex} không có đồ (Item tại index này là null).");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[InventorySlot] SlotIndex ({slotIndex}) vượt quá số lượng đồ đang có trong túi ({InventoryData.Instance.sharedInventory.Count}).");
             }
         }
     }

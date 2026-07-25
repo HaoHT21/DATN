@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: -8804577451312863447, guid: 68a2f39b0c4abaa4d8b16630c7d136f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -194,7 +194,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0.078322634, y: 0}
-  m_Radius: 6.689403
+  m_Radius: 6
 --- !u!114 &6613855501534451203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,6 +209,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 500
   maxHeath: 500
+  isFinalBoss: 0
+  cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
@@ -246,7 +248,7 @@ Transform:
   m_GameObject: {fileID: 3120480687593708142}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 149.8942, y: -34.834324, z: 0}
+  m_LocalPosition: {x: -975.3, y: 160.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -296,11 +298,11 @@ MonoBehaviour:
   anim: {fileID: 8947484568816632963}
   bossHeath: {fileID: 6613855501534451203}
   bossVisual: {fileID: 3811854665280225209}
-  detectRange: 40
+  detectRange: 60
   keepDistance: 15
   dangerDistance: 4
   moveSpeed: 5
-  dashSpeed: 100
+  dashSpeed: 80
   thinkMin: 0.5
   thinkMax: 1.5
   currentPhase: 1

@@ -78,7 +78,7 @@ public class BossAtlantisController : BossController
             int roll =
             Random.Range(0, 100);
 
-            if (roll < 50)
+            if (roll < 30)
             {
                 yield return
                 StartCoroutine(
@@ -86,7 +86,7 @@ public class BossAtlantisController : BossController
                 );
             }
 
-            else if (roll < 75)
+            else if (roll < 60)
             {
                 action = 0;
             }
@@ -110,7 +110,7 @@ public class BossAtlantisController : BossController
                 );
             }
 
-            else if (roll < 50)
+            else if (roll < 60)
             {
                 action = 0;
             }

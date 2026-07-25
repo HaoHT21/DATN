@@ -278,7 +278,21 @@ public class PlayerController : MonoBehaviour
             PlayerHealth ph = GetComponent<PlayerHealth>();
             if (ph != null) { ph.Heal(weapon.healAmount); RemoveWeapon(currentWeaponIndex); }
         }
-        else { _animator.SetTrigger("Attack"); }
+        else
+        {
+            // --- XỬ LÝ VŨ KHÍ CẬN CHIẾN (SWORD) ---
+            _animator.SetTrigger(""); // Animation vung tay của Player (nếu có)
+            if (!weapon.isGun)
+            {
+                WeaponBase weaponBase =
+                weapon.visualPrefab.GetComponent<WeaponBase>();
+
+                if (weaponBase != null)
+                {
+                    weaponBase.Attack();
+                }
+            }
+        }
     }
 
 
@@ -342,14 +356,20 @@ public class PlayerController : MonoBehaviour
             spawned = Instantiate(visualPrefab, weaponHolder);
 
             spawned.transform.localPosition = Vector3.zero;
-
             spawned.transform.localRotation = Quaternion.identity;
-
             spawned.transform.localScale = visualPrefab.transform.localScale;
 
+            WeaponBase weapon = spawned.GetComponent<WeaponBase>();
+            if (weapon != null)
+            {
+                weapon.OnEquip();
+            }
 
-
-            // SỬA TẠI ĐÂY: Mặc định để false, hàm UpdateWeaponVisuals() bên dưới sẽ tự động kích hoạt lại nếu được chọn
+            ItemPickup pickup = spawned.GetComponent<ItemPickup>();
+            if (pickup != null)
+            {
+                pickup.isEquipped = true;
+            }
 
             spawned.SetActive(false);
 

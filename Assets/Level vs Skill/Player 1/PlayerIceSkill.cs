@@ -8,6 +8,10 @@ public class PlayerIceSkill : MonoBehaviour
     public Transform firePoint;            // Đầu nòng súng (FP hoặc FirePoint)
     public int manaCost = 70;
 
+    [Header("--- CẤU HÌNH ÂM THANH CHIÊU THỨC ---")]
+    public AudioClip iceCastSound;         // Ô kéo thả file nhạc tiếng phóng băng (.mp3, .wav)
+    [Range(0f, 100f)] public float skillVolume = 100f; // Thanh trượt chỉnh to nhỏ từ 0 đến 100 ngoài Inspector
+
     [Header("--- Giới hạn phạm vi ---")]
     public float castRange = 8f;
 
@@ -55,6 +59,29 @@ public class PlayerIceSkill : MonoBehaviour
             if (icePrefab != null)
             {
                 if (firePoint == null) firePoint = this.transform;
+
+                // CHỈ SỬA KHÚC NÀY: Khởi tạo AudioSource 2D thủ công để tiếng phóng giáo băng to rõ, đè bẹp nhạc nền
+                if (iceCastSound != null)
+                {
+                    GameObject tempAudio = new GameObject("TempIceCastAudio");
+                    tempAudio.transform.position = transform.position;
+                    AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+                    aSource.clip = iceCastSound;
+                    aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn (bỏ qua khoảng cách Camera)
+                    aSource.volume = Mathf.Clamp01(skillVolume / 100f); // Quy đổi hệ 100 về hệ 1.0 chuẩn Unity
+
+                    // ==========================================
+                    // LONG MẠCH: Gán âm thanh skill Player đi qua đúng kênh CombatSFX của Audio Mixer
+                    if (AudioStaticManager.Instance != null)
+                    {
+                        aSource.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+                    }
+                    // ==========================================
+
+                    aSource.Play();
+                    Destroy(tempAudio, iceCastSound.length); // Phát xong tự dọn dẹp Object tạm khỏi Hierarchy
+                }
 
                 GameObject projectedIce = Instantiate(icePrefab, firePoint.position, Quaternion.identity);
 

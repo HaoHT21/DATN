@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8635256455255889924}
   - component: {fileID: 2723508306192915143}
   - component: {fileID: 1215221014980963134}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FireBullet_Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -2647014575799753385, guid: 9d99a7b93dfeed24c8174f8a1d6d9f2c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -198,6 +198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57ea5e1a6d4f21c488074fb2b36b8087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 30
   damage: 20
   hitEffectPrefab: {fileID: 2623554648057743009, guid: e208fb1ac23d9b54181a169929f4f364, type: 3}

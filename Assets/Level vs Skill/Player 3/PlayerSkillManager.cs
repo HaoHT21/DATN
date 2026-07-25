@@ -6,16 +6,22 @@ public class PlayerSkillManager : MonoBehaviour
     public GameObject splatterSkillPrefab;    // Kéo Prefab burst_splatter_003 vào đây
     public float splatterCooldown = 1.5f;
     private float _splatterTimer = 0f;
+    public AudioClip splatterHitSound;        // Tiếng khi chiêu I chạm trúng quái
 
     [Header("--- 2. SKILL ĐỘC RỈ MÁU (PHÍM L) ---")]
     public GameObject poisonProjectilePrefab; // Kéo Prefab đạn độc vào đây
     public float poisonCooldown = 3f;
     private float _poisonTimer = 0f;
+    public AudioClip poisonHitSound;           // Tiếng khi độc găm trúng quái
 
     [Header("--- 3. SKILL NĂNG LƯỢNG 70 DAME (PHÍM M) ---")]
     public GameObject energySkillPrefab;      // Kéo Prefab vòng xoáy sci-fi vào đây
     public float energyCooldown = 2f;
     private float _energyTimer = 0f;
+    public AudioClip energyHitSound;           // Tiếng khi năng lượng nổ trúng quái
+
+    [Header("--- CẤU HÌNH ÂM LƯỢNG CHUNG ---")]
+    [Range(0f, 100f)] public float skillVolume = 100f; // Thanh trượt âm lượng cho cả 3 skill ngoài Inspector
 
     private SpriteRenderer _sprite;
     private PlayerHealth _playerHealth; // Cầu nối để check Level và trạng thái sống chết gốc
@@ -23,13 +29,13 @@ public class PlayerSkillManager : MonoBehaviour
     private void Awake()
     {
         _sprite = GetComponent<SpriteRenderer>();
-        // Tự động tìm component PlayerHealth gắn chung trên người con Player 3
+        // Tự động tìm component PlayerHealth gắn chung trên người con Player
         _playerHealth = GetComponent<PlayerHealth>();
     }
 
     private void Update()
     {
-        // TỐI ƯU CHÍ MẠNG: Nếu Player 3 đã nghẻo thì ngắt luôn, đéo cho đếm hồi chiêu hay bấm nút gì hết!
+        // TỐI ƯU CHÍ MẠNG: Nếu Player đã nghẻo thì ngắt luôn, đéo cho đếm hồi chiêu hay bấm nút gì hết!
         if (_playerHealth != null && _playerHealth.IsDead) return;
 
         // Đếm ngược hồi chiêu của cả 3 nút
@@ -99,7 +105,19 @@ public class PlayerSkillManager : MonoBehaviour
         Vector2 dir = (_sprite != null && _sprite.flipX) ? Vector2.left : Vector2.right;
 
         GameObject proj = Instantiate(splatterSkillPrefab, spawnPos, Quaternion.identity);
-        if (proj.TryGetComponent<SplatterBlast>(out var script)) script.moveDirection = dir;
+        if (proj.TryGetComponent<SplatterBlast>(out var script))
+        {
+            script.moveDirection = dir;
+            // Nạp biến âm thanh hit trúng địch và volume vào viên đạn để nó tự nổ tiếng khi chạm quái
+            script.hitSound = splatterHitSound;
+            script.soundVolume = Mathf.Clamp01(skillVolume / 100f);
+
+            // Ép thẳng cấu trúc Mixer Group của viên đạn đi qua đúng group CombatSFX
+            if (AudioStaticManager.Instance != null && proj.TryGetComponent<AudioSource>(out var bulletAudio))
+            {
+                bulletAudio.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+            }
+        }
         Debug.Log("<color=yellow>[Manager]</color> Tung chiêu Splatter (Phím I)!");
     }
 
@@ -110,7 +128,19 @@ public class PlayerSkillManager : MonoBehaviour
         Vector2 dir = (_sprite != null && _sprite.flipX) ? Vector2.left : Vector2.right;
 
         GameObject proj = Instantiate(poisonProjectilePrefab, spawnPos, Quaternion.identity);
-        if (proj.TryGetComponent<PoisonAreaPlayer>(out var script)) script.moveDirection = dir;
+        if (proj.TryGetComponent<PoisonAreaPlayer>(out var script))
+        {
+            script.moveDirection = dir;
+            // Nạp biến âm thanh hit trúng địch và volume vào viên đạn để nó tự nổ tiếng khi chạm quái
+            script.hitSound = poisonHitSound;
+            script.soundVolume = Mathf.Clamp01(skillVolume / 100f);
+
+            // Ép thẳng cấu trúc Mixer Group của viên đạn đi qua đúng group CombatSFX
+            if (AudioStaticManager.Instance != null && proj.TryGetComponent<AudioSource>(out var bulletAudio))
+            {
+                bulletAudio.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+            }
+        }
         Debug.Log("<color=green>[Manager]</color> Tung chiêu Độc (Phím L)!");
     }
 
@@ -121,7 +151,19 @@ public class PlayerSkillManager : MonoBehaviour
         Vector2 dir = (_sprite != null && _sprite.flipX) ? Vector2.left : Vector2.right;
 
         GameObject proj = Instantiate(energySkillPrefab, spawnPos, Quaternion.identity);
-        if (proj.TryGetComponent<EnergyBlast>(out var script)) script.moveDirection = dir;
+        if (proj.TryGetComponent<EnergyBlast>(out var script))
+        {
+            script.moveDirection = dir;
+            // Nạp biến âm thanh hit trúng địch và volume vào viên đạn để nó tự nổ tiếng khi chạm quái
+            script.hitSound = energyHitSound;
+            script.soundVolume = Mathf.Clamp01(skillVolume / 100f);
+
+            // Ép thẳng cấu trúc Mixer Group của viên đạn đi qua đúng group CombatSFX
+            if (AudioStaticManager.Instance != null && proj.TryGetComponent<AudioSource>(out var bulletAudio))
+            {
+                bulletAudio.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+            }
+        }
         Debug.Log("<color=cyan>[Manager]</color> Tung chiêu Năng Lượng (Phím M)!");
     }
 

@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -616997662214009531, guid: 2213f4a4e315d16428cc5117d9c3c310, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -180,7 +180,7 @@ MonoBehaviour:
   lifeTime: 5
   damage: 5
   trailBulletPrefab: {fileID: 3417836176469242662, guid: 1fd4f84cdf192d04685c8df7459a62ab, type: 3}
-  spawnInterval: 0.2
+  spawnInterval: 0.5
   trailBulletSpeed: 1
 --- !u!1 &5285701373707935743
 GameObject:

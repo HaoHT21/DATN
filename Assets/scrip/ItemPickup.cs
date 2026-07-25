@@ -19,11 +19,13 @@ public class ItemPickup : MonoBehaviour
 
     public int damage = 25;
 
-
+    public bool isEquipped = false;
 
     private void OnTriggerEnter2D(Collider2D other)
 
     {
+        if (isEquipped)
+            return;
 
         if (other.CompareTag("Player"))
 

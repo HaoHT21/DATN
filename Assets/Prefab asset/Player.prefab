@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 6505054210949361691}
   - component: {fileID: 8214208570305237682}
   - component: {fileID: 2161616668489108450}
+  - component: {fileID: 2467174051606159877}
+  - component: {fileID: 5089999154722768629}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -34,13 +36,13 @@ Transform:
   m_GameObject: {fileID: 2518873520825815000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 33.84, y: -19.65, z: 0}
+  m_LocalPosition: {x: 36.1, y: -20.4, z: 0}
   m_LocalScale: {x: 6, y: 6, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6381983249476783960}
-  - {fileID: 803386836572654701}
   - {fileID: 7868744588769564630}
+  - {fileID: 6719890862975226321}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7355292738449428871
@@ -210,12 +212,14 @@ MonoBehaviour:
   weaponHolder: {fileID: 803386836572654701}
   firePoint: {fileID: 8901015696989878722}
   weaponRotationOffset: -45
-  shootSound: {fileID: 8300000, guid: 474f5b12833b9124aaca040c989f2e58, type: 3}
+  shootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
+  shootVolume: 100
   healSound: {fileID: 0}
   dropSound: {fileID: 0}
   visual: {fileID: 6381983249476783960}
   playerAvatar: {fileID: 0}
   isKnocked: 0
+  reverseControl: 0
   firePointXOffset: 0.355
   firePointYOffset: 0.353
 --- !u!114 &7690319049176068087
@@ -239,8 +243,8 @@ MonoBehaviour:
   maxLevel: 5
   currentEXP: 0
   expToNextLevel: 64000000fa000000f4010000e8030000dc05000098080000b80b0000
-  currentHealth: 1000
-  maxHealth: 1000
+  currentHealth: 300
+  maxHealth: 300
   currentMana: 100
   maxMana: 100
   manaRegenRate: 5
@@ -263,6 +267,8 @@ MonoBehaviour:
   buffVfxPrefab: {fileID: 685253278740951906, guid: b966050f6ff2ddb48a0bb9e7cbb92e27, type: 3}
   skillDuration: 8
   cooldown: 15
+  buffLoopSound: {fileID: 0}
+  skillVolume: 100
   skillManaCost: 20
   isBuffActive: 0
 --- !u!114 &8214208570305237682
@@ -281,6 +287,8 @@ MonoBehaviour:
   icePrefab: {fileID: 2426034877008958509, guid: d518028d7f2c15d48a948fe9faa2f892, type: 3}
   firePoint: {fileID: 0}
   manaCost: 30
+  iceCastSound: {fileID: 0}
+  skillVolume: 100
   castRange: 4
 --- !u!114 &2161616668489108450
 MonoBehaviour:
@@ -294,8 +302,122 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c1041834332fd64a8a5cbafcac3a55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseAttackRate: 0.5
+  currentAttackRate: 0
   baseMoveSpeed: 7
   currentMoveSpeed: 0
+  fireValue: 0
+  maxFire: 3
+--- !u!114 &2467174051606159877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518873520825815000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9250d1da91d031543a4616b257003e64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentFollower: {fileID: 0}
+--- !u!114 &5089999154722768629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518873520825815000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1340ee42ebb70524181e8edaf1b40dd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSkill: {fileID: 0}
+--- !u!1 &3454686697953183502
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6719890862975226321}
+  - component: {fileID: 5387325176480026069}
+  m_Layer: 6
+  m_Name: Light 2D
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6719890862975226321
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3454686697953183502}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 78844253347526648}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5387325176480026069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3454686697953183502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ComponentVersion: 2
+  m_LightType: 3
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0.5
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 0
+  m_LightVolumeIntensity: 1
+  m_LightVolumeEnabled: 0
+  m_ApplyToSortingLayers: 00000000
+  m_LightCookieSprite: {fileID: 0}
+  m_DeprecatedPointLightCookieSprite: {fileID: 0}
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_OverlapOperation: 0
+  m_NormalMapDistance: 3
+  m_NormalMapQuality: 2
+  m_UseNormalMap: 0
+  m_ShadowsEnabled: 1
+  m_ShadowIntensity: 0.75
+  m_ShadowSoftness: 0.3
+  m_ShadowSoftnessFalloffIntensity: 0.5
+  m_ShadowVolumeIntensityEnabled: 0
+  m_ShadowVolumeIntensity: 0.75
+  m_LocalBounds:
+    m_Center: {x: 0, y: -0.00000011920929, z: 0}
+    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 3
+  m_PointLightOuterRadius: 3
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 0.5
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: -0.5, y: 0.5, z: 0}
 --- !u!1 &4906071308131334777
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,13 +443,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4906071308131334777}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: -0.027, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.009999594, y: -0.026999792, z: 0}
+  m_LocalScale: {x: 0.20000002, y: 0.20000002, z: 0.20000002}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8901015696989878722}
-  m_Father: {fileID: 78844253347526648}
+  m_Father: {fileID: 6381983249476783960}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2040070896492764737
 MonoBehaviour:
@@ -345,7 +467,7 @@ MonoBehaviour:
   detectRadius: 10
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
 --- !u!1 &5239651306176665823
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,7 +527,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 803386836572654701}
   m_Father: {fileID: 78844253347526648}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8567172260092723352

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5983535433531090390}
   - component: {fileID: 8309251014220730446}
   - component: {fileID: 8175427453053076441}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HitboxDame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,8 @@ GameObject:
   - component: {fileID: 4461234664832822234}
   - component: {fileID: 4903979808780016093}
   - component: {fileID: 8689311037017913672}
-  m_Layer: 0
+  - component: {fileID: 7768261068825361133}
+  m_Layer: 7
   m_Name: LoneWolf
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -175,7 +176,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: 4723107735738678597, guid: 6402c1bbbd845cc40aac424fc3e50cd8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -310,18 +311,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 6
-  maxSearchTime: 2
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 512
   moveSpeed: 5
-  wanderRadius: 3
-  wanderInterval: 2
-  alertedRange: 20
   hurtDuration: 0.3
   knockbackForce: 5
   enemyVisual: {fileID: 804165510151357474}
+  nextWaypointDistance: 0.2
+  updateRate: 0.25
 --- !u!114 &4903979808780016093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,3 +350,31 @@ MonoBehaviour:
   dashDuration: 0.3
   recoveryTime: 1
   attackHitbox: {fileID: 3346652723155055677}
+--- !u!114 &7768261068825361133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4100882056036383914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1

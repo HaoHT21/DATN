@@ -105,7 +105,6 @@ GameObject:
   - component: {fileID: 3435580394554462609}
   - component: {fileID: 973053089727750152}
   - component: {fileID: 8264079799232386199}
-  - component: {fileID: 6225637507032798071}
   - component: {fileID: 2145800433613339440}
   - component: {fileID: 8732696295604344687}
   - component: {fileID: 2726026789766261642}
@@ -125,7 +124,7 @@ Transform:
   m_GameObject: {fileID: 5087906397338590667}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.09, y: 0.41, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -222,25 +221,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 1000
   maxHeath: 1000
+  isFinalBoss: 0
+  cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
   enableHealthUI: 1
   enableManaUI: 1
---- !u!114 &6225637507032798071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5087906397338590667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9ad4441405524d48b45a9ae7ff76f54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  portalTags:
-  - PortalOrange
 --- !u!61 &2145800433613339440
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -332,12 +319,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0.00000011920929, y: -0.000000014901161}
-  m_Radius: 3.02
+  m_Radius: 12
 --- !u!1 &6773916424304130998
 GameObject:
   m_ObjectHideFlags: 0
@@ -538,7 +525,7 @@ Transform:
   m_GameObject: {fileID: 6905772719604878256}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.4, y: 0.42, z: 0}
+  m_LocalPosition: {x: -984, y: 164.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -595,13 +582,13 @@ MonoBehaviour:
   hitColliders: []
   sprites: []
   moveSpeed: 10
-  detectRange: 20
+  detectRange: 60
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
   thinkMin: 0.5
   thinkMax: 1.5
-  fireballPrefab: {fileID: 7884107102201911381, guid: b713bf347cfaca945aa96ad5f355b487, type: 3}
+  fireballPrefab: {fileID: 4316042897175184008, guid: 4d4be5500fbb4f7439da09e54804bd89, type: 3}
   fireballPoint: {fileID: 6769144706933277675}
   fireballCount: 70
   fireballInterval: 0.08

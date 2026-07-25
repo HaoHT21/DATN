@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6565258463793625397}
   - component: {fileID: 4801181886052171027}
   - component: {fileID: 1328154370370441818}
-  - component: {fileID: 1455690401995677519}
   - component: {fileID: 4521128655430833340}
   - component: {fileID: 6616156804610993162}
   - component: {fileID: 2224845989143877031}
@@ -81,7 +80,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 8681008312180965034, guid: 36b480e1d1c8caa4a9d32aab3839a7ed, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -129,25 +128,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 1000
   maxHeath: 1000
+  isFinalBoss: 0
+  cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
   enableHealthUI: 1
   enableManaUI: 1
---- !u!114 &1455690401995677519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4089782976979320059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9ad4441405524d48b45a9ae7ff76f54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  portalTags:
-  - PortalBlue
 --- !u!61 &4521128655430833340
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -182,7 +169,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.02996564, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -192,7 +179,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.62, y: 0.65}
+  m_Size: {x: 0.3626883, y: 0.65}
   m_EdgeRadius: 0
 --- !u!58 &6616156804610993162
 CircleCollider2D:
@@ -229,7 +216,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0.049226366, y: 0}
-  m_Radius: 1.3395714
+  m_Radius: 8
 --- !u!114 &2224845989143877031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 5922061935708019749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.012672, y: 8.180377, z: 0}
+  m_LocalPosition: {x: -978.6, y: 167.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -375,7 +362,7 @@ MonoBehaviour:
   hitColliders: []
   sprites: []
   moveSpeed: 10
-  detectRange: 20
+  detectRange: 60
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -383,7 +370,7 @@ MonoBehaviour:
   thinkMax: 1.5
   bulletPrefab: {fileID: 4554662268799726002, guid: 652691a15305cb04da23b23b2f97874b, type: 3}
   firePoint: {fileID: 4481129972615789737}
-  bulletCount: 5
+  bulletCount: 2
   bulletInterval: 0.3
   flyBulletPrefab: {fileID: 3417836176469242662, guid: 1fd4f84cdf192d04685c8df7459a62ab, type: 3}
   flyBulletCount: 20

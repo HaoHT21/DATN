@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1631045822366285444}
   - component: {fileID: 1289587165272232316}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BulletLaserGreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,8 @@ GameObject:
   - component: {fileID: 2076200700220769929}
   - component: {fileID: 6212330623493181799}
   - component: {fileID: 2775634849328837942}
-  m_Layer: 0
+  - component: {fileID: 5839848021903844963}
+  m_Layer: 7
   m_Name: MedusaCon
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -170,7 +171,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: -3781910019033479378, guid: 24df5bc21a107534a9ca03e3c5590361, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -305,18 +306,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 6
-  maxSearchTime: 2
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 512
   moveSpeed: 3
-  wanderRadius: 3
-  wanderInterval: 2
-  alertedRange: 20
   hurtDuration: 0.3
   knockbackForce: 5
   enemyVisual: {fileID: 3909330306747875979}
+  nextWaypointDistance: 0.2
+  updateRate: 0.25
 --- !u!114 &6212330623493181799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,6 +345,34 @@ MonoBehaviour:
   dashDuration: 0.3
   recoveryTime: 1
   attackHitbox: {fileID: 3865449677016408203}
+--- !u!114 &5839848021903844963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1156701154677399796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1 &3865449677016408203
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,7 +385,7 @@ GameObject:
   - component: {fileID: 5993009185903059596}
   - component: {fileID: 5735186416872782451}
   - component: {fileID: 7092041865847391107}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HitboxDame
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,6 +12,10 @@ public class EnergyBlast : MonoBehaviour
     public float splashRadius = 2.5f;   // Bán kính vụ nổ quét quái xung quanh
     public LayerMask enemyLayer;        // Layer của Quái (Enemy)
 
+    // CHÈN THÊM 2 DÒNG NÀY ĐỂ NHẬN DỮ LIỆU ÂM THANH TỪ PLAYER SKILL MANAGER TRUYỀN SANG
+    [HideInInspector] public AudioClip hitSound;
+    [HideInInspector] public float soundVolume = 1f;
+
     private Rigidbody2D rb;
     private Animator anim;
     private bool hasExploded = false;
@@ -56,6 +60,29 @@ public class EnergyBlast : MonoBehaviour
         if (rb != null) rb.linearVelocity = Vector2.zero; // Dừng bay lập tức
         if (anim != null) anim.enabled = true;           // Bật hoạt ảnh vòng xoáy bung ra
 
+        // CHÈN ĐOẠN NÀY: Phát âm thanh vụ nổ 2D to rõ đúng lúc chạm trúng đích kẻ địch
+        if (hitSound != null)
+        {
+            GameObject tempAudio = new GameObject("TempEnergyHitAudio");
+            tempAudio.transform.position = transform.position;
+            AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+            aSource.clip = hitSound;
+            aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn (bỏ qua khoảng cách Camera)
+            aSource.volume = soundVolume; // Ăn theo volume chung của Manager truyền qua
+
+            // =========================================================================
+            // SỬA LỖI CHÍ MẠNG TẠI ĐÂY: Ép âm thanh nổ trúng quái đi qua đúng kênh CombatSFX
+            if (AudioStaticManager.Instance != null)
+            {
+                aSource.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+            }
+            // =========================================================================
+
+            aSource.Play();
+            Destroy(tempAudio, hitSound.length); // Chạy xong tự hủy object tạm
+        }
+
         // Quét sát thương diện rộng (AoE) xung quanh vị trí nổ
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, splashRadius);
         foreach (Collider2D enemyInArea in hitEnemies)
@@ -63,11 +90,11 @@ public class EnergyBlast : MonoBehaviour
             if (enemyInArea.CompareTag("Player")) continue;
 
             // Kiểm tra xem mục tiêu lọt vào tầm nổ có thuộc phe địch (Quái hoặc Boss) không
-            bool isEnemyLayer = ((1 << enemyInArea.gameObject.layer) & enemyLayer) != 0;
-            bool isBossTag = enemyInArea.CompareTag("Boss") || enemyInArea.CompareTag("Enemy");
-            bool isBossLayer = LayerMask.LayerToName(enemyInArea.gameObject.layer) == "Boss";
+            bool isEnemyLayerInArea = ((1 << enemyInArea.gameObject.layer) & enemyLayer) != 0;
+            bool isBossTagInArea = enemyInArea.CompareTag("Boss") || enemyInArea.CompareTag("Enemy");
+            bool isBossLayerInArea = LayerMask.LayerToName(enemyInArea.gameObject.layer) == "Boss";
 
-            if (isEnemyLayer || isBossTag || isBossLayer)
+            if (isEnemyLayerInArea || isBossTagInArea || isBossLayerInArea)
             {
                 // Gọi thẳng vào file quản lý máu quái/Boss để vả dame
                 EnemyHeath enemyHP = enemyInArea.GetComponent<EnemyHeath>();

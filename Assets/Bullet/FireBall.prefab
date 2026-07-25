@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3115639524430709382}
   - component: {fileID: 8749990282691378}
   - component: {fileID: 7967941646039576048}
-  - component: {fileID: 6784689708018748150}
+  - component: {fileID: -3315421407792700103}
   m_Layer: 10
   m_Name: FireBall
   m_TagString: Untagged
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 7884107102201911381}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 487.03, y: -645.43, z: 0}
+  m_LocalPosition: {x: 40.063515, y: -56.392548, z: 0}
   m_LocalScale: {x: 5.785766, y: 5.785766, z: 5.785766}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -98,7 +98,7 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0.07143663, y: 0}
   m_Radius: 0.07375333
---- !u!114 &6784689708018748150
+--- !u!114 &-3315421407792700103
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,12 +107,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7884107102201911381}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
+  m_Script: {fileID: 11500000, guid: 04645213399c15c49b6ea52fe6396a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 2
-  speed: 15
+  damage: 5
+  speed: 8
   lifeTime: 5
+  heatAmount: 0.3
 --- !u!1 &9176748894645440625
 GameObject:
   m_ObjectHideFlags: 0

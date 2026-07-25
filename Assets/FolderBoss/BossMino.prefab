@@ -155,7 +155,6 @@ GameObject:
   - component: {fileID: 5766127669246433485}
   - component: {fileID: 4234342352988662784}
   - component: {fileID: 291947406110064290}
-  - component: {fileID: 4803232801265080791}
   - component: {fileID: 3970965153950407493}
   - component: {fileID: 767615783151372280}
   m_Layer: 0
@@ -271,6 +270,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 1000
   maxHeath: 1000
+  isFinalBoss: 0
+  cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
@@ -311,21 +312,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.08136703, y: 0}
-  m_Radius: 2.990484
---- !u!114 &4803232801265080791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 739870469439768684}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9ad4441405524d48b45a9ae7ff76f54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  portalTags:
-  - PortalYellow
+  m_Radius: 15
 --- !u!61 &3970965153950407493
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -567,7 +554,7 @@ Transform:
   m_GameObject: {fileID: 2225764924664185720}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.549744, y: -5.762308, z: 0}
+  m_LocalPosition: {x: -973.3469, y: 157.39848, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -623,8 +610,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 2100691227286080874}
   hitColliders: []
   sprites: []
-  moveSpeed: 5
-  detectRange: 10
+  moveSpeed: 10
+  detectRange: 60
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -636,12 +623,12 @@ MonoBehaviour:
   shootCount: 3
   shootInterval: 0.3
   redBullEffect: {fileID: 1882404717578487663}
-  chargeSpeed: 200
+  chargeSpeed: 100
   chargeDuration: 2
   redBullCount: 1
   redBullInterval: 1
   retreatDistance: 6
-  retreatSpeed: 100
+  retreatSpeed: 50
 --- !u!114 &-6730315901157025249
 MonoBehaviour:
   m_ObjectHideFlags: 0

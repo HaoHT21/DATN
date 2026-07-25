@@ -16,7 +16,8 @@ GameObject:
   - component: {fileID: 3715484722455062951}
   - component: {fileID: 6044066407861670941}
   - component: {fileID: 279957779199376981}
-  m_Layer: 0
+  - component: {fileID: 6514760475785069092}
+  m_Layer: 7
   m_Name: 'Slime '
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -82,7 +83,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: -4689816430943880206, guid: 94e2a429e740b1d46b218886c1e3f689, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -235,18 +236,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 6
-  maxSearchTime: 2
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 512
   moveSpeed: 3
-  wanderRadius: 3
-  wanderInterval: 2
-  alertedRange: 20
   hurtDuration: 0.2
   knockbackForce: 5
   enemyVisual: {fileID: 4711513089070483500}
+  nextWaypointDistance: 0.2
+  updateRate: 0.25
+--- !u!114 &6514760475785069092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6815145705966534051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1 &6906154346952907705
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,7 +281,7 @@ GameObject:
   - component: {fileID: 890951479454889524}
   - component: {fileID: 7471664352578403004}
   - component: {fileID: 8048608505299155482}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HitboxDame
   m_TagString: Untagged
   m_Icon: {fileID: 0}

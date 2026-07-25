@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 8907642469822718442}
   - component: {fileID: 1372174690690143580}
   - component: {fileID: 8729292966050954060}
-  - component: {fileID: 8524918325433554930}
   - component: {fileID: 8095991071707376748}
   - component: {fileID: 6635721563282199606}
   m_Layer: 0
@@ -32,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 1270194797944991374}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.006, y: -0.02, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -129,6 +128,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 1000
   maxHeath: 1000
+  isFinalBoss: 0
+  cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
@@ -169,21 +170,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.006034117, y: 0}
-  m_Radius: 1.8833761
---- !u!114 &8524918325433554930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1270194797944991374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9ad4441405524d48b45a9ae7ff76f54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  portalTags:
-  - PortalGreen
+  m_Radius: 8
 --- !u!61 &8095991071707376748
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -319,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 8399829915083563723}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.8574953, y: 5.320339, z: 0}
+  m_LocalPosition: {x: -973.3469, y: 157.39848, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -374,8 +361,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 8907642469822718442}
   hitColliders: []
   sprites: []
-  moveSpeed: 2
-  detectRange: 20
+  moveSpeed: 10
+  detectRange: 60
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -388,7 +375,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 6815145705966534051, guid: 773026da29ad42940a708a38a18c20b8, type: 3}
   summonCount: 5
   summonRadius: 5
-  summonLifeTime: 6
+  summonLifeTime: 15
 --- !u!114 &-354063715549574903
 MonoBehaviour:
   m_ObjectHideFlags: 0

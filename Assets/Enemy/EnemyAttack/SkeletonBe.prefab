@@ -17,7 +17,8 @@ GameObject:
   - component: {fileID: 7746685577983668990}
   - component: {fileID: 9007515795942308010}
   - component: {fileID: 8077186476357485824}
-  m_Layer: 0
+  - component: {fileID: 8347577879855907014}
+  m_Layer: 7
   m_Name: SkeletonBe
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -83,7 +84,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: -465271799143911658, guid: bcf5ef9702e71de458fbe517e7679cbe, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -218,18 +219,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 6
-  maxSearchTime: 2
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 512
   moveSpeed: 5
-  wanderRadius: 3
-  wanderInterval: 2
-  alertedRange: 20
   hurtDuration: 0.3
   knockbackForce: 5
   enemyVisual: {fileID: 254066170343735459}
+  nextWaypointDistance: 0.2
+  updateRate: 0.25
 --- !u!114 &9007515795942308010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,6 +258,34 @@ MonoBehaviour:
   dashDuration: 0.3
   recoveryTime: 1
   attackHitbox: {fileID: 7081842695335653040}
+--- !u!114 &8347577879855907014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3115917341635708376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1 &7081842695335653040
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,7 +297,7 @@ GameObject:
   - component: {fileID: 5586668288441094400}
   - component: {fileID: 2805813678774100588}
   - component: {fileID: 4476130030162812638}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HitboxDame
   m_TagString: Untagged
   m_Icon: {fileID: 0}

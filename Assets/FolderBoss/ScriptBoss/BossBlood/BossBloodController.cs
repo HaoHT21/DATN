@@ -83,7 +83,7 @@ public class BossBloodController : BossController
                 100
             );
 
-            if (roll < 50)
+            if (roll < 30)
             {
                 yield return
                 StartCoroutine(

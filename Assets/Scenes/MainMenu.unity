@@ -1300,6 +1300,10 @@ PrefabInstance:
       propertyPath: continueButton
       value: 
       objectReference: {fileID: 2080136243}
+    - target: {fileID: 1205432333929036568, guid: cd9954c02b94f4e4081a02ff53f5b094, type: 3}
+      propertyPath: transitionMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1877036715408093256, guid: cd9954c02b94f4e4081a02ff53f5b094, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1

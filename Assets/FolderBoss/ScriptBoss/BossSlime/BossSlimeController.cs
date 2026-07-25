@@ -33,7 +33,7 @@ public class BossSlimeController : BossController
             summonCount += 2;
             jumpAttackCount += 2;
 
-            moveSpeed += 5;
+            moveSpeed += 10;
         }
     }
 

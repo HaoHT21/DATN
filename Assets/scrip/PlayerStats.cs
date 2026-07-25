@@ -3,7 +3,7 @@ using TMPro;
 
 public class PlayerStats : MonoBehaviour
 {
-    public int Score = 1000;
+    public int Score = 100;
     public TextMeshProUGUI scoreText;
 
     // Singleton instance để các script khác (như CoinMagnet) truy cập

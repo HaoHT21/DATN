@@ -147,7 +147,7 @@ bool value
             int roll =
             Random.Range(0, 100);
 
-            if (roll < 50)
+            if (roll < 30)
             {
                 yield return
                 StartCoroutine(
@@ -155,7 +155,7 @@ bool value
                 );
             }
 
-            else if (roll < 75)
+            else if (roll < 60)
             {
                 action = 0;
             }
@@ -179,7 +179,7 @@ bool value
                 );
             }
 
-            else if (roll < 50)
+            else if (roll < 60)
             {
                 action = 0;
             }

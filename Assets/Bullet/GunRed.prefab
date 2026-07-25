@@ -139,9 +139,10 @@ MonoBehaviour:
   itemID: 0
   weaponVisualPrefab: {fileID: 3502463425519907151}
   weaponPickupPrefab: {fileID: 3502463425519907151}
-  bulletPrefab: {fileID: 5705882647281060972, guid: fe3caf0ae47de30429c3ae9067499ffd, type: 3}
+  bulletPrefab: {fileID: 2657630367925298020, guid: 0f190b757c1285c46a08e57e6b80078d, type: 3}
   isGun: 1
   damage: 50
+  isEquipped: 0
 --- !u!58 &6699721217392881018
 CircleCollider2D:
   m_ObjectHideFlags: 0

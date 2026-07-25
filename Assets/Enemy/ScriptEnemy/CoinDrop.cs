@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CoinDrop : MonoBehaviour
 {
@@ -11,16 +11,24 @@ public class CoinDrop : MonoBehaviour
     private EnemyHeath enemyHealth;
     private BossHeath bossHealth;
 
+    private bool isBoss = false;
+
     private void Awake()
     {
         enemyHealth = GetComponent<EnemyHeath>();
         bossHealth = GetComponent<BossHeath>();
 
         if (enemyHealth != null)
+        {
             enemyHealth.OnDeath += DropCoins;
+            isBoss = false;
+        }
 
         if (bossHealth != null)
+        {
             bossHealth.OnDeath += DropCoins;
+            isBoss = true;
+        }
     }
 
     private void OnDestroy()
@@ -36,14 +44,20 @@ public class CoinDrop : MonoBehaviour
     {
         int coinAmount = Random.Range(minCoin, maxCoin + 1);
 
-        Debug.Log($"DROP {coinAmount} COINS");
-
         for (int i = 0; i < coinAmount; i++)
         {
             Vector3 pos = transform.position +
-                         (Vector3)(Random.insideUnitCircle * 0.5f);
+                          (Vector3)(Random.insideUnitCircle * 0.5f);
 
-            Instantiate(coinPrefab, pos, Quaternion.identity);
+            GameObject coin = Instantiate(coinPrefab, pos, Quaternion.identity);
+
+            Coin coinScript = coin.GetComponent<Coin>();
+            if (coinScript != null)
+            {
+                // Enemy -> tự hủy sau 10 giây
+                // Boss -> không tự hủy
+                coinScript.SetAutoDestroy(!isBoss, 10f);
+            }
         }
     }
 }

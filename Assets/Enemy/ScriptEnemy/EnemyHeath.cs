@@ -13,6 +13,9 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
     [Header("Death")]
     public float destroyDelay = 0.5f;
 
+    [Header("Health Bar")]
+    [SerializeField] private bool showHealthBar = true;
+
     private Rigidbody2D rb;
     private Collider2D[] colliders;
 
@@ -36,13 +39,17 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
                 currentHealth,
                 0,
                 maxHealth);
+
+        if (showHealthBar && GetComponent<SimpleEnemyHealthBar>() == null)
+            gameObject.AddComponent<SimpleEnemyHealthBar>();
     }
 
     public void TakeDamage(int damage)
     {
-        if (isDead) 
+        if (isDead)
             return;
 
+        int previous = currentHealth;
         currentHealth -= damage;
 
         if (currentHealth > 0)
@@ -55,8 +62,7 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
             StartCoroutine(DieSequence());
         }
 
-        OnHealthChanged?.Invoke(
-            new HealthChangeInfo());
+        NotifyHealthChanged(previous);
     }
 
     IEnumerator DieSequence()
@@ -100,6 +106,7 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
         if (isDead)
             return;
 
+        int previous = currentHealth;
         currentHealth += amount;
 
         currentHealth =
@@ -107,7 +114,15 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
                 currentHealth,
                 maxHealth);
 
+        NotifyHealthChanged(previous);
+    }
+
+    private void NotifyHealthChanged(int previousHealth)
+    {
         OnHealthChanged?.Invoke(
-            new HealthChangeInfo());
+            new HealthChangeInfo(
+                currentHealth,
+                maxHealth,
+                currentHealth - previousHealth));
     }
 }

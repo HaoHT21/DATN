@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
+using System;
 
 public class PoisonChargeSkill : MonoBehaviour
 {
@@ -13,9 +15,15 @@ public class PoisonChargeSkill : MonoBehaviour
     private float _chargeCounter = 0f;
     private bool _isCharging = false;
 
+    [Header("--- CẤU HÌNH ÂM THANH CHIÊU THỨC ---")]
+    public AudioClip chargeSound;          // Ô kéo file âm thanh ngưng tụ năng lượng (âm thanh nhỏ rồi to dần)
+    public AudioClip enemyHitSound;       // Ô kéo file âm thanh nổ tung khi va chạm trúng địch
+    [Range(0f, 100f)] public float skillVolume = 100f; // Thanh trượt chỉnh to nhỏ từ 0 đến 100 ngoài Inspector
+
     private GameObject _currentEffectInstance;
     private SpriteRenderer _sprite;
     private PlayerHealth _playerHealth; // Cầu nối lấy Level và trạng thái sống chết gốc
+    private AudioSource _activeChargeAudio; // Biến tạm quản lý tiếng gồng lực real-time
 
     void Awake()
     {
@@ -93,6 +101,29 @@ public class PoisonChargeSkill : MonoBehaviour
         Transform myFirePoint = transform.Find("FP") ?? transform.Find("WeaponHolder/FP") ?? transform.Find("FirePoint");
         Vector3 spawnPos = (myFirePoint != null) ? myFirePoint.position : transform.position;
 
+        // CHỈ SỬA KHÚC NÀY: Khởi tạo tiếng ngưng tụ năng lượng bám theo Player
+        if (chargeSound != null)
+        {
+            GameObject chargeAudioObj = new GameObject("TempChargeSound");
+            chargeAudioObj.transform.position = transform.position;
+            chargeAudioObj.transform.SetParent(transform); // Ép làm con Player để di chuyển theo real-time
+
+            _activeChargeAudio = chargeAudioObj.AddComponent<AudioSource>();
+            _activeChargeAudio.clip = chargeSound;
+            _activeChargeAudio.spatialBlend = 0f; // Âm thanh 2D to rõ
+            _activeChargeAudio.volume = Mathf.Clamp01(skillVolume / 100f);
+
+            // ==========================================
+            // LONG MẠCH: Gán âm thanh gồng tụ lực đi qua đúng kênh CombatSFX của Audio Mixer
+            if (AudioStaticManager.Instance != null)
+            {
+                _activeChargeAudio.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
+            }
+            // ==========================================
+
+            _activeChargeAudio.Play();
+        }
+
         // Đẻ ra hiệu ứng tụ lực
         _currentEffectInstance = Instantiate(chargeSkillPrefab, spawnPos, Quaternion.identity);
 
@@ -108,9 +139,20 @@ public class PoisonChargeSkill : MonoBehaviour
         _cooldownTimer = cooldown;
         _isCharging = false;
 
+        // Tụ đủ lực phóng đi -> Tắt tiếng gồng lực
+        if (_activeChargeAudio != null)
+        {
+            Destroy(_activeChargeAudio.gameObject);
+        }
+
         if (_currentEffectInstance != null && _currentEffectInstance.TryGetComponent<ChargeBulletLogic>(out var bullet))
         {
             Vector2 dir = (_sprite != null && _sprite.flipX) ? Vector2.left : Vector2.right;
+
+            // NẠP THÊM LOGIC: Truyền file âm thanh va chạm trúng enemy vào viên đạn để nó tự nổ khi trúng mục tiêu
+            bullet.hitSound = enemyHitSound;
+            bullet.soundVolume = Mathf.Clamp01(skillVolume / 100f);
+
             bullet.Fire(dir); // Ra lệnh cho đạn phụt bay đi
         }
         _currentEffectInstance = null;
@@ -119,6 +161,13 @@ public class PoisonChargeSkill : MonoBehaviour
     void CancelCharge()
     {
         _isCharging = false;
+
+        // Thả non tay hủy chiêu -> Dập tắt luôn tiếng gồng lực ngay lập tức
+        if (_activeChargeAudio != null)
+        {
+            Destroy(_activeChargeAudio.gameObject);
+        }
+
         if (_currentEffectInstance != null)
         {
             Destroy(_currentEffectInstance); // Xóa sổ ngay lập tức vì thả nút non tay

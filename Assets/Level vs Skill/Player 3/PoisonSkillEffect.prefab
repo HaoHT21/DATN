@@ -170,6 +170,8 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 640
+  hitSound: {fileID: 0}
+  soundVolume: 1
 --- !u!50 &6872885375815981660
 Rigidbody2D:
   serializedVersion: 5

@@ -27,6 +27,22 @@ public class LookAtEnemy : MonoBehaviour
             );
 
             if (distance > detectRadius ||
+                !target.gameObject.activeInHierarchy ||
+                !CanSeeTarget(target))
+            {
+                target = null;
+            }
+        }
+
+        // Kiểm tra target còn hợp lệ không
+        if (target != null)
+        {
+            float distance = Vector2.Distance(
+                transform.position,
+                target.position
+            );
+
+            if (distance > detectRadius ||
                 !target.gameObject.activeInHierarchy)
             {
                 target = null;
@@ -142,28 +158,30 @@ public class LookAtEnemy : MonoBehaviour
 
     private bool CanSeeTarget(Transform enemy)
     {
-        Vector2 origin = transform.position;
-        Vector2 targetPos = enemy.position;
-
-        Vector2 direction =
-            (targetPos - origin).normalized;
-
-        float distance =
-            Vector2.Distance(origin, targetPos);
-
-        RaycastHit2D hit =
-            Physics2D.Raycast(
-                origin,
-                direction,
-                distance,
-                wallLayer);
+        RaycastHit2D hit = Physics2D.Linecast(
+            transform.position,
+            enemy.position,
+            wallLayer
+        );
 
         return hit.collider == null;
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        if (target != null)
+        {
+            Gizmos.color = CanSeeTarget(target)
+                ? Color.green
+                : Color.red;
+
+            Gizmos.DrawLine(
+                transform.position,
+                target.position
+            );
+        }
+
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(
             transform.position,
             detectRadius

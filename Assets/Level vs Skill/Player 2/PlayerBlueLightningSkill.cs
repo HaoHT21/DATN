@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System;
 
 public class PlayerBlueLightningSkill : MonoBehaviour
 {
@@ -9,8 +12,12 @@ public class PlayerBlueLightningSkill : MonoBehaviour
     public float cooldown = 2f;          // Thời gian hồi chiêu
     public int damage = 70;              // Sát thương lớn: 70 dame theo yêu cầu
 
-    [Header("--- BỘ LỌC LAYER ---")]
-    public LayerMask enemyLayer;        // Kéo Layer của Quái (Enemy) vào đây
+    [Header("--- CẤU HÌNH ÂM THANH CHIÊU THỨC ---")]
+    public AudioClip blueLightningSound; // Ô kéo thả file nhạc sấm sét xanh dương (.mp3, .wav)
+    [Range(0f, 100f)] public float skillVolume = 100f; // Thanh trượt chỉnh to nhỏ từ 0 đến 100 ngoài Inspector
+
+    [Header("--- BỘ LỌC LAYER DỰ PHÒNG ---")]
+    public LayerMask enemyLayer;        // Kéo Layer của Quái (Enemy) vào đây để đối chiếu trong code
 
     private float _cooldownTimer;
     private PlayerHealth _playerHealth; // Cầu nối lấy Level và trạng thái sống chết từ PlayerHealth
@@ -55,39 +62,73 @@ public class PlayerBlueLightningSkill : MonoBehaviour
 
     void CastBlueLightning()
     {
-        // Tạo vòng tròn vật lý ẩn quét toàn bộ Collider của Quái trong tầm
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, skillRadius, enemyLayer);
+        // SỬA TẠI ĐÂY: Quét diện rộng không giới hạn Layer Mask ngay tại vòng quét vật lý để tránh bỏ sót quái/Boss
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, skillRadius);
 
-        // NÂNG CẤP: Nếu không có con địch nào lọt vào tầm đánh thì văng chữ cảnh báo lên UI liền
-        if (hitEnemies.Length == 0)
+        Collider2D closestEnemy = null;
+        float minDistance = float.MaxValue;
+
+        // Vòng lặp lọc thông minh đa tầng giống hệt chiêu I
+        foreach (Collider2D collider in hitColliders)
+        {
+            // Nếu là chính Player thì bỏ qua đéo đánh
+            if (collider.CompareTag("Player")) continue;
+
+            // Kiểm tra xem mục tiêu có thuộc layer Quái thường, mang tag Boss/Enemy hoặc thuộc layer Boss hay không
+            bool isEnemyLayer = ((1 << collider.gameObject.layer) & enemyLayer) != 0;
+            bool isBossTag = collider.CompareTag("Boss") || collider.CompareTag("Enemy");
+            bool isBossLayer = LayerMask.LayerToName(collider.gameObject.layer) == "Boss";
+
+            if (isEnemyLayer || isBossTag || isBossLayer)
+            {
+                float distance = Vector2.Distance(transform.position, collider.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestEnemy = collider;
+                }
+            }
+        }
+
+        // Nếu sau khi lọc xong toàn bộ Scene mà vẫn đéo có con địch nào hợp lệ
+        if (closestEnemy == null)
         {
             if (SkillNotification.Instance != null)
             {
                 SkillNotification.Instance.ShowMessage("KHÔNG CÓ ĐỊCH TRONG PHẠM VI SÉT GIẬT!", Color.yellow);
             }
 
-            Debug.Log("<color=cyan>[Sét Xanh]</color> Không có quái nào trong phạm vi để giật sét!");
-            return; // Thoát sớm, đéo trừ hồi chiêu hay làm gì cả để người chơi không bị phí skill
+            Debug.Log("<color=cyan>[Sét Xanh]</color> Không có quái hay Boss nào trong phạm vi để giật sét!");
+            return; // Thoát sớm, bảo toàn hồi chiêu
         }
 
-        // Kích hoạt hồi chiêu ngay khi chắc chắn có mục tiêu
+        // Kích hoạt hồi chiêu ngay khi tìm thấy mục tiêu chuẩn xác
         _cooldownTimer = cooldown;
 
-        // Thuật toán tìm con quái ở gần Player 2 nhất để ưu tiên đánh trước
-        Collider2D closestEnemy = null;
-        float minDistance = float.MaxValue;
-
-        foreach (Collider2D enemy in hitEnemies)
+        // Khởi tạo AudioSource 2D thủ công để sấm sét xanh nổ to rõ, đè bẹp nhạc nền
+        if (blueLightningSound != null)
         {
-            float distance = Vector2.Distance(transform.position, enemy.transform.position);
-            if (distance < minDistance)
+            GameObject tempAudio = new GameObject("TempBlueLightningAudio");
+            tempAudio.transform.position = transform.position;
+            AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+            aSource.clip = blueLightningSound;
+            aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn
+            aSource.volume = Mathf.Clamp01(skillVolume / 100f); // Quy đổi chuẩn từ hệ 100 về hệ 1.0 của Unity
+
+            // ==========================================
+            // LONG MẠCH: Gán âm thanh sét xanh đi qua đúng kênh CombatSFX của Audio Mixer
+            if (AudioStaticManager.Instance != null)
             {
-                minDistance = distance;
-                closestEnemy = enemy;
+                aSource.outputAudioMixerGroup = AudioStaticManager.Instance.combatGroup;
             }
+            // ==========================================
+
+            aSource.Play();
+            Destroy(tempAudio, blueLightningSound.length); // Phát xong tự dọn dẹp Object tạm
         }
 
-        // Thực hiện giật sét lên đầu con quái gần nhất
+        // Thực hiện giật sét lên đầu con mục tiêu gần nhất lọc được
         if (closestEnemy != null)
         {
             // Tạo vị trí xuất hiện ngay tại quái (cộng thêm 0.2f để tia năng lượng ôm trọn người quái)
@@ -96,7 +137,7 @@ public class PlayerBlueLightningSkill : MonoBehaviour
             // Sinh ra hiệu ứng tia sét xanh dương tại vị trí quái
             Instantiate(lightningPrefab, spawnPosition, Quaternion.identity);
 
-            // Gây 70 sát thương thẳng vào máu quái
+            // Gây 70 sát thương thẳng vào máu quái hoặc Boss
             if (closestEnemy.TryGetComponent<EnemyHeath>(out var enemyHP))
             {
                 if (!enemyHP.IsDead)

@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 3064413470847460566}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.0413327, y: 8.761323, z: 0}
+  m_LocalPosition: {x: -973.3469, y: 157.39848, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -115,8 +115,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 1826291345669189954}
   hitColliders: []
   sprites: []
-  moveSpeed: 5
-  detectRange: 20
+  moveSpeed: 10
+  detectRange: 60
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -129,7 +129,7 @@ MonoBehaviour:
   summonPrefab: {fileID: 2359222360881132017, guid: e1808ade3f55b1f4b994065f4476940f, type: 3}
   summonPoint: {fileID: 2734535326007396112}
   summonCount: 5
-  summonLifeTime: 5
+  summonLifeTime: 15
 --- !u!114 &-6763870026077622471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,7 +157,6 @@ GameObject:
   - component: {fileID: 1826291345669189954}
   - component: {fileID: 1210730058464290578}
   - component: {fileID: 5220937057520885301}
-  - component: {fileID: 8454931793112259813}
   - component: {fileID: 8282456444444095357}
   - component: {fileID: 7055630640729141374}
   - component: {fileID: 8372440953380112605}
@@ -177,7 +176,7 @@ Transform:
   m_GameObject: {fileID: 7152426900566913204}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.14, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 7.5, y: 7.5, z: 7.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -226,7 +225,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 8793639957104055765, guid: 531582a6ce6ec1e42852fc119d3f30a9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -274,25 +273,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 1000
   maxHeath: 1000
+  isFinalBoss: 0
+  cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
   smoothSpeed: 8
   enableHealthUI: 1
   enableManaUI: 1
---- !u!114 &8454931793112259813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7152426900566913204}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9ad4441405524d48b45a9ae7ff76f54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  portalTags:
-  - PortalRed
 --- !u!61 &8282456444444095357
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -374,7 +361,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.0768671, y: 0}
-  m_Radius: 1.3148999
+  m_Radius: 8
 --- !u!114 &8372440953380112605
 MonoBehaviour:
   m_ObjectHideFlags: 0
