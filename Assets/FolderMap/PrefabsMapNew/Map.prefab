@@ -116951,6 +116951,7 @@ GameObject:
   - component: {fileID: 1970769914754424632}
   - component: {fileID: 1472725771789964180}
   - component: {fileID: 6449026471577555040}
+  - component: {fileID: 3033593096389509635}
   m_Layer: 0
   m_Name: EffectZone
   m_TagString: Untagged
@@ -117028,7 +117029,7 @@ AudioSource:
   m_GameObject: {fileID: 5387251011612109795}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -8105145960927809780, guid: 6b77e6b3018635e4880f18d90bfac406, type: 2}
   m_audioClip: {fileID: 8300000, guid: ccad869fad961cf41ab8e4d1be870bc7, type: 3}
   m_Resource: {fileID: 8300000, guid: ccad869fad961cf41ab8e4d1be870bc7, type: 3}
   m_PlayOnAwake: 1
@@ -117161,6 +117162,20 @@ MonoBehaviour:
   targetColor: {r: 0.242673, g: 0.3056603, b: 0.11938052, a: 1}
   transitionDuration: 1
   playerTag: Player
+--- !u!114 &3033593096389509635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5387251011612109795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ba0d342c542f9749827f72421b6a356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minimapUI: {fileID: 0}
+  roomManager: {fileID: 2056971904845559500}
 --- !u!1 &5473155112046738882
 GameObject:
   m_ObjectHideFlags: 0
@@ -121241,7 +121256,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 1, g: 0.38917017, b: 0, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.15727234, a: 1}
   m_Origin: {x: 0, y: 0, z: 0}
   m_Size: {x: 185, y: 158, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}

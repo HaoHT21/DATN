@@ -11,13 +11,14 @@ GameObject:
   - component: {fileID: 7792737788825052741}
   - component: {fileID: 1451749032488275671}
   - component: {fileID: 7995392262213917043}
-  - component: {fileID: 1478894908293754596}
+  - component: {fileID: 5253441172544626380}
   - component: {fileID: 2377204594605761238}
   - component: {fileID: 9222729923251709333}
   - component: {fileID: 778623460231171060}
   - component: {fileID: 8859358197452187025}
   - component: {fileID: 8344646950675177344}
   - component: {fileID: 4220142998524727658}
+  - component: {fileID: 3860446706156433538}
   m_Layer: 0
   m_Name: SkeletonCon
   m_TagString: Enemy
@@ -34,7 +35,7 @@ Transform:
   m_GameObject: {fileID: 2805773036536916102}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 24.05, y: -20.53, z: 0}
+  m_LocalPosition: {x: -379.17, y: -170.06, z: 0}
   m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -118,7 +119,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!61 &1478894908293754596
+--- !u!61 &5253441172544626380
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,17 +153,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.029999997, y: 0.11}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.75, y: -0.1875}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.12, y: 0.16}
     newSize: {x: 0.12, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.12, y: 0.16}
+  m_Size: {x: 0.1, y: 0.1}
   m_EdgeRadius: 0
 --- !u!50 &2377204594605761238
 Rigidbody2D:
@@ -207,6 +208,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &778623460231171060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,9 +224,9 @@ MonoBehaviour:
   moveSpeed: 3
   hurtDuration: 0.3
   knockbackForce: 5
-  enemyVisual: {fileID: 7792737788825052741}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 7792737788825052741}
 --- !u!114 &8859358197452187025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,8 +240,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 1
-  maxCoin: 25
+  minCoin: 25
+  maxCoin: 50
 --- !u!114 &8344646950675177344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,6 +294,18 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &3860446706156433538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2805773036536916102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c9257929df4934aa286177093002dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7356607615014955712
 GameObject:
   m_ObjectHideFlags: 0

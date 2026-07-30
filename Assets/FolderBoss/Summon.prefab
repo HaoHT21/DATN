@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 6454910713266590159}
   - component: {fileID: 1025348016193689015}
   - component: {fileID: 8845740285372074596}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Summon
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -33,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 2359222360881132017}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.6659265, y: -2.7992241, z: 0}
+  m_LocalPosition: {x: -273.24524, y: 39.060318, z: 0}
   m_LocalScale: {x: 5.1268563, y: 5.1268563, z: 5.1268563}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: -6973191664251310759, guid: 7082cefd85574a048883527b3eae59d9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -161,7 +161,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.12, y: 0.22}
+  m_Size: {x: 0.1, y: 0.1}
   m_EdgeRadius: 0
 --- !u!50 &3868474196776496540
 Rigidbody2D:
@@ -205,9 +205,9 @@ MonoBehaviour:
   moveSpeed: 3
   hurtDuration: 0.2
   knockbackForce: 5
-  enemyVisual: {fileID: 5435255626168514078}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 5435255626168514078}
 --- !u!114 &6454910713266590159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,6 +252,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &8845740285372074596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -290,7 +291,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8778679867893842952}
   - component: {fileID: 6493850742001071379}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}

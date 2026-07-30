@@ -47,9 +47,9 @@ GameObject:
   - component: {fileID: 3419107827781261140}
   - component: {fileID: 1095596848219173144}
   - component: {fileID: 7819118342166576647}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_21
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &455628791678484849
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,9 +314,9 @@ GameObject:
   - component: {fileID: 5840528884989057742}
   - component: {fileID: 9031170052666995562}
   - component: {fileID: 8339898709653690659}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_6
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -450,7 +450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &984238407077006670
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,9 +463,9 @@ GameObject:
   - component: {fileID: 6719761082083733634}
   - component: {fileID: 7518313728427967240}
   - component: {fileID: 4786098414507349897}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_40
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -599,7 +599,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &1156944577723540562
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,9 +612,9 @@ GameObject:
   - component: {fileID: 4255087000927345682}
   - component: {fileID: 4200483959027072586}
   - component: {fileID: 400400617530213906}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_32
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -748,7 +748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &1317056312937922408
 GameObject:
   m_ObjectHideFlags: 0
@@ -761,9 +761,9 @@ GameObject:
   - component: {fileID: 3183524339015286422}
   - component: {fileID: 8458210511282164403}
   - component: {fileID: 6716518784316124993}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_44
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -897,7 +897,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &1387981821026148960
 GameObject:
   m_ObjectHideFlags: 0
@@ -2012,9 +2012,9 @@ GameObject:
   - component: {fileID: 1969499037719903905}
   - component: {fileID: 8119121749636802311}
   - component: {fileID: 7844917059659637772}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_2
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2148,7 +2148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &1705904684214524303
 GameObject:
   m_ObjectHideFlags: 0
@@ -2384,9 +2384,9 @@ GameObject:
   - component: {fileID: 2993981103525125224}
   - component: {fileID: 3816967727491382068}
   - component: {fileID: 255640946767204243}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_16
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2520,7 +2520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &1854315246031635053
 GameObject:
   m_ObjectHideFlags: 0
@@ -2533,9 +2533,9 @@ GameObject:
   - component: {fileID: 7469775309836206691}
   - component: {fileID: 3616930667035127702}
   - component: {fileID: 7606992968313730758}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_38
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2669,7 +2669,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &1894587554344972671
 GameObject:
   m_ObjectHideFlags: 0
@@ -2769,9 +2769,9 @@ GameObject:
   - component: {fileID: 3143082736889133432}
   - component: {fileID: 3265247841913495130}
   - component: {fileID: 6977103732165326907}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_33
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2905,7 +2905,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &2135733049882806757
 GameObject:
   m_ObjectHideFlags: 0
@@ -3108,9 +3108,9 @@ GameObject:
   - component: {fileID: 383717920749970781}
   - component: {fileID: 1198765717940644447}
   - component: {fileID: 3341786375743937436}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_10
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3244,7 +3244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &2650381914002094561
 GameObject:
   m_ObjectHideFlags: 0
@@ -3257,9 +3257,9 @@ GameObject:
   - component: {fileID: 6842419958631902077}
   - component: {fileID: 6241622680732046494}
   - component: {fileID: 4920484944559595211}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_15
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3393,7 +3393,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &2716522659299711747
 GameObject:
   m_ObjectHideFlags: 0
@@ -3493,9 +3493,9 @@ GameObject:
   - component: {fileID: 2770036739477801615}
   - component: {fileID: 2614489485359237515}
   - component: {fileID: 2064696507248879841}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_12
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3629,7 +3629,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &2775673955712252645
 GameObject:
   m_ObjectHideFlags: 0
@@ -3642,9 +3642,9 @@ GameObject:
   - component: {fileID: 2877815691556177686}
   - component: {fileID: 1381552289757085668}
   - component: {fileID: 8844597697153126920}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_28
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3778,7 +3778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &2891160454894941069
 GameObject:
   m_ObjectHideFlags: 0
@@ -3807,7 +3807,7 @@ Transform:
   m_GameObject: {fileID: 2891160454894941069}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 956, y: 1385, z: 0}
+  m_LocalPosition: {x: 978, y: 1402, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3959,6 +3959,7 @@ MonoBehaviour:
     - {fileID: 0}
     enemyCount: 0
   nextWaveDelay: 1.5
+  bossCameraZoom: {fileID: 0}
 --- !u!114 &694815513432393468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9207,9 +9208,9 @@ GameObject:
   - component: {fileID: 4650436601512777577}
   - component: {fileID: 5468400674331119027}
   - component: {fileID: 5646586577801330094}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_39
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9343,7 +9344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &2935348434190595496
 GameObject:
   m_ObjectHideFlags: 0
@@ -9357,6 +9358,8 @@ GameObject:
   - component: {fileID: 2239852599907632883}
   - component: {fileID: 1784996868920115661}
   - component: {fileID: 3781815892970887548}
+  - component: {fileID: 1208917563130914752}
+  - component: {fileID: 6420088361639509961}
   m_Layer: 0
   m_Name: EffectZone
   m_TagString: Untagged
@@ -9435,8 +9438,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: ccad869fad961cf41ab8e4d1be870bc7, type: 3}
-  m_Resource: {fileID: 8300000, guid: ccad869fad961cf41ab8e4d1be870bc7, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 01a46e9fcad6fa24d96f919a50d9d170, type: 3}
+  m_Resource: {fileID: 8300000, guid: 01a46e9fcad6fa24d96f919a50d9d170, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -9534,7 +9537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b8dc26c3eb06a54aa7a8486c89df7f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapBGM: {fileID: 8300000, guid: ccad869fad961cf41ab8e4d1be870bc7, type: 3}
+  mapBGM: {fileID: 8300000, guid: 01a46e9fcad6fa24d96f919a50d9d170, type: 3}
 --- !u!114 &3781815892970887548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9551,10 +9554,39 @@ MonoBehaviour:
   drainTime: 5
   globalLight: {fileID: 0}
   globalNormalIntensity: 1
-  globalDarkIntensity: 0.2
+  globalDarkIntensity: 0.01
   effectBar: {fileID: 0}
   effectFill: {fileID: 0}
   lightChangeSpeed: 2
+--- !u!114 &1208917563130914752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2935348434190595496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e643687e0cea4cc46a5761ad2aa898ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetColor: {r: 0.18039216, g: 0.10980392, b: 0.16470589, a: 1}
+  transitionDuration: 1
+  playerTag: Player
+--- !u!114 &6420088361639509961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2935348434190595496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ba0d342c542f9749827f72421b6a356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minimapUI: {fileID: 0}
+  roomManager: {fileID: 8905436122347253473}
 --- !u!1 &2965428736435702477
 GameObject:
   m_ObjectHideFlags: 0
@@ -9567,9 +9599,9 @@ GameObject:
   - component: {fileID: 7305220237501194074}
   - component: {fileID: 556817198381805481}
   - component: {fileID: 6752606059655118220}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_18
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9703,7 +9735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &3023813562025893410
 GameObject:
   m_ObjectHideFlags: 0
@@ -9925,9 +9957,9 @@ GameObject:
   - component: {fileID: 1316645710441018836}
   - component: {fileID: 7118177519336166670}
   - component: {fileID: 5124189890777240812}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_41
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10061,7 +10093,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &3230745949144803722
 GameObject:
   m_ObjectHideFlags: 0
@@ -10074,9 +10106,9 @@ GameObject:
   - component: {fileID: 4338970593586098801}
   - component: {fileID: 4635389753433758175}
   - component: {fileID: 7215463940258357238}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_37
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10210,7 +10242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &3262336136545391227
 GameObject:
   m_ObjectHideFlags: 0
@@ -10669,9 +10701,9 @@ GameObject:
   - component: {fileID: 4727742916350277108}
   - component: {fileID: 83533059948571425}
   - component: {fileID: 4506481335327341589}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_36
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10805,7 +10837,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &3636318994952456808
 GameObject:
   m_ObjectHideFlags: 0
@@ -10818,9 +10850,9 @@ GameObject:
   - component: {fileID: 4196337541223729447}
   - component: {fileID: 2832812358836664632}
   - component: {fileID: 196182496821843056}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_9
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10954,7 +10986,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &3717058381386329000
 GameObject:
   m_ObjectHideFlags: 0
@@ -10967,9 +10999,9 @@ GameObject:
   - component: {fileID: 3894018726614146788}
   - component: {fileID: 6901540740301244779}
   - component: {fileID: 2364132492144956986}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_8
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11103,7 +11135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &3721970367786771567
 GameObject:
   m_ObjectHideFlags: 0
@@ -11116,9 +11148,9 @@ GameObject:
   - component: {fileID: 7096887085962945416}
   - component: {fileID: 7359388290458012083}
   - component: {fileID: 1960220392591611458}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_25
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11252,7 +11284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &3847137148149770361
 GameObject:
   m_ObjectHideFlags: 0
@@ -11265,9 +11297,9 @@ GameObject:
   - component: {fileID: 7130762247804001468}
   - component: {fileID: 7852314441046675612}
   - component: {fileID: 3857631981297307560}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_5
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11401,7 +11433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &4105478983729315832
 GameObject:
   m_ObjectHideFlags: 0
@@ -11414,9 +11446,9 @@ GameObject:
   - component: {fileID: 846263132684604133}
   - component: {fileID: 686264931449677941}
   - component: {fileID: 5413908480977095023}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_46
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11550,7 +11582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &4506363196686252517
 GameObject:
   m_ObjectHideFlags: 0
@@ -11650,9 +11682,9 @@ GameObject:
   - component: {fileID: 7460693956729939129}
   - component: {fileID: 4724185081968556149}
   - component: {fileID: 8458290742016049124}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_31
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11786,7 +11818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &4702419744457766916
 GameObject:
   m_ObjectHideFlags: 0
@@ -11799,9 +11831,9 @@ GameObject:
   - component: {fileID: 6379017760460124631}
   - component: {fileID: 5488944249288724411}
   - component: {fileID: 7257836891457207803}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_29
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11935,7 +11967,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &4715220171216586413
 GameObject:
   m_ObjectHideFlags: 0
@@ -17758,7 +17790,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1fff4ca9f9fa9e40b7999c1c0109121, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pullTime: 3
+  pullTime: 2
   rotateSpeed: 900
   damage: 10
   safeDistance: 0.6
@@ -17776,9 +17808,9 @@ GameObject:
   - component: {fileID: 5247844590425093280}
   - component: {fileID: 2902602934241152424}
   - component: {fileID: 2015923515351089962}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_22
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17912,7 +17944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &5044754029589867676
 GameObject:
   m_ObjectHideFlags: 0
@@ -18061,9 +18093,9 @@ GameObject:
   - component: {fileID: 6979280371207521429}
   - component: {fileID: 2465224604293885816}
   - component: {fileID: 7280598180396309408}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_1
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18197,7 +18229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &5147119245641060810
 GameObject:
   m_ObjectHideFlags: 0
@@ -18210,9 +18242,9 @@ GameObject:
   - component: {fileID: 9037719103503384194}
   - component: {fileID: 3382445479689096070}
   - component: {fileID: 3918626937537075856}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_7
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18346,7 +18378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &5289955520281022568
 GameObject:
   m_ObjectHideFlags: 0
@@ -18521,9 +18553,9 @@ GameObject:
   - component: {fileID: 7304653664419822468}
   - component: {fileID: 3343084710043960959}
   - component: {fileID: 5425458836092726118}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_23
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18657,7 +18689,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &5809703416429564161
 GameObject:
   m_ObjectHideFlags: 0
@@ -18670,9 +18702,9 @@ GameObject:
   - component: {fileID: 2810731466697327832}
   - component: {fileID: 3151981029049283441}
   - component: {fileID: 7899551517484410408}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_30
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18806,7 +18838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &5923337874585273489
 GameObject:
   m_ObjectHideFlags: 0
@@ -19077,9 +19109,9 @@ GameObject:
   - component: {fileID: 8983521278750071646}
   - component: {fileID: 1894686172879166586}
   - component: {fileID: 346445650918599895}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_14
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19213,7 +19245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6031348055104688278
 GameObject:
   m_ObjectHideFlags: 0
@@ -19226,9 +19258,9 @@ GameObject:
   - component: {fileID: 7472499033607556231}
   - component: {fileID: 3106828597982677221}
   - component: {fileID: 5382735201120253952}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_45
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19362,7 +19394,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6128439282663363398
 GameObject:
   m_ObjectHideFlags: 0
@@ -19670,9 +19702,9 @@ GameObject:
   - component: {fileID: 805199258177421246}
   - component: {fileID: 929223078494854669}
   - component: {fileID: 1776339838737412169}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_11
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19806,7 +19838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6370482218740617838
 GameObject:
   m_ObjectHideFlags: 0
@@ -19819,9 +19851,9 @@ GameObject:
   - component: {fileID: 8729032369061086360}
   - component: {fileID: 1564817183398178722}
   - component: {fileID: 7323214796740403238}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_43
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19955,7 +19987,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6379654975688693356
 GameObject:
   m_ObjectHideFlags: 0
@@ -19968,9 +20000,9 @@ GameObject:
   - component: {fileID: 7184036081827717612}
   - component: {fileID: 4291564348551525203}
   - component: {fileID: 8932068001659992918}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_35
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20104,7 +20136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6545667313479532169
 GameObject:
   m_ObjectHideFlags: 0
@@ -20204,9 +20236,9 @@ GameObject:
   - component: {fileID: 6808191665309407170}
   - component: {fileID: 8376098196784805489}
   - component: {fileID: 8479579754612287852}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_4
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20340,7 +20372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6621151617701222206
 GameObject:
   m_ObjectHideFlags: 0
@@ -20497,9 +20529,9 @@ GameObject:
   - component: {fileID: 6480130764417813561}
   - component: {fileID: 6031409054331817430}
   - component: {fileID: 7721003549643398923}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_13
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20633,7 +20665,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6721031235243676815
 GameObject:
   m_ObjectHideFlags: 0
@@ -20646,9 +20678,9 @@ GameObject:
   - component: {fileID: 5283037367693336247}
   - component: {fileID: 7224333511582280515}
   - component: {fileID: 4155882144698881326}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_42
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20782,7 +20814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6722335866224047121
 GameObject:
   m_ObjectHideFlags: 0
@@ -20795,9 +20827,9 @@ GameObject:
   - component: {fileID: 2463247876257073356}
   - component: {fileID: 7319340834493166715}
   - component: {fileID: 5060472812133258901}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_26
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20931,7 +20963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &6822173104702219249
 GameObject:
   m_ObjectHideFlags: 0
@@ -20944,9 +20976,9 @@ GameObject:
   - component: {fileID: 4180842585995070196}
   - component: {fileID: 3318619113717316933}
   - component: {fileID: 6473263056421097431}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_17
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -21080,7 +21112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &7085851762454412604
 GameObject:
   m_ObjectHideFlags: 0
@@ -21093,9 +21125,9 @@ GameObject:
   - component: {fileID: 8240270840272569217}
   - component: {fileID: 5032552686459115308}
   - component: {fileID: 2140218314153141707}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_34
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -21229,7 +21261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &7186290475149861797
 GameObject:
   m_ObjectHideFlags: 0
@@ -21242,9 +21274,9 @@ GameObject:
   - component: {fileID: 1795546298663276267}
   - component: {fileID: 8585212317255243868}
   - component: {fileID: 8906947030776740972}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_19
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -21378,7 +21410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &7203092401003671979
 GameObject:
   m_ObjectHideFlags: 0
@@ -21629,9 +21661,9 @@ GameObject:
   - component: {fileID: 7641347214300666171}
   - component: {fileID: 8378760247651117884}
   - component: {fileID: 5580942263808324607}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_50
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -21765,7 +21797,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &7638765285159103887
 GameObject:
   m_ObjectHideFlags: 0
@@ -21778,9 +21810,9 @@ GameObject:
   - component: {fileID: 7659951650047297442}
   - component: {fileID: 4146195271119601456}
   - component: {fileID: 3917105126471387813}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_24
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -21914,7 +21946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &7778315480771388714
 GameObject:
   m_ObjectHideFlags: 0
@@ -21927,9 +21959,9 @@ GameObject:
   - component: {fileID: 2146391904158570294}
   - component: {fileID: 6942537448075485317}
   - component: {fileID: 8203897834651024503}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_49
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22063,7 +22095,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &8283387309677763226
 GameObject:
   m_ObjectHideFlags: 0
@@ -22213,9 +22245,9 @@ GameObject:
   - component: {fileID: 8143758682837190257}
   - component: {fileID: 5851536529330966371}
   - component: {fileID: 3324368092933242001}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_27
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22349,7 +22381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &8570497767686211300
 GameObject:
   m_ObjectHideFlags: 0
@@ -22362,9 +22394,9 @@ GameObject:
   - component: {fileID: 2523502291119666516}
   - component: {fileID: 8094464147696196051}
   - component: {fileID: 225960085484841061}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_47
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22498,7 +22530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &8593012454082747251
 GameObject:
   m_ObjectHideFlags: 0
@@ -22739,9 +22771,9 @@ GameObject:
   - component: {fileID: 3109735427752240929}
   - component: {fileID: 3576359768783002605}
   - component: {fileID: 8323505565320683208}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_20
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22875,7 +22907,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &9069005206370732334
 GameObject:
   m_ObjectHideFlags: 0
@@ -23090,9 +23122,9 @@ GameObject:
   - component: {fileID: 6886291783320140387}
   - component: {fileID: 1470353626448225152}
   - component: {fileID: 7624312235720617773}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_48
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23226,7 +23258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
 --- !u!1 &9113059547497933288
 GameObject:
   m_ObjectHideFlags: 0
@@ -127233,9 +127265,9 @@ GameObject:
   - component: {fileID: 391491295776327643}
   - component: {fileID: 11211611780434591}
   - component: {fileID: 4201625527222107562}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Random_Object_3
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -127369,4 +127401,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  poisonAreaPrefab: {fileID: 0}
+  poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}

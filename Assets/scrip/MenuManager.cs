@@ -34,6 +34,7 @@ public class MenuManager : MonoBehaviour
             introVideo.gameObject.SetActive(false);
             introVideo.loopPointReached += OnVideoFinished;
         }
+        Debug.Log("Đường dẫn file save: " + Application.persistentDataPath);
     }
 
     void OnDestroy()

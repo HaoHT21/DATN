@@ -108,10 +108,10 @@ TextureImporter:
         serializedVersion: 2
         x: 31
         y: 0
-        width: 68
+        width: 73
         height: 63
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -124,33 +124,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: Fire3_1
-      rect:
-        serializedVersion: 2
-        x: 90
-        y: 17
-        width: 14
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1c9a2e985e0914be0800000000000000
-      internalID: -1494754285775050303
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 28c9302433432bb4996378c57c802375
     internalID: 0
     vertices: []
     indices: 
@@ -159,7 +137,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Fire3_0: 1467658710680967802
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -429,13 +429,30 @@ public class MapGenerator : MonoBehaviour
                     break;
 
                 case ObstacleLayoutType.Cross:
-                    for (int x = room.x + 2; x < room.xMax - 2; x++)
+                    // Tăng offset viền (ví dụ: +4) để cắt bớt 2 tile ở phía ngoài cùng của mỗi nhánh
+                    int outerOffset = 4;
+
+                    // Tăng khoảng cách từ tâm (ví dụ: > 3) để bỏ qua/xóa bớt tile ở phần khối bên trong
+                    int innerGap = 3;
+
+                    // 1. Vẽ nhánh ngang (Trục X)
+                    for (int x = room.x + outerOffset; x < room.xMax - outerOffset; x++)
                     {
-                        if (map[x, centerY] == 1 && Mathf.Abs(x - centerX) > 1) map[x, centerY] = 2;
+                        // Chỉ đặt obstacle nếu ô đó cách tâm X lớn hơn innerGap (xóa bớt phần khối bên trong)
+                        if (map[x, centerY] == 1 && Mathf.Abs(x - centerX) > innerGap)
+                        {
+                            map[x, centerY] = 2;
+                        }
                     }
-                    for (int y = room.y + 2; y < room.yMax - 2; y++)
+
+                    // 2. Vẽ nhánh dọc (Trục Y)
+                    for (int y = room.y + outerOffset; y < room.yMax - outerOffset; y++)
                     {
-                        if (map[centerX, y] == 1 && Mathf.Abs(y - centerY) > 1) map[centerX, y] = 2;
+                        // Chỉ đặt obstacle nếu ô đó cách tâm Y lớn hơn innerGap (xóa bớt phần khối bên trong)
+                        if (map[centerX, y] == 1 && Mathf.Abs(y - centerY) > innerGap)
+                        {
+                            map[centerX, y] = 2;
+                        }
                     }
                     break;
 

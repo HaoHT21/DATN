@@ -98,8 +98,6 @@ GameObject:
   - component: {fileID: 2121976091275730855}
   - component: {fileID: 6345544438853433059}
   - component: {fileID: 259497063228308807}
-  - component: {fileID: 8307257496663899532}
-  - component: {fileID: 6702879493846641708}
   m_Layer: 0
   m_Name: GunBlue
   m_TagString: Untagged
@@ -135,13 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaa22e86789148844932553c6f544ab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemIcon: {fileID: -1382800200064632863, guid: 641cc3d6ca320f441ad2675fecf1f7ef, type: 3}
-  itemID: 0
-  weaponVisualPrefab: {fileID: 8962261878740901355}
-  weaponPickupPrefab: {fileID: 8962261878740901355}
-  bulletPrefab: {fileID: 6843648813630082619, guid: 811c30f576b6ac442b52d73d775d35c7, type: 3}
-  isGun: 1
-  damage: 50
+  itemData: {fileID: 11400000, guid: 862cbf945a4dbd2498717c618ff2956d, type: 2}
 --- !u!58 &259497063228308807
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -178,29 +170,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &8307257496663899532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8962261878740901355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10cbb2b0eef279946a2076df61729828, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: af4afa5418074919899f683d919a7426
---- !u!114 &6702879493846641708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8962261878740901355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a273b0cb7636e544875c9f7ebfd5640, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  collected: 0

@@ -215,7 +215,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.57, y: 0.4}
+  m_Size: {x: 0.4, y: 0.4}
   m_EdgeRadius: 0
 --- !u!114 &6635721563282199606
 MonoBehaviour:
@@ -306,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 8399829915083563723}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -973.3469, y: 157.39848, z: 0}
+  m_LocalPosition: {x: 115.98, y: -103.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -361,7 +361,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 8907642469822718442}
   hitColliders: []
   sprites: []
-  moveSpeed: 10
+  moveSpeed: 20
   detectRange: 60
   wallLayer:
     serializedVersion: 2
@@ -370,8 +370,8 @@ MonoBehaviour:
   thinkMax: 1.5
   bulletPrefab: {fileID: 8282301630644044267, guid: aec8d33c2ba1f7a4c9b5316f0cf271af, type: 3}
   firePoint: {fileID: 8461028234699971491}
-  bulletCount: 40
-  jumpAttackCount: 4
+  bulletCount: 35
+  jumpAttackCount: 2
   enemyPrefab: {fileID: 6815145705966534051, guid: 773026da29ad42940a708a38a18c20b8, type: 3}
   summonCount: 5
   summonRadius: 5

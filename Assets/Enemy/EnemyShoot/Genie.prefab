@@ -64,6 +64,7 @@ GameObject:
   - component: {fileID: 1634136886719048576}
   - component: {fileID: 5155498748442005768}
   - component: {fileID: 4905980691949070790}
+  - component: {fileID: 3005666386469286074}
   m_Layer: 0
   m_Name: Genie
   m_TagString: Enemy
@@ -80,8 +81,8 @@ Transform:
   m_GameObject: {fileID: 7203229692839817076}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 38.82, y: -23.02, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_LocalPosition: {x: -382.17, y: -172.24, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8942083613431030833}
@@ -208,7 +209,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.43, y: 0.86}
+  m_Size: {x: 0.2, y: 0.2}
   m_EdgeRadius: 0
 --- !u!50 &4705692532964980025
 Rigidbody2D:
@@ -253,6 +254,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &3780046889495264020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,9 +270,9 @@ MonoBehaviour:
   moveSpeed: 3
   hurtDuration: 0.3
   knockbackForce: 5
-  enemyVisual: {fileID: 4437224375825967064}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 4437224375825967064}
 --- !u!114 &1634136886719048576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,8 +286,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 1
-  maxCoin: 25
+  minCoin: 25
+  maxCoin: 50
 --- !u!114 &5155498748442005768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,3 +346,15 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &3005666386469286074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7203229692839817076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c9257929df4934aa286177093002dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

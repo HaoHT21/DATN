@@ -80,7 +80,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.00012634695, y: 0.0077234805}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -90,7 +90,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8798219, y: 0.42728913}
+  m_Size: {x: 0.8, y: 0.4}
   m_EdgeRadius: 0
 --- !u!1 &9110053079286763239
 GameObject:
@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 89696665573834409}
   - component: {fileID: 5936058685405016464}
   - component: {fileID: 8921979806237559239}
+  - component: {fileID: -3897428433112638810}
   m_Layer: 7
   m_Name: Goblin
   m_TagString: Enemy
@@ -126,8 +127,8 @@ Transform:
   m_GameObject: {fileID: 9110053079286763239}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 43.422127, y: -13.905733, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalPosition: {x: -383.6, y: -170.49, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8627175504282714049}
@@ -254,7 +255,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.37, y: 0.38}
+  m_Size: {x: 0.2, y: 0.2}
   m_EdgeRadius: 0
 --- !u!50 &6297649307967498507
 Rigidbody2D:
@@ -299,6 +300,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &6121387261597632940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,9 +316,9 @@ MonoBehaviour:
   moveSpeed: 5
   hurtDuration: 0.3
   knockbackForce: 5
-  enemyVisual: {fileID: 1368565494420407810}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 1368565494420407810}
 --- !u!114 &89696665573834409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,8 +332,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 1
-  maxCoin: 25
+  minCoin: 25
+  maxCoin: 50
 --- !u!114 &5936058685405016464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,3 +380,15 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &-3897428433112638810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9110053079286763239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c9257929df4934aa286177093002dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

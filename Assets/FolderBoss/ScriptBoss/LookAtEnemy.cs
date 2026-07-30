@@ -2,7 +2,7 @@
 
 public class LookAtEnemy : MonoBehaviour
 {
-    public float rotateSpeed = 5f;
+    public float rotateSpeed = 15f; // Tăng tốc độ xoay lên một chút để xoay mượt và nhanh hơn
     public float detectRadius = 8f;
 
     private Transform target;
@@ -18,88 +18,42 @@ public class LookAtEnemy : MonoBehaviour
 
     void Update()
     {
-        // Kiểm tra target còn hợp lệ không
-        if (target != null)
-        {
-            float distance = Vector2.Distance(
-                transform.position,
-                target.position
-            );
-
-            if (distance > detectRadius ||
-                !target.gameObject.activeInHierarchy ||
-                !CanSeeTarget(target))
-            {
-                target = null;
-            }
-        }
-
-        // Kiểm tra target còn hợp lệ không
-        if (target != null)
-        {
-            float distance = Vector2.Distance(
-                transform.position,
-                target.position
-            );
-
-            if (distance > detectRadius ||
-                !target.gameObject.activeInHierarchy)
-            {
-                target = null;
-            }
-        }
-
-        // Chưa có target thì tìm
-        if (target == null)
-        {
-            FindNearestTarget();
-        }
+        // 1. Luôn tìm kẻ địch gần nhất còn sống và không bị che bởi tường
+        FindNearestTarget();
 
         Vector2 direction;
 
-        // Có enemy → nhìn enemy
+        // 2. Nếu tìm thấy Enemy -> Nhìn theo Enemy
         if (target != null)
         {
-            direction =
-                target.position -
-                transform.position;
+            direction = target.position - transform.position;
         }
-        // Không có enemy → nhìn theo hướng di chuyển
+        // 3. Không có Enemy -> Nhìn theo hướng di chuyển của người chơi
         else
         {
-            direction =
-                new Vector2(
-                    Input.GetAxisRaw("Horizontal"),
-                    Input.GetAxisRaw("Vertical")
-                );
+            direction = new Vector2(
+                Input.GetAxisRaw("Horizontal"),
+                Input.GetAxisRaw("Vertical")
+            );
 
-            // Nếu đứng yên thì giữ góc cũ
+            // Nếu đứng yên và không có kẻ địch thì giữ nguyên góc hiện tại
             if (direction.magnitude < 0.1f)
                 return;
         }
 
-        float angle =
-            Mathf.Atan2(
-                direction.y,
-                direction.x
-            ) * Mathf.Rad2Deg;
+        // 4. Tính toán góc quay
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
-        Quaternion rotation =
-            Quaternion.Euler(
-                0,
-                0,
-                angle
-            );
+        // 5. Quay mượt mà theo thời gian
+        transform.rotation = Quaternion.Lerp(
+            transform.rotation,
+            rotation,
+            rotateSpeed * Time.deltaTime
+        );
 
-        transform.rotation =
-            Quaternion.Lerp(
-                transform.rotation,
-                rotation,
-                rotateSpeed *
-                Time.deltaTime
-            );
+        // 6. Flip lại Sprite nếu hướng quay sang trái để tránh bị ngửa bụng (cho súng/mắt 2D)
         Vector3 scale = transform.localScale;
-
         if (direction.x < 0)
             scale.y = -Mathf.Abs(scale.y);
         else
@@ -113,42 +67,32 @@ public class LookAtEnemy : MonoBehaviour
         float closestDistance = Mathf.Infinity;
         Transform closest = null;
 
-        FindTargetByTag(
-            "Enemy",
-            ref closest,
-            ref closestDistance
-        );
+        // Tìm trong nhóm Enemy
+        FindTargetByTag("Enemy", ref closest, ref closestDistance);
 
-        FindTargetByTag(
-            "Boss",
-            ref closest,
-            ref closestDistance
-        );
+        // Tìm trong nhóm Boss
+        FindTargetByTag("Boss", ref closest, ref closestDistance);
 
+        // Cập nhật target mới nhất (luôn là kẻ gần nhất)
         target = closest;
     }
 
-    void FindTargetByTag(
-        string tag,
-        ref Transform closest,
-        ref float closestDistance)
+    void FindTargetByTag(string tag, ref Transform closest, ref float closestDistance)
     {
-        GameObject[] objects =
-            GameObject.FindGameObjectsWithTag(tag);
+        GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
 
         foreach (GameObject obj in objects)
         {
-            float distance =
-                Vector2.Distance(
-                    transform.position,
-                    obj.transform.position
-                );
+            // Bỏ qua nếu GameObject bị ẩn/đã chết
+            if (!obj.activeInHierarchy) continue;
 
-            if (
-            distance <= detectRadius &&
-            distance < closestDistance &&
-            CanSeeTarget(obj.transform)
-            )
+            float distance = Vector2.Distance(transform.position, obj.transform.position);
+
+            // Điều kiện để chọn: 
+            // - Nằm trong tầm detectRadius
+            // - Gần hơn khoảng cách của kẻ địch hiện tại
+            // - Không bị tường che
+            if (distance <= detectRadius && distance < closestDistance && CanSeeTarget(obj.transform))
             {
                 closestDistance = distance;
                 closest = obj.transform;
@@ -158,12 +102,14 @@ public class LookAtEnemy : MonoBehaviour
 
     private bool CanSeeTarget(Transform enemy)
     {
+        // Kiểm tra xem có bức tường nào chắn giữa Player và Enemy không
         RaycastHit2D hit = Physics2D.Linecast(
             transform.position,
             enemy.position,
             wallLayer
         );
 
+        // Nếu collider trả về null tức là không đụng tường -> Nhìn thấy được
         return hit.collider == null;
     }
 
@@ -171,20 +117,11 @@ public class LookAtEnemy : MonoBehaviour
     {
         if (target != null)
         {
-            Gizmos.color = CanSeeTarget(target)
-                ? Color.green
-                : Color.red;
-
-            Gizmos.DrawLine(
-                transform.position,
-                target.position
-            );
+            Gizmos.color = CanSeeTarget(target) ? Color.green : Color.red;
+            Gizmos.DrawLine(transform.position, target.position);
         }
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRadius
-        );
+        Gizmos.DrawWireSphere(transform.position, detectRadius);
     }
 }

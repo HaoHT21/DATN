@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PoisonSpawner : MonoBehaviour
+public class PoisonSpawner : MonoBehaviour, IDamageable
 {
     [Header("Health")]
     public int hp = 1;

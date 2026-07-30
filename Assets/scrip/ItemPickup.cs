@@ -1,63 +1,35 @@
 ﻿using UnityEngine;
 
-
-
 public class ItemPickup : MonoBehaviour
-
 {
-
-    public Sprite itemIcon;                // <--- Thêm biến này
-    public int itemID;
-
-    public GameObject weaponVisualPrefab;
-
-    public GameObject weaponPickupPrefab;
-
-    public GameObject bulletPrefab;
-
-    public bool isGun;
-
-    public int damage = 25;
-
-    public bool isEquipped = false;
+    [Header("Cấu hình dựa trên ItemData")]
+    public ItemData itemData;
 
     private void OnTriggerEnter2D(Collider2D other)
-
     {
-        if (isEquipped)
-            return;
+        if (!other.CompareTag("Player")) return;
 
-        if (other.CompareTag("Player"))
+        // Nếu là bình máu thì để HealthPotion xử lý
+        if (GetComponent<HealthPotion>() != null) return;
 
+        PlayerController pc = other.GetComponent<PlayerController>();
+
+        if (pc != null && itemData != null)
         {
+            pc.PickupWeapon(
+                itemData.visualPrefab,
+                itemData.itemPrefab, // Prefab vứt ra đất
+                itemData.isGun,
+                itemData.damage,
+                itemData.bulletPrefab,
+                itemData.itemIcon,
+                itemData.itemID
+            );
 
-            // --- ĐOẠN THÊM VÀO: NẾU ĐÂY LÀ BÌNH MÁU THÌ NHƯỜNG QUYỀN CHO HEALTHPOTION ---
-            if (GetComponent<HealthPotion>() != null)
-            {
-                return;
-            }
-            // ----------------------------------------------------------------------------
-
-
-            PlayerController pc = other.GetComponent<PlayerController>();
-
-            if (pc != null)
-
-            {
-
-                // Truyền thêm itemIcon vào đây
-
-                pc.PickupWeapon(weaponVisualPrefab, weaponPickupPrefab, isGun, damage, bulletPrefab, itemIcon, itemID);
-
-                if (TryGetComponent<CollectibleSaveable>(out var collectible))
-                    collectible.Collect();
-                else
-                    Destroy(gameObject);
-
-            }
-
+            if (TryGetComponent<CollectibleSaveable>(out var collectible))
+                collectible.Collect();
+            else
+                Destroy(gameObject);
         }
-
     }
-
 }

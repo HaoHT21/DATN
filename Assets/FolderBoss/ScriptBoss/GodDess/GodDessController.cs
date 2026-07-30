@@ -161,10 +161,10 @@ public class GodDessController : BossEndController
                     else if (roll < 20)
                         action = 1;
 
-                    else if (roll < 45)
+                    else if (roll < 40)
                         action = 2;
 
-                    else if (roll < 75)
+                    else if (roll < 70)
                         action = 3;
 
                     else

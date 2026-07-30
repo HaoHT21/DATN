@@ -332,6 +332,16 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
             }
         }
 
+        // TỰ ĐỘNG TÌM "HP_Text" NẾU CHƯA GÁN TRONG INSPECTOR
+        if (hpText == null)
+        {
+            GameObject hpTextObj = GameObject.Find("HP_Text");
+            if (hpTextObj != null)
+            {
+                hpText = hpTextObj.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
         // Cập nhật text số cho Máu (Ví dụ: 100/100)
         if (hpText != null)
         {
@@ -350,6 +360,16 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
             {
                 manaSlider = mpObj.GetComponent<Slider>();
                 manaSlider.value = (float)currentMana / maxMana;
+            }
+        }
+
+        // TỰ ĐỘNG TÌM "MP_Text" NẾU CHƯA GÁN TRONG INSPECTOR
+        if (mpText == null)
+        {
+            GameObject mpTextObj = GameObject.Find("MP_Text");
+            if (mpTextObj != null)
+            {
+                mpText = mpTextObj.GetComponent<TextMeshProUGUI>();
             }
         }
 

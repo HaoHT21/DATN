@@ -85,13 +85,7 @@ public class PlayerController : MonoBehaviour
 
     //private float gunScaleValue = 0.5f;
 
-
-
-    [Header("Ép vị trí đầu nòng")]
-
-    [SerializeField] private float firePointXOffset = 0.355f;
-
-    [SerializeField] private float firePointYOffset = 0.353f;
+    public bool isFrozen = false; // Thêm biến này
 
 
 
@@ -192,7 +186,10 @@ public class PlayerController : MonoBehaviour
 
 
 
-        if (Input.GetKeyDown(KeyCode.K) && _attackTimer <= 0 && inventory != null && inventory.Count > 0) PerformAttack();
+        if (Input.GetKeyDown(KeyCode.K) && !isFrozen && _attackTimer <= 0 && inventory != null && inventory.Count > 0)
+        {
+            PerformAttack();
+        }
 
 
 
@@ -218,7 +215,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isKnocked)
+        // Nếu đang bị Knockback HOẶC bị Đóng băng thì không cho di chuyển
+        if (isKnocked || isFrozen)
             return;
 
         rb.MovePosition(
@@ -235,6 +233,9 @@ public class PlayerController : MonoBehaviour
 
     public void PerformAttack()
     {
+        // THÊM DÒNG NÀY: Ngăn chặn tấn công nếu đang bị đóng băng
+        if (isFrozen) return;
+
         if (inventory == null || inventory.Count == 0) return;
         var weapon = inventory[currentWeaponIndex];
         _attackTimer = attackRate;
@@ -282,14 +283,13 @@ public class PlayerController : MonoBehaviour
         {
             // --- XỬ LÝ VŨ KHÍ CẬN CHIẾN (SWORD) ---
             _animator.SetTrigger(""); // Animation vung tay của Player (nếu có)
-            if (!weapon.isGun)
-            {
-                WeaponBase weaponBase =
-                weapon.visualPrefab.GetComponent<WeaponBase>();
 
-                if (weaponBase != null)
+            if (weapon.visualPrefab != null)
+            {
+                // Lấy script nằm trên GameObject vũ khí đang cầm
+                if (weapon.visualPrefab.TryGetComponent<SwordWeapon>(out var sword))
                 {
-                    weaponBase.Attack();
+                    sword.Attack();
                 }
             }
         }
@@ -326,108 +326,63 @@ public class PlayerController : MonoBehaviour
 
 
     public void PickupWeapon(GameObject visualPrefab, GameObject pickupPrefab, bool isGun, int dmg, GameObject bulletType, Sprite icon, int itemID = 0)
-
     {
-
         if (inventory == null) return;
-
         if (inventory.Count >= 20) return;
 
-
-
         if (weaponHolder == null)
-
         {
-
             Debug.LogError($"Lỗi: Bạn chưa kéo thả 'Weapon Holder' vào script PlayerController gắn trên {gameObject.name}!");
-
             return;
-
         }
 
-
-
         GameObject spawned = null;
-
         if (visualPrefab != null)
-
         {
-
             spawned = Instantiate(visualPrefab, weaponHolder);
-
             spawned.transform.localPosition = Vector3.zero;
             spawned.transform.localRotation = Quaternion.identity;
             spawned.transform.localScale = visualPrefab.transform.localScale;
 
-            WeaponBase weapon = spawned.GetComponent<WeaponBase>();
-            if (weapon != null)
-            {
-                weapon.OnEquip();
-            }
+            // =========================================================================
+            // KHẮC PHỤC LỖI NHÂN BẢN:
+            // Gỡ bỏ các Component nhặt đồ khỏi khẩu súng ĐANG CẦM TRÊN TAY
+            // để nó không thể tự kích hoạt Trigger nhặt đồ hay va chạm vật lý nữa.
+            // =========================================================================
+            if (spawned.TryGetComponent<ItemPickup>(out var pickupScript))
+                Destroy(pickupScript);
 
-            ItemPickup pickup = spawned.GetComponent<ItemPickup>();
-            if (pickup != null)
-            {
-                pickup.isEquipped = true;
-            }
+            if (spawned.TryGetComponent<Collider2D>(out var col))
+                Destroy(col);
+
+            if (spawned.TryGetComponent<Rigidbody2D>(out var rb))
+                Destroy(rb);
+
+            if (spawned.TryGetComponent<CollectibleSaveable>(out var saveable))
+                Destroy(saveable);
+            // =========================================================================
 
             spawned.SetActive(false);
-
         }
 
-
-
         inventory.Add(new WeaponItem
-
         {
             itemID = itemID,
             icon = icon,
-
             visualPrefab = spawned,
-
             pickupPrefab = pickupPrefab,
-
             isGun = isGun,
-
             damage = dmg,
-
             bulletPrefab = bulletType,
-
             isPotion = false,
-
             healAmount = 0
-
         });
-
-
 
         currentWeaponIndex = inventory.Count - 1;
 
-
-
-        // Gọi hàm này để cập nhật trạng thái SetActive(true) cho vũ khí vừa nhặt!
-
+        // Cập nhật hiển thị vũ khí cầm trên tay
         UpdateWeaponVisuals();
-
     }
-
-
-
-    void DropWeapon()
-
-    {
-
-        if (inventory == null || inventory.Count == 0) return;
-
-        var item = inventory[currentWeaponIndex];
-
-        if (item.pickupPrefab) Instantiate(item.pickupPrefab, transform.position + Vector3.down, Quaternion.identity);
-
-        RemoveWeapon(currentWeaponIndex);
-
-    }
-
-
 
     void RemoveWeapon(int index)
 
@@ -482,38 +437,66 @@ public class PlayerController : MonoBehaviour
         UpdateWeaponVisuals();
     }
 
+    void DropWeapon()
+    {
+        if (inventory == null || inventory.Count == 0) return;
+        DropWeaponAtSlot(currentWeaponIndex);
+    }
+
     public void DropWeaponAtSlot(int slotIndex)
     {
-        if (inventory == null)
-            return;
-
-        if (slotIndex < 0 || slotIndex >= inventory.Count)
-            return;
+        if (inventory == null || slotIndex < 0 || slotIndex >= inventory.Count) return;
 
         WeaponItem item = inventory[slotIndex];
+        GameObject prefabToSpawn = item.pickupPrefab;
 
-        // Sinh item rơi xuống đất
-        if (item.pickupPrefab != null)
+        // Tra cứu ItemDatabase nếu thiếu pickupPrefab
+        if (prefabToSpawn == null && ItemDatabase.Instance != null)
         {
-            Instantiate(
-                item.pickupPrefab,
-                transform.position + Vector3.down,
-                Quaternion.identity);
+            ItemData data = ItemDatabase.Instance.GetItemByID(item.itemID);
+            if (data != null)
+            {
+                prefabToSpawn = data.itemPrefab;
+            }
         }
 
-        // Xóa model trên tay
+        // 1. Xóa model visual trên tay Player trước
         if (item.visualPrefab != null)
         {
             Destroy(item.visualPrefab);
         }
 
+        // 2. Sinh item rơi xuống đất
+        if (prefabToSpawn != null)
+        {
+            Vector3 dropDirection = _sprite.flipX ? Vector3.left : Vector3.right;
+            Vector3 dropPosition = transform.position + dropDirection * 1f + Vector3.down * 0.2f;
+
+            GameObject droppedItem = Instantiate(
+                prefabToSpawn,
+                dropPosition,
+                Quaternion.identity
+            );
+
+            // Thêm lực văng nhẹ
+            if (droppedItem.TryGetComponent<Rigidbody2D>(out var rbItem))
+            {
+                Vector2 force = new Vector2(dropDirection.x * 2f, 1.5f);
+                rbItem.AddForce(force, ForceMode2D.Impulse);
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[DropWeapon] Không tìm thấy Pickup Prefab cho ItemID: {item.itemID}");
+        }
+
+        // 3. Xóa khỏi danh sách Inventory
         inventory.RemoveAt(slotIndex);
 
-        // Nếu xóa món đang chọn hoặc trước món đang chọn
+        // Điều chỉnh lại index vũ khí hiện tại
         if (currentWeaponIndex >= inventory.Count)
         {
-            currentWeaponIndex =
-                Mathf.Max(0, inventory.Count - 1);
+            currentWeaponIndex = Mathf.Max(0, inventory.Count - 1);
         }
 
         UpdateWeaponVisuals();
@@ -529,3 +512,4 @@ public class PlayerController : MonoBehaviour
 
     //}
 }
+

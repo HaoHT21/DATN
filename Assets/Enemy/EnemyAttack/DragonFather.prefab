@@ -50,6 +50,7 @@ GameObject:
   - component: {fileID: 1258090550267710778}
   - component: {fileID: 4083582750462488427}
   - component: {fileID: 2107387994654480114}
+  - component: {fileID: -5998948257553911848}
   m_Layer: 7
   m_Name: DragonFather
   m_TagString: Enemy
@@ -66,7 +67,7 @@ Transform:
   m_GameObject: {fileID: 4559944600259743985}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.8, y: 4.61, z: 0}
+  m_LocalPosition: {x: -380.21, y: -172.23, z: 0}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -239,6 +240,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &1529577144225603784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,9 +256,9 @@ MonoBehaviour:
   moveSpeed: 5
   hurtDuration: 0.3
   knockbackForce: 5
-  enemyVisual: {fileID: 6974211433469412453}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 6974211433469412453}
 --- !u!114 &1258090550267710778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,8 +272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 1
-  maxCoin: 25
+  minCoin: 25
+  maxCoin: 50
 --- !u!114 &4083582750462488427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,6 +320,18 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &-5998948257553911848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4559944600259743985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c9257929df4934aa286177093002dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7800846149046605154
 GameObject:
   m_ObjectHideFlags: 0

@@ -107,9 +107,14 @@ public class GateManager : MonoBehaviour
         progressUI?.ShowGateOpenedMessage();
 
         if (ancientGate != null)
-            ancientGate.OpenGate();
+        {
+            // SỬA TẠI ĐÂY: Kích hoạt Cổng bằng hệ thống Ngọc => Mở Portal Đen
+            ancientGate.OpenGateWithBlackPortal();
+        }
         else
+        {
             Debug.LogWarning("[GateManager] Chưa gán AncientGateController.");
+        }
     }
 
     private void RefreshProgressUI()

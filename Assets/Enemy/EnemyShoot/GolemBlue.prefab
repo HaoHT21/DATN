@@ -64,6 +64,7 @@ GameObject:
   - component: {fileID: 130490417035745084}
   - component: {fileID: 1711221770472209958}
   - component: {fileID: 3149200097321076951}
+  - component: {fileID: -3347663486199705165}
   m_Layer: 0
   m_Name: GolemBlue
   m_TagString: Enemy
@@ -80,7 +81,7 @@ Transform:
   m_GameObject: {fileID: 6727794421984774414}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 38.62, y: -20.16, z: 0}
+  m_LocalPosition: {x: -385.41, y: -172.54, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -208,7 +209,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.4, y: 0.39}
+  m_Size: {x: 0.2, y: 0.2}
   m_EdgeRadius: 0
 --- !u!50 &637560946717580610
 Rigidbody2D:
@@ -253,6 +254,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &7568146674080746594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,9 +270,9 @@ MonoBehaviour:
   moveSpeed: 3
   hurtDuration: 0.3
   knockbackForce: 5
-  enemyVisual: {fileID: 5072043034472910610}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 5072043034472910610}
 --- !u!114 &130490417035745084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,8 +286,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 1
-  maxCoin: 25
+  minCoin: 25
+  maxCoin: 50
 --- !u!114 &1711221770472209958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,3 +344,15 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &-3347663486199705165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6727794421984774414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c9257929df4934aa286177093002dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

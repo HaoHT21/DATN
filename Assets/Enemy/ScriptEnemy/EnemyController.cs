@@ -15,45 +15,35 @@ public class EnemyController : MonoBehaviour
     [Header("Knockback")]
     public float knockbackForce = 5f;
 
-    private Vector2 hitDirection;
+    [Header("Pathfinding")]
+    public float nextWaypointDistance = 0.2f;
+    public float updateRate = 0.25f;
 
     [Header("Visual")]
     public Transform enemyVisual;
 
+    // Components
     private Seeker seeker;
-
     private Path path;
-
-    private int currentWaypoint;
-
-    public float nextWaypointDistance = 0.2f;
-
-    public float updateRate = 0.25f;
-
-
     private Rigidbody2D rb;
     private Animator animator;
     private EnemyHeath health;
 
+    // State variables
     private Transform target;
-
+    private int currentWaypoint;
     private bool isHurting;
     private bool isDead;
-    private bool isAlerted;
     private bool movementLocked;
-
     private string currentAnim;
-
+    private Vector2 hitDirection;
     private Coroutine hurtCoroutine;
 
+    // Public Getters
     public Transform Target => target;
     public bool IsHurting => isHurting;
-
-    public bool HasTarget =>
-        target != null;
-
-    public Rigidbody2D RB =>
-        rb;
+    public bool HasTarget => target != null;
+    public Rigidbody2D RB => rb;
 
     private void Awake()
     {
@@ -67,8 +57,6 @@ public class EnemyController : MonoBehaviour
             health.OnHurt += HandleHurt;
             health.OnDeath += HandleDeath;
         }
-
-        PlayAnimation("idle");
     }
 
     private void OnDestroy()
@@ -82,364 +70,179 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating(
-        nameof(UpdatePath),
-        0f,
-        updateRate);
+        PlayAnimation("idle");
+        InvokeRepeating(nameof(UpdatePath), 0f, updateRate);
     }
 
     private void Update()
     {
-        if (isDead)
-            return;
-
-        if (isHurting)
-            return;
+        if (isDead || isHurting) return;
 
         FindPlayer();
 
-        if (movementLocked)
-            return;
-
-        if (target != null)
+        if (target == null || movementLocked)
         {
-            ChasePlayer();
+            if (!movementLocked && target == null)
+            {
+                StopMovement();
+                PlayAnimation("idle");
+            }
         }
-        else
-        {
-            StopMovement();
-            PlayAnimation("idle");
-        }
-    }
-
-    void UpdatePath()
-    {
-        if (movementLocked)
-            return;
-
-        if (target == null)
-            return;
-
-        if (!seeker.IsDone())
-            return;
-
-        seeker.StartPath(
-            rb.position,
-            target.position,
-            OnPathComplete);
-    }
-
-    void OnPathComplete(Path p)
-    {
-        if (p.error)
-            return;
-
-        path = p;
-
-        currentWaypoint = 0;
     }
 
     private void FixedUpdate()
     {
-        if (movementLocked)
-            return;
+        if (movementLocked || isDead || isHurting) return;
 
         FollowPath();
     }
 
+    #region Pathfinding Logic
+    void UpdatePath()
+    {
+        if (movementLocked || target == null || !seeker.IsDone() || isDead)
+            return;
+
+        seeker.StartPath(rb.position, target.position, OnPathComplete);
+    }
+
+    void OnPathComplete(Path p)
+    {
+        if (!p.error)
+        {
+            path = p;
+            currentWaypoint = 0;
+        }
+    }
+
     void FollowPath()
     {
-        if (path == null)
-            return;
+        if (path == null) return;
 
         if (currentWaypoint >= path.vectorPath.Count)
         {
             rb.linearVelocity = Vector2.zero;
+            PlayAnimation("idle");
             return;
         }
 
-        Vector2 next =
-            path.vectorPath[currentWaypoint];
+        Vector2 next = path.vectorPath[currentWaypoint];
+        Vector2 dir = (next - rb.position).normalized;
 
-        Vector2 dir =
-            (next - rb.position).normalized;
-
-        rb.linearVelocity =
-            dir * moveSpeed;
+        rb.linearVelocity = dir * moveSpeed;
 
         Flip(dir);
-
         PlayAnimation("run");
 
-        if (Vector2.Distance(
-            rb.position,
-            next)
-            < nextWaypointDistance)
+        if (Vector2.Distance(rb.position, next) < nextWaypointDistance)
         {
             currentWaypoint++;
         }
     }
+    #endregion
 
-    public void SetHitDirection(
-    Vector2 direction
-)
-    {
-        hitDirection =
-            direction.normalized;
-    }
-
-
+    #region Movement Helpers
     public void StopMovement()
     {
         rb.linearVelocity = Vector2.zero;
-
         path = null;
-
         currentWaypoint = 0;
     }
 
     public void LockMovement(bool value)
     {
         movementLocked = value;
-
-        if (value)
-            StopMovement();
+        if (value) StopMovement();
     }
 
-
-    public void PlayAnimation(string animName)
+    public void LookAt(Vector2 targetPos)
     {
-        if (animator == null)
-            return;
+        Vector2 dir = targetPos - (Vector2)transform.position;
+        Flip(dir);
+    }
 
-        if (currentAnim == "death")
-            return;
+    private void Flip(Vector2 dir)
+    {
+        if (enemyVisual == null || Mathf.Abs(dir.x) < 0.01f) return;
 
-        if (currentAnim == "hurt" &&
-            animName != "death")
-            return;
-
-        // attack luôn cho phát lại
-        if (
-            currentAnim == animName &&
-            animName != "attack"
-        )
-            return;
-
-        currentAnim = animName;
-
-        animator.Play(
-            animName,
-            0,
-            0f
-        );
+        Vector3 scale = enemyVisual.localScale;
+        scale.x = dir.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+        enemyVisual.localScale = scale;
     }
 
     void FindPlayer()
     {
-        if (target != null)
-            return;
-
-        GameObject player =
-            GameObject.FindGameObjectWithTag("Player");
-
-        if (player != null)
-        {
-            target = player.transform;
-        }
+        if (target != null) return;
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) target = player.transform;
     }
+    #endregion
 
-    void ChasePlayer()
+    #region Animation & Hurt & Death
+    public void PlayAnimation(string animName, bool forceReset = false)
     {
-        Vector2 dir =
-            (
-                (Vector2)target.position -
-                (Vector2)transform.position
-            ).normalized;
+        if (animator == null || currentAnim == "death") return;
 
-        rb.linearVelocity =
-            dir * moveSpeed;
+        // Nếu trùng animation và không yêu cầu phát lại từ đầu thì bỏ qua
+        if (currentAnim == animName && !forceReset) return;
 
-        Flip(dir);
+        currentAnim = animName;
 
-        PlayAnimation("run");
-    }
-
-    void Flip(Vector2 dir)
-    {
-        if (enemyVisual == null)
-            return;
-
-        Vector3 scale =
-            enemyVisual.localScale;
-
-        if (dir.x > 0)
+        // Chỉ phát lại từ frame 0 nếu là attack/hurt hoặc được yêu cầu forceReset
+        if (animName == "attack" || animName == "hurt" || forceReset)
         {
-            enemyVisual.rotation =
-                Quaternion.Euler(
-                    0,
-                    0,
-                    0
-                );
+            animator.Play(animName, 0, 0f);
         }
         else
         {
-            enemyVisual.rotation =
-                Quaternion.Euler(
-                    0,
-                    180,
-                    0
-                );
+            animator.Play(animName);
         }
-
-        enemyVisual.localScale =
-            scale;
     }
 
-
-    public void LookAt(Vector2 targetPos)
+    public void SetHitDirection(Vector2 direction)
     {
-        Vector2 dir =
-            targetPos -
-            (Vector2)transform.position;
-
-        Flip(dir);
+        hitDirection = direction.normalized;
     }
-
-
-    //--------------------------------
-    // HURT + KNOCKBACK
-    //--------------------------------
 
     void HandleHurt()
     {
-        //--------------------------------
-        // Nếu đang bị hurt
-        // thì reset coroutine cũ
-        //--------------------------------
-
-        if (
-            hurtCoroutine != null
-        )
-        {
-            StopCoroutine(
-                hurtCoroutine
-            );
-
-            isHurting = false;
-        }
-
-        //--------------------------------
-        // Chạy hurt mới
-        //--------------------------------
-
-        hurtCoroutine =
-        StartCoroutine(
-            HurtRoutine()
-        );
+        if (hurtCoroutine != null) StopCoroutine(hurtCoroutine);
+        hurtCoroutine = StartCoroutine(HurtRoutine());
     }
-
 
     IEnumerator HurtRoutine()
     {
-        //--------------------------------
-        // Đã chết thì bỏ
-        //--------------------------------
-
-        if (isDead)
-            yield break;
-
-        //--------------------------------
-        // Khóa AI
-        //--------------------------------
+        if (isDead) yield break;
 
         isHurting = true;
         LockMovement(true);
 
-        Vector2 dir =
-            hitDirection;
-
-        //--------------------------------
-        // Phát animation hurt
-        //--------------------------------
-
+        // Reset trạng thái animation để phát hurt chuẩn xác
         currentAnim = "";
+        PlayAnimation("hurt", true);
 
-        PlayAnimation(
-            "hurt"
-        );
+        // Đẩy lùi (Knockback)
+        rb.linearVelocity = hitDirection * knockbackForce;
 
-        //--------------------------------
-        // Bật lùi NGAY LẬP TỨC
-        //--------------------------------
+        yield return new WaitForSeconds(hurtDuration);
 
-        rb.linearVelocity =
-        hitDirection * knockbackForce;
-
-
-        //--------------------------------
-        // Chờ thời gian hurt
-        //--------------------------------
-
-        yield return
-        new WaitForSeconds(
-            hurtDuration
-        );
-
-        //--------------------------------
-        // Dừng knockback
-        //--------------------------------
-
-        rb.linearVelocity =
-        Vector2.zero;
-
-        //--------------------------------
-        // Mở lại AI
-        //--------------------------------
-
+        // Xong Hurt
+        rb.linearVelocity = Vector2.zero;
+        isHurting = false;
         LockMovement(false);
-        isHurting =
-        false;
+        hurtCoroutine = null;
 
-        hurtCoroutine =
-        null;
-
+        // Reset currentAnim về rỗng để ép Animator chuyển sang state mới ngay lập tức
         currentAnim = "";
-
-        //--------------------------------
-        // Quay lại state cũ
-        //--------------------------------
-
-        if (target != null)
-        {
-            PlayAnimation(
-                "run"
-            );
-        }
-        else
-        {
-            PlayAnimation(
-                "idle"
-            );
-        }
+        PlayAnimation(target != null ? "run" : "idle", true);
     }
 
     void HandleDeath()
     {
         isDead = true;
-
-        rb.linearVelocity =
-            Vector2.zero;
-
-        PlayAnimation("death");
+        StopMovement();
+        currentAnim = "";
+        PlayAnimation("death", true);
     }
-
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color =
-            isAlerted
-            ? Color.red
-            : Color.yellow;
-    }
+    #endregion
 }

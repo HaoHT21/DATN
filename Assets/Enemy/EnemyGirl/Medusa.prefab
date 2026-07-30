@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: -1798208652722532581}
   - component: {fileID: 1513488576211965912}
   - component: {fileID: -2968386807399790537}
-  - component: {fileID: 2147300221628494497}
+  - component: {fileID: 8364468895097763600}
   m_Layer: 0
   m_Name: Medusa
   m_TagString: Untagged
@@ -207,7 +207,7 @@ Transform:
   m_GameObject: {fileID: 5944653168162481949}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.99, y: -19.86, z: 0}
+  m_LocalPosition: {x: 31.48, y: -20.65, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -379,7 +379,7 @@ MonoBehaviour:
   visualRoot: {fileID: 4333292638883080151}
   homePoint: {fileID: 0}
   currentState: 0
-  npcSkill: {fileID: 2147300221628494497}
+  npcSkill: {fileID: 8364468895097763600}
   player: {fileID: 0}
 --- !u!114 &-2794688601036385236
 MonoBehaviour:
@@ -465,7 +465,7 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 512
---- !u!114 &2147300221628494497
+--- !u!114 &8364468895097763600
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -474,14 +474,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 5944653168162481949}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1c7fb35e531b644f992f1a5a69502c9, type: 3}
+  m_Script: {fileID: 11500000, guid: 7967d132e31765a4d884d1e8586eb13e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   skillName: 
-  skillIcon: {fileID: 5558539047866050993, guid: 403253580b0fdc54f8976351bedc689f, type: 3}
-  duration: 0
-  cooldown: 10
-  damage: 999999
+  skillIcon: {fileID: -3781910019033479378, guid: 24df5bc21a107534a9ca03e3c5590361, type: 3}
+  duration: 5
+  cooldown: 5
+  summonPrefab: {fileID: 1156701154677399796, guid: 083ffa3dae4a6054f9e04b625b799f04, type: 3}
+  summonCount: 3
+  spawnRadius: 2
 --- !u!1 &6027539670274524487
 GameObject:
   m_ObjectHideFlags: 0

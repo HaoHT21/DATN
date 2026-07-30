@@ -48,13 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaa22e86789148844932553c6f544ab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemIcon: {fileID: 3003250472346388646, guid: d58181a003c43f844838a4d0013e62ca, type: 3}
-  itemID: 0
-  weaponVisualPrefab: {fileID: 3768280964771177539}
-  weaponPickupPrefab: {fileID: 3768280964771177539}
-  bulletPrefab: {fileID: 397643253393762302, guid: 8e43fe12ddcc6aa4bb605b60174a06e9, type: 3}
-  isGun: 1
-  damage: 25
+  itemData: {fileID: 11400000, guid: 7657dd8fad551f847851f8f464085905, type: 2}
 --- !u!58 &6304940578551837407
 CircleCollider2D:
   m_ObjectHideFlags: 0

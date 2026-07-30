@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 6615964121273151545}
   - component: {fileID: 3879519132780331015}
   - component: {fileID: 2938346061592688072}
+  - component: {fileID: 4331807247738624640}
   m_Layer: 0
   m_Name: GolemGold
   m_TagString: Enemy
@@ -34,7 +35,7 @@ Transform:
   m_GameObject: {fileID: 1815303259184701279}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.603363, y: -23.137915, z: 0}
+  m_LocalPosition: {x: -387.12, y: -172.84, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -162,7 +163,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.4, y: 0.39}
+  m_Size: {x: 0.2, y: 0.2}
   m_EdgeRadius: 0
 --- !u!50 &9135872359977054927
 Rigidbody2D:
@@ -207,6 +208,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &7882747823123892616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,9 +224,9 @@ MonoBehaviour:
   moveSpeed: 3
   hurtDuration: 0.3
   knockbackForce: 5
-  enemyVisual: {fileID: 3902727276743954902}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 3902727276743954902}
 --- !u!114 &6615964121273151545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,8 +240,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 1
-  maxCoin: 25
+  minCoin: 25
+  maxCoin: 50
 --- !u!114 &3879519132780331015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,6 +298,18 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &4331807247738624640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1815303259184701279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c9257929df4934aa286177093002dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3427319054351215285
 GameObject:
   m_ObjectHideFlags: 0

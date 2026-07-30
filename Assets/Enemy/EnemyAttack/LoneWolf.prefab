@@ -80,7 +80,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.18116206, y: -0.0056563467}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -90,7 +90,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8250134, y: 0.65793765}
+  m_Size: {x: 1, y: 0.6}
   m_EdgeRadius: 0
 --- !u!1 &4100882056036383914
 GameObject:
@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 4903979808780016093}
   - component: {fileID: 8689311037017913672}
   - component: {fileID: 7768261068825361133}
+  - component: {fileID: -7475119208802006595}
   m_Layer: 7
   m_Name: LoneWolf
   m_TagString: Enemy
@@ -126,8 +127,8 @@ Transform:
   m_GameObject: {fileID: 4100882056036383914}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 40.733444, y: -17.106316, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_LocalPosition: {x: -385.4, y: -169.86, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5983535433531090390}
@@ -244,7 +245,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.05026774, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -254,7 +255,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.653244, y: 0.58}
+  m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0
 --- !u!50 &3255023433093130477
 Rigidbody2D:
@@ -299,6 +300,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &4461234664832822234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,9 +316,9 @@ MonoBehaviour:
   moveSpeed: 5
   hurtDuration: 0.3
   knockbackForce: 5
-  enemyVisual: {fileID: 804165510151357474}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 804165510151357474}
 --- !u!114 &4903979808780016093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,8 +332,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 1
-  maxCoin: 25
+  minCoin: 25
+  maxCoin: 50
 --- !u!114 &8689311037017913672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,3 +380,15 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &-7475119208802006595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4100882056036383914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c9257929df4934aa286177093002dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

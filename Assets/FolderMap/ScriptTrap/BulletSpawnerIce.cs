@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BulletSpawnerIce : MonoBehaviour
+public class BulletSpawnerIce : MonoBehaviour, IDamageable
 {
     [Header("Health")]
     public int hp = 1;
@@ -16,8 +16,7 @@ public class BulletSpawnerIce : MonoBehaviour
 
     public void TakeDamage(int damageAmount)
     {
-        if (activated)
-            return;
+        if (activated) return;
 
         hp -= damageAmount;
 
@@ -37,31 +36,21 @@ public class BulletSpawnerIce : MonoBehaviour
         {
             float angle = i * angleStep;
 
-            Quaternion rotation =
-                Quaternion.Euler(0, 0, angle);
+            Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
-            GameObject bullet =
-                Instantiate(
-                    bulletPrefab,
-                    transform.position,
-                    rotation);
+            GameObject bullet = Instantiate(
+                bulletPrefab,
+                transform.position,
+                rotation);
 
-            Rigidbody2D rb =
-                bullet.GetComponent<Rigidbody2D>();
+            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
             if (rb != null)
             {
-                rb.linearVelocity =
-                    bullet.transform.right *
-                    bulletSpeed;
+                rb.linearVelocity = bullet.transform.right * bulletSpeed;
             }
         }
 
         Destroy(gameObject);
-    }
-
-    public void OnBulletHit(int damage)
-    {
-        TakeDamage(damage);
     }
 }

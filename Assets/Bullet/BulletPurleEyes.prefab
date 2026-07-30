@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 8961313577865923868}
   - component: {fileID: 5683341064175028197}
   - component: {fileID: 8555134368846021482}
-  - component: {fileID: 7602663209134359874}
   - component: {fileID: -8854938087780891717}
+  - component: {fileID: 7602663209134359874}
   m_Layer: 10
   m_Name: BulletPurleEyes
   m_TagString: Untagged
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_Sprite: {fileID: -507333720454737628, guid: 0ddff31f6bd633d4c8c4ce0110d776c0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -149,21 +149,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.13500002
---- !u!114 &7602663209134359874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6273060983266658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 2
-  speed: 10
-  lifeTime: 5
 --- !u!50 &-8854938087780891717
 Rigidbody2D:
   serializedVersion: 5
@@ -191,3 +176,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &7602663209134359874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6273060983266658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 2
+  speed: 10
+  lifeTime: 5

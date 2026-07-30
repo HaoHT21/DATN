@@ -98,11 +98,11 @@ bool value
     {
         if (phase == 2)
         {
-            castCount += 2;
+            castCount += 5;
 
-            spawnBulletCount += 10;
+            spawnBulletCount += 20;
 
-            moveSpeed += 5;
+            moveSpeed += 10;
         }
     }
 
@@ -155,7 +155,7 @@ bool value
                 );
             }
 
-            else if (roll < 60)
+            else if (roll < 50)
             {
                 action = 0;
             }
@@ -179,7 +179,7 @@ bool value
                 );
             }
 
-            else if (roll < 60)
+            else if (roll < 40)
             {
                 action = 0;
             }

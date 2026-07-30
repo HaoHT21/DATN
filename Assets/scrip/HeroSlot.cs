@@ -190,12 +190,12 @@ public class HeroSlot : MonoBehaviour
         GameObject newPlayer = Instantiate(hero.heroPrefab, spawnPos, spawnRot);
         newPlayer.tag = "Player"; // Gán lại Tag chuẩn
 
-        // 3. CẬP NHẬT CAMERA FOLLOW
-        CameraFollow cam = FindFirstObjectByType<CameraFollow>();
-        if (cam != null)
-        {
-            cam.target = newPlayer.transform;
-        }
+        //// 3. CẬP NHẬT CAMERA FOLLOW
+        //CameraFollow cam = FindFirstObjectByType<CameraFollow>();
+        //if (cam != null)
+        //{
+        //    cam.target = newPlayer.transform;
+        //}
 
         // 4. GẮN LẠI CÁC CÂY SÚNG ĐÓ VÀO WEAPONHOLDER CỦA PLAYER MỚI
         Transform newHolder = FindDeepChild(newPlayer.transform, "WeaponHolder");

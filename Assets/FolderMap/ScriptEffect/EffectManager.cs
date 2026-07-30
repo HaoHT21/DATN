@@ -7,7 +7,6 @@ public class EffectManager : MonoBehaviour
 
     [Header("Attack Speed")]
     public float baseAttackRate = 0.5f;
-
     public float currentAttackRate;
 
     [Header("Base")]
@@ -17,7 +16,6 @@ public class EffectManager : MonoBehaviour
     public float currentMoveSpeed;
 
     private float speedBonus = 0f;
-
     private float slowMultiplier = 1f;
     private float slideSlowMultiplier = 1f;
 
@@ -25,7 +23,6 @@ public class EffectManager : MonoBehaviour
 
     public float fireValue;
     public float maxFire = 1f;
-
     private float lastFireTime;
 
     private PlayerHealth health;
@@ -33,35 +30,44 @@ public class EffectManager : MonoBehaviour
     private void Awake()
     {
         health = GetComponent<PlayerHealth>();
-
         player = GetComponent<PlayerController>();
 
-        ApplyStats();
-
         currentAttackRate = baseAttackRate;
-        player.attackRate = currentAttackRate;
+        ApplyStats();
     }
 
     private void ApplyStats()
     {
-        float speed = baseMoveSpeed + speedBonus;
-
-        speed *= slowMultiplier;
-        speed *= slideSlowMultiplier;
-
+        // 1. Xử lý trạng thái Đóng băng (Freeze)
         if (freezeCount > 0)
-            speed = 0;
+        {
+            currentMoveSpeed = 0f;
+            player.moveSpeed = 0f;
 
-        currentMoveSpeed = speed;
-        player.moveSpeed = speed;
+            // Bật trạng thái bị đóng băng ở PlayerController
+            if (player != null)
+                player.isFrozen = true;
+        }
+        else
+        {
+            // Tắt trạng thái đóng băng
+            if (player != null)
+                player.isFrozen = false;
+
+            // 2. Tính toán lại Tốc độ di chuyển khi hết Freeze
+            float speed = baseMoveSpeed + speedBonus;
+            speed *= slowMultiplier;
+            speed *= slideSlowMultiplier;
+
+            currentMoveSpeed = speed;
+            player.moveSpeed = speed;
+            player.attackRate = currentAttackRate; // Giữ nguyên attackRate chuẩn
+        }
     }
 
     //=========================
-
     // Speed
-
     //=========================
-
     public void AddSpeed(float amount)
     {
         speedBonus += amount;
@@ -74,12 +80,6 @@ public class EffectManager : MonoBehaviour
         ApplyStats();
     }
 
-    //=========================
-
-    // Temporary Buff
-
-    //=========================
-
     public void AddSpeedTemporary(float amount, float duration)
     {
         StartCoroutine(SpeedRoutine(amount, duration));
@@ -88,32 +88,24 @@ public class EffectManager : MonoBehaviour
     IEnumerator SpeedRoutine(float amount, float duration)
     {
         AddSpeed(amount);
-
         yield return new WaitForSeconds(duration);
-
         RemoveSpeed(amount);
     }
 
     //=========================
     // Slow
     //=========================
-
     public void SetSlow(float percent)
     {
         slowMultiplier = 1f - percent;
-
         ApplyStats();
     }
+
     public void RemoveSlow()
     {
         slowMultiplier = 1f;
-
         ApplyStats();
     }
-
-    //=========================
-    // Slide Slow
-    //=========================
 
     public void SetSlideSlow(float percent)
     {
@@ -128,21 +120,17 @@ public class EffectManager : MonoBehaviour
     }
 
     //=========================
-
-    // Freeze
-
+    // Freeze (Đóng băng - Khóa di chuyển + Khóa tấn công)
     //=========================
     public void AddFreeze()
     {
         freezeCount++;
-
         ApplyStats();
     }
 
     public void RemoveFreeze()
     {
         freezeCount--;
-
         if (freezeCount < 0)
             freezeCount = 0;
 
@@ -157,12 +145,13 @@ public class EffectManager : MonoBehaviour
     IEnumerator FreezeRoutine(float duration)
     {
         AddFreeze();
-
         yield return new WaitForSeconds(duration);
-
         RemoveFreeze();
     }
 
+    //=========================
+    // Attack Speed
+    //=========================
     public void AddAttackSpeed(float percent)
     {
         currentAttackRate *= 1f - percent;
@@ -170,38 +159,25 @@ public class EffectManager : MonoBehaviour
         if (currentAttackRate < 0.05f)
             currentAttackRate = 0.05f;
 
-        player.attackRate = currentAttackRate;
-
+        ApplyStats();
     }
 
     public void RemoveAttackSpeed(float percent)
     {
         currentAttackRate /= 1f - percent;
-
-        player.attackRate = currentAttackRate;
+        ApplyStats();
     }
 
-    public void AddAttackSpeedTemporary(
-    float percent,
-    float duration)
+    public void AddAttackSpeedTemporary(float percent, float duration)
     {
-        StartCoroutine(
-            AttackSpeedRoutine(percent, duration));
+        StartCoroutine(AttackSpeedRoutine(percent, duration));
     }
 
-
-
-    IEnumerator AttackSpeedRoutine(
-    float percent,
-    float duration)
+    IEnumerator AttackSpeedRoutine(float percent, float duration)
     {
-        float old = player.attackRate;
-
-        player.attackRate *= 1f - percent;
-
+        AddAttackSpeed(percent);
         yield return new WaitForSeconds(duration);
-
-        player.attackRate = old;
+        RemoveAttackSpeed(percent);
     }
 
     public void ResetFireHeat()
@@ -213,10 +189,8 @@ public class EffectManager : MonoBehaviour
     {
         fireValue += amount;
         fireValue = Mathf.Clamp(fireValue, 0, maxFire);
-
         lastFireTime = Time.time;
     }
 
     public float LastFireTime => lastFireTime;
-
 }

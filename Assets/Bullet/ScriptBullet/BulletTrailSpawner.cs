@@ -138,5 +138,12 @@ public class BulletTrailSpawner : MonoBehaviour
 
             Destroy(gameObject);
         }
+
+        if (other.TryGetComponent<IDamageable>(out var damageableTarget))
+        {
+            damageableTarget.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
+        }
     }
 }

@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Scene")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
+    [SerializeField] private SceneTransitionMode transitionMode = SceneTransitionMode.Asynchronous;
 
     [Header("Điều khiển")]
     [SerializeField] private bool togglePauseWithEscape = true;
@@ -39,7 +40,11 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance == this)
+        {
+            // BẮT BỘC: Đảm bảo khi GameManager bị xóa/chuyển scene, Time scale & Audio được trả về bình thường
+            RestoreTimeBeforeSceneLoad();
             Instance = null;
+        }
     }
 
     private void Update()
@@ -69,7 +74,9 @@ public class GameManager : MonoBehaviour
         if (IsGameplayPaused)
             return;
 
+        // Lưu lại timescale cũ trước khi dừng game (mặc định là 1f nếu nhỏ hơn hoặc bằng 0)
         _timeScaleBeforePause = Time.timeScale > 0f ? Time.timeScale : 1f;
+
         SetState(GameState.Paused);
         Time.timeScale = 0f;
         AudioListener.pause = true;
@@ -85,17 +92,28 @@ public class GameManager : MonoBehaviour
         AudioListener.pause = false;
     }
 
+    /// <summary>
+    /// Lưu game, trả lại TimeScale và quay về Main Menu
+    /// </summary>
     public void ExitToMainMenu()
     {
         GameSessionSave.SaveCurrentSession();
         RestoreTimeBeforeSceneLoad();
 
         if (SceneTransitionManager.Instance != null)
-            SceneTransitionManager.Instance.LoadScene(mainMenuSceneName);
+        {
+            SceneTransitionManager.Instance.LoadScene(
+                new SceneTransitionRequest(mainMenuSceneName, transitionMode));
+        }
         else
+        {
             SceneManager.LoadScene(mainMenuSceneName);
+        }
     }
 
+    /// <summary>
+    /// Lưu game và thoát ứng dụng hẳn
+    /// </summary>
     public void QuitApplication()
     {
         GameSessionSave.SaveCurrentSession();

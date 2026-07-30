@@ -74,7 +74,7 @@ Transform:
   m_GameObject: {fileID: 5708223457054644839}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -991.9, y: 173.2, z: 0}
+  m_LocalPosition: {x: 113.98, y: -97.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -130,7 +130,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 4529013731077683105}
   hitColliders: []
   sprites: []
-  moveSpeed: 10
+  moveSpeed: 20
   detectRange: 60
   wallLayer:
     serializedVersion: 2
@@ -140,7 +140,7 @@ MonoBehaviour:
   icePrefab: {fileID: 9035861995818589019, guid: 445ef3660c83efb4395a4cf857f8ef19, type: 3}
   icePoint: {fileID: 1161897125325457446}
   iceBurstCount: 1
-  iceCount: 15
+  iceCount: 30
   attackIcePrefab: {fileID: 2253353001783897143, guid: fb8ead5dd91167d4e8c524b164aab8ea, type: 3}
   attackIcePoint: {fileID: 8994751653521422405}
   attackIceCount: 3
@@ -370,7 +370,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.71, y: 0.94}
+  m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
 --- !u!58 &7580510381073735553
 CircleCollider2D:

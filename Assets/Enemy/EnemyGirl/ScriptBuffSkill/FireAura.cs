@@ -59,8 +59,8 @@ public class FireAura : MonoBehaviour
                 continue;
             }
 
-            EnemyHealth enemy =
-                targets[i].GetComponent<EnemyHealth>();
+            EnemyHeath enemy =
+                targets[i].GetComponent<EnemyHeath>();
 
             if (enemy != null)
             {

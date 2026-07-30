@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class TrapLock : MonoBehaviour
@@ -7,7 +7,6 @@ public class TrapLock : MonoBehaviour
     public Animator animator;
 
     public float lockTime = 2f;
-
     private bool activated;
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -23,19 +22,10 @@ public class TrapLock : MonoBehaviour
         if (animator != null)
             animator.Play("Lock");
 
-        PlayerController player =
-            other.GetComponent<PlayerController>();
-
-        if (player != null)
-            StartCoroutine(LockPlayer(player));
-    }
-
-    IEnumerator LockPlayer(PlayerController player)
-    {
-        player.enabled = false;
-
-        yield return new WaitForSeconds(lockTime);
-
-        player.enabled = true;
+        // Gọi EffectManager để khóa cả di chuyển và tấn công
+        if (other.TryGetComponent(out EffectManager effect))
+        {
+            effect.Freeze(lockTime);
+        }
     }
 }

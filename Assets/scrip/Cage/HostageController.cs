@@ -236,12 +236,23 @@ public class HostageController : MonoBehaviour
     {
         RegisterTransferIfNeeded();
 
-        if (hostagePrefab != null && houseSpawnPoint != null)
+        if (hostagePrefab != null)
         {
-            Instantiate(
-                hostagePrefab,
-                houseSpawnPoint.position,
-                houseSpawnPoint.rotation);
+            GameObject spawn =
+                GameObject.FindGameObjectWithTag("Spawn");
+
+            if (spawn != null)
+            {
+                Instantiate(
+                    hostagePrefab,
+                    spawn.transform.position,
+                    spawn.transform.rotation
+                );
+            }
+            else
+            {
+                Debug.LogWarning("Không tìm thấy GameObject có tag Spawn.");
+            }
         }
 
         Destroy(gameObject);

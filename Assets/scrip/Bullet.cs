@@ -1,5 +1,10 @@
 ﻿using UnityEngine;
 
+public interface IDamageable
+{
+    void TakeDamage(int damageAmount);
+}
+
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
 public class Bullet : MonoBehaviour
 {
@@ -36,23 +41,9 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        if (col.TryGetComponent<Bomb>(out var bomb))
+        if (col.TryGetComponent<IDamageable>(out var damageableTarget))
         {
-            bomb.TakeDamage(damage);
-            HitEffect();
-            return;
-        }
-
-        if (col.TryGetComponent<PoisonSpawner>(out var poison))
-        {
-            poison.TakeDamage(damage);
-            HitEffect();
-            return;
-        }
-
-        if (col.TryGetComponent<BulletSpawnerIce>(out var ice))
-        {
-            ice.TakeDamage(damage);
+            damageableTarget.TakeDamage(damage);
             HitEffect();
             return;
         }

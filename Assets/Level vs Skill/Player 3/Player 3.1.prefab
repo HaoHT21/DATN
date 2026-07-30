@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 3121600423962362563}
   - component: {fileID: 3413304890491269008}
   - component: {fileID: 3608503133336774940}
+  - component: {fileID: 6593908165850445323}
   m_Layer: 6
   m_Name: Player 3.1
   m_TagString: Player
@@ -146,7 +147,7 @@ Transform:
   m_GameObject: {fileID: 8858723166439186541}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 34.392784, y: -24.13188, z: 0}
+  m_LocalPosition: {x: 28.587013, y: -23.531033, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -375,15 +376,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   splatterSkillPrefab: {fileID: 9102177267407252235, guid: bf549a9c6f9552548805a9aea085e665, type: 3}
   splatterCooldown: 1.5
-  splatterCastSound: {fileID: 0}
   splatterHitSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
   poisonProjectilePrefab: {fileID: 3045699094172907557, guid: 4548961946e158540bba534f46ca320c, type: 3}
   poisonCooldown: 3
-  poisonCastSound: {fileID: 0}
   poisonHitSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
   energySkillPrefab: {fileID: 2257653794705168774, guid: ff26906e5e57a1b43b8ffbddea176374, type: 3}
   energyCooldown: 2
-  energyCastSound: {fileID: 0}
   energyHitSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
   skillVolume: 62.3
 --- !u!114 &3413304890491269008
@@ -402,6 +400,8 @@ MonoBehaviour:
   currentAttackRate: 0
   baseMoveSpeed: 5
   currentMoveSpeed: 0
+  fireValue: 0
+  maxFire: 1
 --- !u!114 &3608503133336774940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -415,3 +415,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentFollower: {fileID: 0}
+--- !u!114 &6593908165850445323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8858723166439186541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1340ee42ebb70524181e8edaf1b40dd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSkill: {fileID: 0}

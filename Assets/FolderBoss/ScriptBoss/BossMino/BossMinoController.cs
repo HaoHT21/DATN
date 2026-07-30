@@ -226,7 +226,7 @@ public class BossMinoController : BossController
 
     void FireBullets()
     {
-        float spread = 60f;
+        float spread = 50f;
 
         if (bulletCount <= 1)
         {

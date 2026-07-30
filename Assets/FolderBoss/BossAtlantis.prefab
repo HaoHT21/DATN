@@ -169,7 +169,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.02996564, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -179,7 +179,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.3626883, y: 0.65}
+  m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0
 --- !u!58 &6616156804610993162
 CircleCollider2D:
@@ -306,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 5922061935708019749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -978.6, y: 167.8, z: 0}
+  m_LocalPosition: {x: 92.01, y: -91.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -361,7 +361,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 6565258463793625397}
   hitColliders: []
   sprites: []
-  moveSpeed: 10
+  moveSpeed: 20
   detectRange: 60
   wallLayer:
     serializedVersion: 2
@@ -370,13 +370,13 @@ MonoBehaviour:
   thinkMax: 1.5
   bulletPrefab: {fileID: 4554662268799726002, guid: 652691a15305cb04da23b23b2f97874b, type: 3}
   firePoint: {fileID: 4481129972615789737}
-  bulletCount: 2
+  bulletCount: 3
   bulletInterval: 0.3
   flyBulletPrefab: {fileID: 3417836176469242662, guid: 1fd4f84cdf192d04685c8df7459a62ab, type: 3}
   flyBulletCount: 20
   flyDuration: 10
   flyRadius: 10
-  flySpawnInterval: 0.3
+  flySpawnInterval: 0.1
 --- !u!114 &4499489812840188820
 MonoBehaviour:
   m_ObjectHideFlags: 0

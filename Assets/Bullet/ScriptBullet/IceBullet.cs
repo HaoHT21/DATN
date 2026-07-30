@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
 public class IceBullet : MonoBehaviour
@@ -8,7 +7,7 @@ public class IceBullet : MonoBehaviour
     public int damage = 10;
 
     [Header("Freeze")]
-    public float freezeDuration = 2f; //Thời gian đóng băn
+    public float freezeDuration = 2f; // Thời gian đóng băng
 
     [Header("Effect")]
     public GameObject hitEffectPrefab;
@@ -18,11 +17,9 @@ public class IceBullet : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
         GetComponent<Collider2D>().isTrigger = true;
 
-        rb.linearVelocity =
-            transform.right * speed;
+        rb.linearVelocity = transform.right * speed;
 
         Destroy(gameObject, 3f);
     }
@@ -32,11 +29,12 @@ public class IceBullet : MonoBehaviour
         if (col.isTrigger)
             return;
 
-        // Player
-        if (col.TryGetComponent(out PlayerHealth player))
+        // Xử lý khi va chạm Player
+        if (col.TryGetComponent(out PlayerHealth playerHealth))
         {
-            player.TakeDamage(damage);
+            playerHealth.TakeDamage(damage);
 
+            // Gọi EffectManager để Freeze Player (Khóa di chuyển + Tấn công)
             if (col.TryGetComponent(out EffectManager effect))
             {
                 effect.Freeze(freezeDuration);
@@ -45,9 +43,17 @@ public class IceBullet : MonoBehaviour
             Hit();
             return;
         }
+
         if (col.CompareTag("Wall"))
         {
             Destroy(gameObject);
+        }
+
+        if (col.TryGetComponent<IDamageable>(out var damageableTarget))
+        {
+            damageableTarget.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
         }
     }
 
@@ -55,10 +61,7 @@ public class IceBullet : MonoBehaviour
     {
         if (hitEffectPrefab != null)
         {
-            Instantiate(
-                hitEffectPrefab,
-                transform.position,
-                Quaternion.identity);
+            Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
         }
 
         Destroy(gameObject);

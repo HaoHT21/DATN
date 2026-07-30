@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 4085776588826549109}
   - component: {fileID: 6375829319996241864}
   - component: {fileID: 5336805264897951525}
+  - component: {fileID: 2804524352336339011}
   m_Layer: 6
   m_Name: Player 2.1
   m_TagString: Player
@@ -148,7 +149,7 @@ Transform:
   m_GameObject: {fileID: 8947821326295191854}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 32.23099, y: -23.325348, z: 0}
+  m_LocalPosition: {x: 27.61483, y: -21.484331, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -442,6 +443,8 @@ MonoBehaviour:
   currentAttackRate: 0
   baseMoveSpeed: 5
   currentMoveSpeed: 0
+  fireValue: 0
+  maxFire: 1
 --- !u!114 &5336805264897951525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -455,3 +458,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentFollower: {fileID: 0}
+--- !u!114 &2804524352336339011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8947821326295191854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1340ee42ebb70524181e8edaf1b40dd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSkill: {fileID: 0}

@@ -64,6 +64,7 @@ GameObject:
   - component: {fileID: 8950429725722168021}
   - component: {fileID: 8985563923785397325}
   - component: {fileID: 8385765630928523781}
+  - component: {fileID: 5725719030731623547}
   m_Layer: 0
   m_Name: Crow
   m_TagString: Enemy
@@ -80,8 +81,8 @@ Transform:
   m_GameObject: {fileID: 6194156978465875573}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25.5, y: -22.36, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalPosition: {x: -384.49, y: -172.37, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7899542836799338750}
@@ -198,7 +199,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.029434443, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -208,7 +209,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.37294382, y: 0.88}
+  m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0
 --- !u!50 &2765257692726877515
 Rigidbody2D:
@@ -253,6 +254,7 @@ MonoBehaviour:
   currentHealth: 100
   expReward: 30
   destroyDelay: 0.5
+  showHealthBar: 1
 --- !u!114 &7127339810580361304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,9 +270,9 @@ MonoBehaviour:
   moveSpeed: 3
   hurtDuration: 0.3
   knockbackForce: 5
-  enemyVisual: {fileID: 5002864995115844413}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 5002864995115844413}
 --- !u!114 &8950429725722168021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,8 +286,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 1
-  maxCoin: 25
+  minCoin: 25
+  maxCoin: 50
 --- !u!114 &8985563923785397325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,3 +344,15 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &5725719030731623547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6194156978465875573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c9257929df4934aa286177093002dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

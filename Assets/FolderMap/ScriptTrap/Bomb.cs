@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class Bomb : MonoBehaviour
+public class Bomb : MonoBehaviour, IDamageable
 {
     [Header("Health")]
     public int hp = 1;
@@ -19,6 +18,9 @@ public class Bomb : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
+
+        if (col != null)
+            col.enabled = false;
     }
 
     public void TakeDamage(int damageAmount)
@@ -39,9 +41,8 @@ public class Bomb : MonoBehaviour
 
         exploded = true;
 
-        // Tắt collider được chỉ định trong Inspector
         if (col != null)
-            col.isTrigger = false;
+            col.enabled = true;
 
         animator.Play("Boom");
 
@@ -52,41 +53,14 @@ public class Bomb : MonoBehaviour
 
     private void DamageNearby()
     {
-        Collider2D[] hits =
-            Physics2D.OverlapCircleAll(transform.position, radius);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
 
         foreach (Collider2D hit in hits)
         {
-            // Enemy
-            if (hit.TryGetComponent(out EnemyHeath enemy))
+            // Các vật thể gần đó cũng nhận damage nếu có IDamageable
+            if (hit.TryGetComponent<IDamageable>(out var target))
             {
-                enemy.TakeDamage(damage);
-
-                Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    Vector2 dir =
-                        (hit.transform.position - transform.position).normalized;
-                }
-            }
-
-            // Player
-            if (hit.TryGetComponent(out PlayerHealth player))
-            {
-                player.TakeDamage(damage);
-
-                Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    Vector2 dir =
-                        (hit.transform.position - transform.position).normalized;
-                }
-            }
-
-            // Tile phá hủy
-            if (hit.TryGetComponent(out BreakableTile tile))
-            {
-                tile.TakeDamage(damage);
+                target.TakeDamage(damage);
             }
         }
     }

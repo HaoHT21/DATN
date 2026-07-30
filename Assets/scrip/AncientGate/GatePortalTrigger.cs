@@ -21,7 +21,5 @@ public class GatePortalTrigger : MonoBehaviour
 
         if (gate.State != GateState.Open)
             return;
-
-        gate.OnPlayerEnterPortal();
     }
 }
