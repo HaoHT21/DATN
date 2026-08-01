@@ -8,7 +8,7 @@ public class PlayerSkillReceiver : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             UseSkill();
         }

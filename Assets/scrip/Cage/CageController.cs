@@ -42,13 +42,14 @@ public class CageController : MonoBehaviour
     {
         HostageRescueManager.EnsureInstance();
 
-        if (hostage != null
-            && !string.IsNullOrEmpty(hostage.HostageId)
-            && HostageRescueManager.Instance.IsAlreadyRescued(hostage.HostageId))
-        {
-            State = CageState.Rescued;
-            hostage.gameObject.SetActive(false);
-        }
+        // COMMENT HOẶC XÓA ĐOẠN NÀY ĐỂ GAME KHÔNG TỰ ẨN CON TIN KHI LOAD SCENE/GAME
+        //if (hostage != null
+        //    && !string.IsNullOrEmpty(hostage.HostageId)
+        //    && HostageRescueManager.Instance.IsAlreadyRescued(hostage.HostageId))
+        //{
+        //    State = CageState.Rescued;
+        //    hostage.gameObject.SetActive(false);
+        //}
 
         ApplyStateVisuals();
     }

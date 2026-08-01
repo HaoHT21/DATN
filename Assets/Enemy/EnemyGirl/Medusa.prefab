@@ -207,7 +207,7 @@ Transform:
   m_GameObject: {fileID: 5944653168162481949}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 31.48, y: -20.65, z: 0}
+  m_LocalPosition: {x: -289.13422, y: 42.71479, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -439,7 +439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 7
-  stopDistance: 2
+  stopDistance: 2.5
   resumeDistance: 3
   teleportDistance: 15
   teleportRadius: 2
@@ -479,10 +479,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: 
   skillIcon: {fileID: -3781910019033479378, guid: 24df5bc21a107534a9ca03e3c5590361, type: 3}
-  duration: 5
+  duration: 10
   cooldown: 5
   summonPrefab: {fileID: 1156701154677399796, guid: 083ffa3dae4a6054f9e04b625b799f04, type: 3}
-  summonCount: 3
+  summonCount: 2
   spawnRadius: 2
 --- !u!1 &6027539670274524487
 GameObject:
@@ -654,8 +654,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.07, y: 0.6}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0.07, y: 0.8711}
+  m_SizeDelta: {x: 20, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8520145520621339722
 GameObject:
@@ -691,10 +691,10 @@ RectTransform:
   - {fileID: 2421737495702230416}
   m_Father: {fileID: 4333292638883080151}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 50, y: 50.000008}
-  m_SizeDelta: {x: 22.1192, y: 4.0143}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.0000076293945}
+  m_SizeDelta: {x: 22.119202, y: 4.0143013}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8320254146559940128
 Canvas:
@@ -794,10 +794,10 @@ RectTransform:
   - {fileID: 4988239206770296669}
   m_Father: {fileID: 4333292638883080151}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 50, y: 50.000008}
-  m_SizeDelta: {x: 22.1192, y: 4.0143}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.0000076293945}
+  m_SizeDelta: {x: 22.119202, y: 4.0143013}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8254333140758152691
 Canvas:

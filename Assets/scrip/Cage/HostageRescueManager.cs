@@ -130,44 +130,49 @@ public class HostageRescueManager : MonoBehaviour
     {
         _rescuedIds.Clear();
         _records.Clear();
-        RescuedCount = PlayerPrefs.GetInt(CountKey, 0);
 
-        if (!PlayerPrefs.HasKey(RecordsKey))
-            return;
+        // Ép số lượng đếm về 0 khi bắt đầu game
 
-        string raw = PlayerPrefs.GetString(RecordsKey, string.Empty);
-        if (string.IsNullOrEmpty(raw))
-            return;
+        RescuedCount = 0; 
+            //PlayerPrefs.GetInt(CountKey, 0);
 
-        string[] entries = raw.Split('|');
-        foreach (string entry in entries)
-        {
-            if (string.IsNullOrEmpty(entry))
-                continue;
+        //if (!PlayerPrefs.HasKey(RecordsKey))
+        //    return;
 
-            string[] parts = entry.Split(':');
-            if (parts.Length < 3)
-                continue;
+        //string raw = PlayerPrefs.GetString(RecordsKey, string.Empty);
+        //if (string.IsNullOrEmpty(raw))
+        //    return;
 
-            var record = new HostageTransferRecord
-            {
-                hostageId = parts[0],
-                targetSceneName = parts[1],
-                spawnPointId = parts[2]
-            };
+        //string[] entries = raw.Split('|');
+        //foreach (string entry in entries)
+        //{
+        //    if (string.IsNullOrEmpty(entry))
+        //        continue;
 
-            _rescuedIds.Add(record.hostageId);
-            _records[record.hostageId] = record;
-        }
+        //    string[] parts = entry.Split(':');
+        //    if (parts.Length < 3)
+        //        continue;
 
-        RescuedCount = _rescuedIds.Count;
+        //    var record = new HostageTransferRecord
+        //    {
+        //        hostageId = parts[0],
+        //        targetSceneName = parts[1],
+        //        spawnPointId = parts[2]
+        //    };
+
+        //    _rescuedIds.Add(record.hostageId);
+        //    _records[record.hostageId] = record;
+        //}
+
+        //RescuedCount = _rescuedIds.Count;
     }
 
     private void SaveData()
     {
-        PlayerPrefs.SetInt(CountKey, RescuedCount);
-        PlayerPrefs.SetString(RecordsKey, BuildRecordsPayload());
-        PlayerPrefs.Save();
+        // COMMENT LẠI ĐỂ KHÔNG TỰ ĐỘNG LƯU VÀO PLAYERPREFS NỮA
+        //PlayerPrefs.SetInt(CountKey, RescuedCount);
+        //PlayerPrefs.SetString(RecordsKey, BuildRecordsPayload());
+        //PlayerPrefs.Save();
     }
 
     private string BuildRecordsPayload()

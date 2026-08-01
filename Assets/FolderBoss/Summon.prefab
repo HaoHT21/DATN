@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6454910713266590159}
   - component: {fileID: 1025348016193689015}
   - component: {fileID: 8845740285372074596}
+  - component: {fileID: -1340191943817347638}
   m_Layer: 10
   m_Name: Summon
   m_TagString: Enemy
@@ -281,6 +282,19 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &-1340191943817347638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2359222360881132017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953f3f9756a834245ae78ecec2ed86c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeTime: 10
 --- !u!1 &7545844921616473371
 GameObject:
   m_ObjectHideFlags: 0

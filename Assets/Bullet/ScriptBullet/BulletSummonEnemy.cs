@@ -51,5 +51,12 @@ public class BulletSummonEnemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        if (other.TryGetComponent<IDamageable>(out var damageableTarget))
+        {
+            damageableTarget.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
+        }
     }
 }

@@ -17,6 +17,9 @@ public class HeroSlot : MonoBehaviour
     private List<HeroData> availableHeroes;
     private int currentIndex;
 
+    // LƯU DANH SÁCH DẠNG RAM (Mất khi tắt game, còn hiệu lực khi đang chơi)
+    private static HashSet<int> sessionOwnedHeroes = new HashSet<int>();
+
     public void Setup(List<HeroData> heroes)
     {
         Debug.Log("HeroSlot Setup");
@@ -47,7 +50,19 @@ public class HeroSlot : MonoBehaviour
         UpdateDisplay();
     }
 
-    private void UpdateDisplay()
+    //Code thêm
+    // Kiểm tra xem hero đã được sở hữu trong phiên chơi này chưa
+    private bool CheckIsOwned(HeroData hero)
+    {
+        // 1. Mặc định hero đầu tiên hoặc ID 1, 21 luôn mở
+        if (currentIndex == 0 || hero.itemID == 1 || hero.itemID == 21)
+            return true;
+
+        // 2. Kiểm tra xem đã mua trong phiên chơi này chưa
+        return sessionOwnedHeroes.Contains(hero.itemID);
+    }
+
+    public void UpdateDisplay()
     {
         if (availableHeroes == null || availableHeroes.Count == 0)
             return;
@@ -56,12 +71,17 @@ public class HeroSlot : MonoBehaviour
 
         iconImage.sprite = hero.icon;
 
-        bool isOwned = PlayerPrefs.GetInt("HiroOwned_" + hero.itemID, 0) == 1;
+        //Thêm dòng này
+        // Kiểm tra quyền sở hữu trong RAM
+        bool isOwned = CheckIsOwned(hero);
 
-        if (currentIndex == 0 || hero.itemID == 1 || hero.itemID == 21)
-        {
-            isOwned = true;
-        }
+        //Comment dòng này
+        //bool isOwned = PlayerPrefs.GetInt("HiroOwned_" + hero.itemID, 0) == 1;
+
+        //if (currentIndex == 0 || hero.itemID == 1 || hero.itemID == 21)
+        //{
+        //    isOwned = true;
+        //}
 
         if (isOwned)
         {
@@ -107,15 +127,21 @@ public class HeroSlot : MonoBehaviour
 
         HeroData hero = availableHeroes[currentIndex];
 
-        bool isOwned = PlayerPrefs.GetInt("HiroOwned_" + hero.itemID, 0) == 1;
-        if (currentIndex == 0 || hero.itemID == 1 || hero.itemID == 21) isOwned = true;
+        //Thêm dòng này
+        // SỬA TẠI ĐÂY: Dùng CheckIsOwned(hero) thay vì đọc PlayerPrefs
+        bool isOwned = CheckIsOwned(hero);
+
+        //Comment dòng này
+        //bool isOwned = PlayerPrefs.GetInt("HiroOwned_" + hero.itemID, 0) == 1;
+        //if (currentIndex == 0 || hero.itemID == 1 || hero.itemID == 21) isOwned = true;
 
         if (isOwned)
         {
             Debug.Log($"[Shop] Đã chọn đổi sang nhân vật: {hero.heroName}");
 
-            PlayerPrefs.SetInt("SelectedHeroID", hero.itemID);
-            PlayerPrefs.Save();
+            //Comment dòng này
+            //PlayerPrefs.SetInt("SelectedHeroID", hero.itemID);
+            //PlayerPrefs.Save();
 
             SwapPlayerOnMap(hero);
             UpdateDisplay();
@@ -124,14 +150,28 @@ public class HeroSlot : MonoBehaviour
         {
             if (PlayerStats.Instance != null)
             {
-                PlayerStats.Instance.TryPurchase(hero.price, hero.itemID);
+                // KIỂM TRA ĐỦ TIỀN MỚI CHO MUA
+                bool isSuccess = PlayerStats.Instance.TryPurchase(hero.price, hero.itemID);
 
-                PlayerPrefs.SetInt("HiroOwned_" + hero.itemID, 1);
-                PlayerPrefs.SetInt("SelectedHeroID", hero.itemID);
-                PlayerPrefs.Save();
+                if (isSuccess)
+                {
+                    //Thêm dòng này
+                    // LƯU VÀO RAM TẠM THỜI (Không ghi vào ổ cứng/PlayerPrefs)
+                    sessionOwnedHeroes.Add(hero.itemID);
 
-                SwapPlayerOnMap(hero);
-                UpdateDisplay();
+                    //Comment dòng này
+                    //PlayerPrefs.SetInt("HiroOwned_" + hero.itemID, 1);
+                    //PlayerPrefs.SetInt("SelectedHeroID", hero.itemID);
+                    //PlayerPrefs.Save();
+
+                    SwapPlayerOnMap(hero);
+                    UpdateDisplay();
+                    Debug.Log($"<color=green>[Shop]</color> Mua thành công nhân vật: {hero.heroName}");
+                }
+                else
+                {
+                    Debug.LogWarning($"<color=red>[Shop]</color> Không đủ tiền mua nhân vật: {hero.heroName}!");
+                }
             }
             else
             {
@@ -140,7 +180,7 @@ public class HeroSlot : MonoBehaviour
         }
     }
 
-    // HÀM SWAP PLAYER VÀ GIỮ NGUYÊN SÚNG TRÊN TAY CỰC MƯỢT
+    // HÀM SWAP PLAYER VÀ GIỮ NGUYÊN SCALE SÚNG CHUẨN KHI MỚI LƯỢM
     private void SwapPlayerOnMap(HeroData hero)
     {
         if (hero.heroPrefab == null)
@@ -149,12 +189,13 @@ public class HeroSlot : MonoBehaviour
             return;
         }
 
-        // 1. TÌM PLAYER CŨ & TÁCH SÚNG RA NGOÀI ĐỂ KHÔNG BỊ DESTROY
+        // 1. TÌM PLAYER CŨ & LƯỢM SÚNG BẮT ĐẦU TÁCH
         GameObject[] oldPlayers = GameObject.FindGameObjectsWithTag("Player");
         Vector3 spawnPos = Vector3.zero;
         Quaternion spawnRot = Quaternion.identity;
 
         List<Transform> currentGuns = new List<Transform>();
+        List<Vector3> originalGunScales = new List<Vector3>();
 
         if (oldPlayers.Length > 0)
         {
@@ -163,7 +204,7 @@ public class HeroSlot : MonoBehaviour
 
             foreach (GameObject p in oldPlayers)
             {
-                p.tag = "Untagged"; // Đổi tag để tránh trùng
+                p.tag = "Untagged";
 
                 Transform oldHolder = FindDeepChild(p.transform, "WeaponHolder");
                 if (oldHolder != null)
@@ -172,52 +213,57 @@ public class HeroSlot : MonoBehaviour
                     {
                         Transform gun = oldHolder.GetChild(i);
                         currentGuns.Add(gun);
+                        // LƯU LẠI SCALE CHUẨN CỦA SÚNG TRƯỚC KHIN TÁCH
+                        originalGunScales.Add(gun.localScale);
                     }
                 }
 
-                // CỰC KỲ QUAN TRỌNG: Tách tất cả các con súng ra khỏi Player cũ ngay lập tức
                 foreach (Transform gun in currentGuns)
                 {
-                    gun.SetParent(null); // Đưa súng ra ngoài Hierarchy tạm thời
+                    gun.SetParent(null);
                 }
 
-                p.SetActive(false); // Ẩn Player cũ
-                Destroy(p);         // Xóa Player cũ
+                p.SetActive(false);
+                Destroy(p);
             }
         }
 
-        // 2. SINH RA 1 CON PLAYER MỚI
+        // 2. SINH PLAYER MỚI
         GameObject newPlayer = Instantiate(hero.heroPrefab, spawnPos, spawnRot);
-        newPlayer.tag = "Player"; // Gán lại Tag chuẩn
+        newPlayer.tag = "Player";
 
-        //// 3. CẬP NHẬT CAMERA FOLLOW
-        //CameraFollow cam = FindFirstObjectByType<CameraFollow>();
-        //if (cam != null)
-        //{
-        //    cam.target = newPlayer.transform;
-        //}
+        // 3. CẬP NHẬT CINEMACHINE CAMERA FOLLOW CHUẨN UNITY 6
+        Unity.Cinemachine.CinemachineCamera cmCam6 = FindFirstObjectByType<Unity.Cinemachine.CinemachineCamera>();
+        if (cmCam6 != null)
+        {
+            cmCam6.Follow = newPlayer.transform;
+            cmCam6.LookAt = newPlayer.transform;
+        }
 
-        // 4. GẮN LẠI CÁC CÂY SÚNG ĐÓ VÀO WEAPONHOLDER CỦA PLAYER MỚI
+        // 4. GẮN SÚNG VÀO WEAPONHOLDER CỦA PLAYER MỚI VỚI SCALE GỐC
         Transform newHolder = FindDeepChild(newPlayer.transform, "WeaponHolder");
 
         if (newHolder != null && currentGuns.Count > 0)
         {
-            foreach (Transform gun in currentGuns)
+            for (int i = 0; i < currentGuns.Count; i++)
             {
-                gun.SetParent(newHolder); // Gắn lại làm con của WeaponHolder mới
-                gun.localPosition = Vector3.zero; // Căn về chính giữa tay
+                Transform gun = currentGuns[i];
+                gun.SetParent(newHolder);
+                gun.localPosition = Vector3.zero;
                 gun.localRotation = Quaternion.identity;
-                gun.localScale = Vector3.one;
+
+                // TRẢ LẠI SCALE CHUẨN BAN ĐẦU CỦA SÚNG
+                gun.localScale = originalGunScales[i];
+
                 gun.gameObject.SetActive(true);
 
-                // Ép Sprite Súng hiện rõ ràng trên tay
                 SpriteRenderer sr = gun.GetComponent<SpriteRenderer>();
                 if (sr == null) sr = gun.GetComponentInChildren<SpriteRenderer>();
 
                 if (sr != null)
                 {
                     sr.enabled = true;
-                    sr.sortingOrder = 15; // Nổi đè lên trên Sprite nhân vật
+                    sr.sortingOrder = 15;
                 }
             }
         }
@@ -232,5 +278,21 @@ public class HeroSlot : MonoBehaviour
             if (result != null) return result;
         }
         return null;
+    }
+
+    // ==========================================
+    // HÀM RESET DỮ LIỆU SHOP VỀ BAN ĐẦU
+    // ==========================================
+    public static void ResetAllShopData()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("<color=green>[Shop Reset]</color> Đã xóa toàn bộ dữ liệu mua nhân vật!");
+
+        HeroSlot[] slots = FindObjectsByType<HeroSlot>(FindObjectsSortMode.None);
+        foreach (var slot in slots)
+        {
+            slot.UpdateDisplay();
+        }
     }
 }

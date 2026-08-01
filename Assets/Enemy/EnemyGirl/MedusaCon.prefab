@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 772459697827646398}
   - component: {fileID: 7832539783000505366}
   - component: {fileID: 6241919408892893383}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: MedusaCon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,7 @@ MonoBehaviour:
   moveSpeed: 5
   detectRange: 20
   attackRange: 5
-  attackRate: 0.5
+  attackRate: 1
   lifeTime: 10
   firePoint: {fileID: 4752543099076257993}
   bulletPrefab: {fileID: 7517353825460300998, guid: c34a425eb95bc9b4f97528684ea4478f, type: 3}
@@ -215,7 +215,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4752543099076257993}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: HitboxDame
   m_TagString: Untagged
   m_Icon: {fileID: 0}

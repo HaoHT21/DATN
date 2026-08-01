@@ -11,6 +11,7 @@ public class MenuManager : MonoBehaviour
 
     [Header("Buttons")]
     [SerializeField] private Button continueButton;
+    [SerializeField] private Button quitButton; // Nút Exit/Quit trong Menu (nếu có)
 
     [Header("Intro Video Settings")]
     public VideoPlayer introVideo;
@@ -28,6 +29,10 @@ public class MenuManager : MonoBehaviour
 
         if (continueButton != null)
             continueButton.interactable = SaveGameService.HasSave();
+
+        // Gán sự kiện click cho QuitButton nếu được kéo thả trong Inspector
+        if (quitButton != null)
+            quitButton.onClick.AddListener(QuitGame);
 
         if (introVideo != null)
         {
@@ -167,5 +172,25 @@ public class MenuManager : MonoBehaviour
     {
         if (settingPanel != null)
             settingPanel.SetActive(false);
+    }
+
+    // ==========================================
+    // TÍNH NĂNG THOÁT GAME (QUIT GAME)
+    // ==========================================
+
+    /// <summary>
+    /// Hàm gọi khi nhấn nút Exit/Quit Game trong Menu UI
+    /// </summary>
+    public void QuitGame()
+    {
+        Debug.Log("[MenuManager] Người chơi đang thoát game...");
+
+#if UNITY_EDITOR
+        // Tắt Play Mode nếu đang chạy trong Unity Editor
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // Thoát ứng dụng hoàn toàn khi đã Build game
+        Application.Quit();
+#endif
     }
 }

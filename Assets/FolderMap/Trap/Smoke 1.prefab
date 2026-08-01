@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1442614527813020564}
   - component: {fileID: 326287331223093435}
   - component: {fileID: 6523147552546638226}
+  - component: {fileID: 6259155740949830719}
   m_Layer: 9
   m_Name: Smoke 1
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 1337739442873663513}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.26, y: 8.34, z: 0}
+  m_LocalPosition: {x: -277.16217, y: 46.75023, z: 0}
   m_LocalScale: {x: 6.5, y: 6.5, z: 6.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -149,3 +150,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.13, y: 0.16}
   m_EdgeRadius: 0
+--- !u!114 &6259155740949830719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1337739442873663513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08343a830b18d3043bcab4097fee946a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poisonSplashSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
+  poisonPoolLoopSound: {fileID: 0}
+  soundVolume: 100
+  poolAudioDuration: 5

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2954395439256851477}
   - component: {fileID: 4542824524541440051}
   - component: {fileID: 2839415032516647144}
+  - component: {fileID: 5979906325477860596}
   m_Layer: 9
   m_Name: BlackEnemy
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 266798420952353910}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.1180725, y: 6.5345135, z: 0}
+  m_LocalPosition: {x: -274.02, y: 46.49, z: 0}
   m_LocalScale: {x: 6.5, y: 6.5, z: 6.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -149,3 +150,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 1
   poisonAreaPrefab: {fileID: 2833892680418040988, guid: d8569a669aedaaf48b12be33b11b8402, type: 3}
+--- !u!114 &5979906325477860596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266798420952353910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08343a830b18d3043bcab4097fee946a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poisonSplashSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
+  poisonPoolLoopSound: {fileID: 0}
+  soundVolume: 100
+  poolAudioDuration: 5

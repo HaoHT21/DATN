@@ -876,14 +876,10 @@ MonoBehaviour:
   rescueDialogue:
   - nameCharacter1: 
     avatarCharacter1: {fileID: 0}
-    contentForPanel1: 'Fk
-
-'
-    nameCharacter2: 
-    avatarCharacter2: {fileID: 0}
-    contentForPanel2: 'CC
-
-'
+    contentForPanel1: "B\u1EA1n \u0111\xE3 \u0111\u01B0\u1EE3c c\u1EE9u"
+    nameCharacter2: Vampire
+    avatarCharacter2: {fileID: 4723107735738678597, guid: 1205bf9f001e10c4f9a118e7ce0d7f95, type: 3}
+    contentForPanel2: "C\u1EA3m \u01A1n"
   dialogueTypingSpeed: 0.05
   postDialogueDelay: 0.5
   rescueMode: 0
@@ -1187,7 +1183,7 @@ Transform:
   m_GameObject: {fileID: 4638321503031083221}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -96.84, y: 132.06, z: 0}
+  m_LocalPosition: {x: 24.26, y: -23.77, z: 0}
   m_LocalScale: {x: 2.4849, y: 2.4849, z: 2.4849}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1258,7 +1254,7 @@ MonoBehaviour:
     type: 0
     amount: 300
     itemData: {fileID: 0}
-  hostage: {fileID: 0}
+  hostage: {fileID: 3557995675473002125}
   interactionUI: {fileID: 3454409230733482066}
   cageAnimator: {fileID: 9181976794861680443}
   interactionTrigger: {fileID: 3622085252440658868}

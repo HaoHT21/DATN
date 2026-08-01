@@ -457,8 +457,12 @@ public class MapGenerator : MonoBehaviour
                     break;
 
                 case ObstacleLayoutType.Columns:
-                    int paddingX = Mathf.Clamp(room.width / 4, 2, 4);
-                    int paddingY = Mathf.Clamp(room.height / 4, 2, 4);
+                    // Cộng thêm 2 ô offset vào khoảng cách lùi từ mép tường
+                    int extraWallDistance = 2;
+
+                    // Tăng khoảng cách cách tường lên (ví dụ cũ là 2..4, nay cộng thêm extraWallDistance sẽ thành 4..6)
+                    int paddingX = Mathf.Clamp(room.width / 4 + extraWallDistance, 2 + extraWallDistance, 4 + extraWallDistance);
+                    int paddingY = Mathf.Clamp(room.height / 4 + extraWallDistance, 2 + extraWallDistance, 4 + extraWallDistance);
 
                     Vector2Int[] innerCorners = new Vector2Int[]
                     {

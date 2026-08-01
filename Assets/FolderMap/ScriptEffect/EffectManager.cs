@@ -175,9 +175,19 @@ public class EffectManager : MonoBehaviour
 
     IEnumerator AttackSpeedRoutine(float percent, float duration)
     {
-        AddAttackSpeed(percent);
+        float original = baseAttackRate;
+
+        currentAttackRate = Mathf.Max(
+            original * (1f - percent),
+            0.05f);
+
+        ApplyStats();
+
         yield return new WaitForSeconds(duration);
-        RemoveAttackSpeed(percent);
+
+        currentAttackRate = original;
+
+        ApplyStats();
     }
 
     public void ResetFireHeat()

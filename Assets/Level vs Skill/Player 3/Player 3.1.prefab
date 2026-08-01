@@ -108,10 +108,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateSpeed: 100
-  detectRadius: 8
+  detectRadius: 18
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
 --- !u!1 &8858723166439186541
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,7 +334,7 @@ MonoBehaviour:
   knockbackForce: 8
   invincibleTime: 0.5
   flashInterval: 0.08
-  spawnPosition: {x: 0, y: 0, z: 0}
+  spawnPosition: {x: 40, y: -13, z: 0}
 --- !u!114 &8956496976287561011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,8 +360,7 @@ MonoBehaviour:
   playerAvatar: {fileID: 0}
   isKnocked: 0
   reverseControl: 0
-  firePointXOffset: 0.355
-  firePointYOffset: 0.353
+  isFrozen: 0
 --- !u!114 &3121600423962362563
 MonoBehaviour:
   m_ObjectHideFlags: 0

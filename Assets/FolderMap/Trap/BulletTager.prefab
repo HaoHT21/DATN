@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 198982295062857327}
   - component: {fileID: 4961053160660287080}
   - component: {fileID: 991302595445591196}
+  - component: {fileID: -5811694643016337723}
   m_Layer: 9
   m_Name: BulletTager
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 8780310726241750686}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.383689, y: 6.8410673, z: 0}
+  m_LocalPosition: {x: -286.12, y: 41.91, z: 0}
   m_LocalScale: {x: 6.5, y: 6.5, z: 6.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -149,3 +150,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 1
   poisonAreaPrefab: {fileID: 3281635133511785733, guid: f5860d2215ac2fe45aced7a1b3dc612d, type: 3}
+--- !u!114 &-5811694643016337723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8780310726241750686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08343a830b18d3043bcab4097fee946a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poisonSplashSound: {fileID: 8300000, guid: 050b34391795cc84b85e5a43ff9ca63c, type: 3}
+  poisonPoolLoopSound: {fileID: 0}
+  soundVolume: 100
+  poolAudioDuration: 5

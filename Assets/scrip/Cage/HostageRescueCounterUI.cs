@@ -8,7 +8,7 @@ public class HostageRescueCounterUI : MonoBehaviour
 {
     [Header("UI")]
     public TextMeshProUGUI countText;
-    public string displayFormat = "Con tin đã cứu: {0}";
+    public string displayFormat = "Con tin đã cứu: {0}/8";
 
     private void OnEnable()
     {

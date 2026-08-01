@@ -17,7 +17,7 @@ public class PlayerStats : MonoBehaviour
     private void Start()
     {
         // Lưu ý: Nếu dữ liệu cũ reset tiền, hãy tạm thời comment dòng này lại để test
-        GameSessionSave.LoadInto(this);
+        //GameSessionSave.LoadInto(this);
         UpdateUI();
     }
 

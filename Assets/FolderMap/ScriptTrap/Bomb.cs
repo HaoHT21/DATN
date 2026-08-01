@@ -62,6 +62,21 @@ public class Bomb : MonoBehaviour, IDamageable
             {
                 target.TakeDamage(damage);
             }
+
+            // Damage Enemy
+            EnemyHeath enemy = hit.GetComponent<EnemyHeath>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
+
+            // Damage Player
+            PlayerHealth player = hit.GetComponent<PlayerHealth>();
+            if (player != null)
+            {
+                Vector2 hitDirection = (player.transform.position - transform.position).normalized;
+                player.TakeDamage(damage, hitDirection);
+            }
         }
     }
 
