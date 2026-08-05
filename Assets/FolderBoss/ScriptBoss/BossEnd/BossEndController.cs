@@ -10,16 +10,20 @@ public class BossEndController : MonoBehaviour
     public BossHeath bossHeath;
     public Transform bossVisual;
 
+    [Header("Phase Visual Objects")]
+    [Tooltip("Các GameObject / Effect chỉ bật ở Phase 1 (Sẽ tự tắt khi sang Phase 2)")]
+    public GameObject[] phase1Objects;
+
+    [Tooltip("Các GameObject / Visual / Aura mới xuất hiện ở Phase 2 trở đi")]
+    public GameObject[] phase2Objects;
+
     [Header("Range")]
     public float detectRange = 15f;
-
     public float keepDistance = 5f;
-
     public float dangerDistance = 2f;
 
     [Header("Move")]
     public float moveSpeed = 3f;
-
     public float dashSpeed = 10f;
 
     [Header("Thinking")]
@@ -27,21 +31,14 @@ public class BossEndController : MonoBehaviour
     public float thinkMax = 1.5f;
 
     [Header("Phase")]
-
     public int currentPhase = 1;
-
     bool changingPhase;
 
     [Header("Phase 3 Dodge")]
-
     public LayerMask bulletLayer;
-
     public LayerMask wallLayer;
-
     public float detectBulletRadius = 4f;
-
     public float dodgeDistance = 4f;
-
     bool dodging;
 
     [Header("UI")]
@@ -49,11 +46,8 @@ public class BossEndController : MonoBehaviour
 
     [Header("Skills")]
     public BossSkillShoot shootSkill;
-
     public BossSkillDashShoot dashShootSkill;
-
     public BossSkillBulletRain bulletRainSkill;
-
     public BossSkillTeleport teleportSkill;
 
     protected bool movementLocked;
@@ -66,11 +60,9 @@ public class BossEndController : MonoBehaviour
     protected bool isMoving;
     protected bool isDead;
 
-    [Header("Phase 3 Dodge")]
-
+    [Header("Phase 3 Dodge Settings")]
     [Tooltip("Boss chỉ được phép né bao nhiêu lần")]
     public int maxDodgeCount = 5;
-
     private int currentDodgeCount = 0;
 
     //--------------------------------
@@ -90,12 +82,10 @@ public class BossEndController : MonoBehaviour
 
     void Awake()
     {
-        rb =
-        GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
 
         if (anim == null)
-            anim =
-            GetComponent<Animator>();
+            anim = GetComponent<Animator>();
 
         //--------------------------------
         // Auto Find UI Mana
@@ -117,29 +107,24 @@ public class BossEndController : MonoBehaviour
             manaFill.gameObject.SetActive(false);
             manaFill.fillAmount = 1f;
         }
-
     }
 
     protected virtual void Start()
     {
-        GameObject player =
-        GameObject.FindGameObjectWithTag(
-            "Player"
-        );
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
-            target =
-            player.transform;
+            target = player.transform;
+
+        // Khởi tạo trạng thái GameObject ban đầu theo Phase 1
+        SetPhaseVisuals(1);
     }
 
     //--------------------------------
 
     void Update()
     {
-        //--------------------------------
         // Smooth Mana UI
-        //--------------------------------
-
         if (enableManaUI && manaFill != null)
         {
             manaFill.fillAmount = Mathf.Lerp(
@@ -147,90 +132,47 @@ public class BossEndController : MonoBehaviour
                 targetManaFill,
                 manaSmoothSpeed * Time.deltaTime
             );
-        }   
+        }
 
-        //--------------------------------
         // DEATH
-        //--------------------------------
-
-        if (
-            !isDead &&
-            bossHeath.currentHeath <= 0
-        )
+        if (!isDead && bossHeath.currentHeath <= 0)
         {
             isDead = true;
 
             StopAllCoroutines();
 
-            rb.linearVelocity =
-            Vector2.zero;
-
+            rb.linearVelocity = Vector2.zero;
             rb.simulated = false;
 
             LockMovement(true);
 
-            // tắt collider
-            foreach
-            (
-                Collider2D col
-                in GetComponents<Collider2D>()
-            )
+            foreach (Collider2D col in GetComponents<Collider2D>())
             {
                 col.enabled = false;
             }
 
             PlayDeath();
 
-            StartCoroutine(
-                DestroyRoutine()
-            );
+            StartCoroutine(DestroyRoutine());
 
             return;
         }
 
         FlipToPlayer();
 
-        //--------------------------------
-        // Né đạn ưu tiên cao nhất
-        //--------------------------------
-
-        //--------------------------------
-        // Phase 3 chỉ né nếu còn lượt
-        //--------------------------------
-
-        if (
-            currentPhase == 3 &&
-            !dodging &&
-            canDodge
-        )
+        // Né đạn ưu tiên cao nhất (Phase 3)
+        if (currentPhase == 3 && !dodging && canDodge)
         {
             DetectDangerBullet();
         }
 
-        //--------------------------------
-        // Nếu đang né thì thôi
-        //--------------------------------
-
         if (dodging)
             return;
 
-        //--------------------------------
-        // trạng thái khóa
-        //--------------------------------
-
-        if (
-            movementLocked ||
-            usingSkill ||
-            isThinking ||
-            isMoving
-        )
+        if (movementLocked || usingSkill || isThinking || isMoving)
             return;
 
-        float distance =
-        Vector2.Distance(
-            transform.position,
-            target.position
-        );
+        float distance = Vector2.Distance(transform.position, target.position);
 
         if (distance > detectRange)
         {
@@ -240,9 +182,7 @@ public class BossEndController : MonoBehaviour
 
         UpdatePhase();
 
-        StartCoroutine(
-            Think()
-        );
+        StartCoroutine(Think());
     }
 
     //--------------------------------
@@ -253,191 +193,52 @@ public class BossEndController : MonoBehaviour
 
         PlayIdle();
 
-        yield return new WaitForSeconds(
-            Random.Range(
-                thinkMin,
-                thinkMax
-            )
-        );
+        yield return new WaitForSeconds(Random.Range(thinkMin, thinkMax));
 
-        float distance =
-        Vector2.Distance(
-            transform.position,
-            target.position
-        );
-
-        //--------------------------------
-        // Player quá gần
-        //--------------------------------
+        float distance = Vector2.Distance(transform.position, target.position);
 
         if (distance < dangerDistance)
         {
-            int action =
-            Random.Range(0, 2);
+            int action = Random.Range(0, 2);
 
             switch (action)
             {
                 case 0:
-
-                    yield return
-                    StartCoroutine(
-                        DashBack()
-                    );
-
+                    yield return StartCoroutine(DashBack());
                     break;
 
                 case 1:
-
-                    yield return
-                    StartCoroutine(
-                        WalkBack()
-                    );
-
+                    yield return StartCoroutine(WalkBack());
                     break;
             }
         }
-
-        //--------------------------------
-        // Bình thường
-        //--------------------------------
-
         else
         {
-            //--------------------------------
-            // Phase 1
-            //--------------------------------
-
             if (currentPhase == 1)
             {
-                int action =
-                Random.Range(0, 7);
+                int action = Random.Range(0, 7);
 
                 switch (action)
                 {
-                    case 0:
-
-                        yield return
-                        StartCoroutine(
-                            WalkToPlayer()
-                        );
-
-                        break;
-
-                    case 1:
-
-                        yield return
-                        StartCoroutine(
-                            CircleMove()
-                        );
-
-                        break;
-
-                    case 2:
-
-                        yield return
-                        StartCoroutine(
-                            DashSide()
-                        );
-
-                        break;
-
-                    case 3:
-
-                        yield return
-                        StartCoroutine(
-                            UseShootSkill()
-                        );
-
-                        break;
-
-                    case 4:
-
-                        yield return
-                        StartCoroutine(
-                            UseDashShootSkill()
-                        );
-
-                        break;
-
-                    case 5:
-
-                        yield return
-                        StartCoroutine(
-                            bulletRainSkill.Cast()
-                        );
-
-                        break;
-
-                    case 6:
-
-                        yield return
-                        StartCoroutine(
-                            UseTeleportSkill()
-                        );
-
-                        break;
+                    case 0: yield return StartCoroutine(WalkToPlayer()); break;
+                    case 1: yield return StartCoroutine(CircleMove()); break;
+                    case 2: yield return StartCoroutine(DashSide()); break;
+                    case 3: yield return StartCoroutine(UseShootSkill()); break;
+                    case 4: yield return StartCoroutine(UseDashShootSkill()); break;
+                    case 5: yield return StartCoroutine(bulletRainSkill.Cast()); break;
+                    case 6: yield return StartCoroutine(UseTeleportSkill()); break;
                 }
             }
-
-            //--------------------------------
-            // Phase 2+
-            //--------------------------------
-
             else
             {
-                int roll =
-                Random.Range(
-                    0,
-                    100
-                );
+                int roll = Random.Range(0, 100);
 
-                if (roll < 10)
-                {
-                    yield return
-                    StartCoroutine(
-                        WalkToPlayer()
-                    );
-                }
-
-                else if (roll < 20)
-                {
-                    yield return
-                    StartCoroutine(
-                        CircleMove()
-                    );
-                }
-
-                else if (roll < 40)
-                {
-                    yield return
-                    StartCoroutine(
-                        UseShootSkill()
-                    );
-                }
-
-                else if (roll < 60)
-                {
-                    yield return
-                    StartCoroutine(
-                        UseDashShootSkill()
-                    );
-                }
-
-                else if (roll < 80)
-                {
-                    yield return
-                    StartCoroutine(
-                        UseTeleportSkill()
-                    );
-                }
-
-                else
-                {
-                    yield return
-                    StartCoroutine(
-                        bulletRainSkill.Cast()
-                    );
-                }
+                if (roll < 10) yield return StartCoroutine(WalkToPlayer());
+                else if (roll < 20) yield return StartCoroutine(CircleMove());
+                else if (roll < 40) yield return StartCoroutine(UseShootSkill());
+                else if (roll < 60) yield return StartCoroutine(UseDashShootSkill());
+                else if (roll < 80) yield return StartCoroutine(UseTeleportSkill());
+                else yield return StartCoroutine(bulletRainSkill.Cast());
             }
         }
 
@@ -449,58 +250,32 @@ public class BossEndController : MonoBehaviour
         if (changingPhase)
             return;
 
-        float hpPercent =
-        (float)
-        bossHeath.currentHeath
-        /
-        bossHeath.maxHeath;
+        float hpPercent = (float)bossHeath.currentHeath / bossHeath.maxHeath;
 
-        //--------------------------------
-
-        if (
-            hpPercent <= .35f
-            &&
-            currentPhase < 3
-        )
+        if (hpPercent <= .35f && currentPhase < 3)
         {
-            StartCoroutine(
-                ChangePhase(3)
-            );
+            StartCoroutine(ChangePhase(3));
         }
-
-        else if (
-            hpPercent <= .7f
-            &&
-            currentPhase < 2
-        )
+        else if (hpPercent <= .7f && currentPhase < 2)
         {
-            StartCoroutine(
-                ChangePhase(2)
-            );
+            StartCoroutine(ChangePhase(2));
         }
     }
 
-    protected IEnumerator ChangePhase(
-    int phase
-    )
+    protected IEnumerator ChangePhase(int phase)
     {
         changingPhase = true;
 
-        currentPhase =
-        phase;
+        currentPhase = phase;
 
-        LockMovement(
-            true
-        );
+        LockMovement(true);
 
         PlayAttack();
 
-        yield return
-        new WaitForSeconds(
-            1f
-        );
+        // Ẩn/Hiện GameObjects tương ứng theo Phase vừa chuyển
+        SetPhaseVisuals(phase);
 
-        //--------------------------------
+        yield return new WaitForSeconds(1f);
 
         if (phase == 2)
         {
@@ -514,82 +289,80 @@ public class BossEndController : MonoBehaviour
             thinkMax = .4f;
         }
 
-        LockMovement(
-            false
-        );
+        LockMovement(false);
 
         changingPhase = false;
     }
 
+    /// <summary>
+    /// Hàm xử lý bật/tắt GameObject giữa các Phase
+    /// </summary>
+    private void SetPhaseVisuals(int phase)
+    {
+        if (phase == 1)
+        {
+            ToggleObjectArray(phase1Objects, true);
+            ToggleObjectArray(phase2Objects, false);
+        }
+        else if (phase >= 2)
+        {
+            ToggleObjectArray(phase1Objects, false);
+            ToggleObjectArray(phase2Objects, true);
+        }
+    }
+
+    private void ToggleObjectArray(GameObject[] objects, bool active)
+    {
+        if (objects == null) return;
+
+        foreach (GameObject obj in objects)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(active);
+            }
+        }
+    }
+
     void DetectDangerBullet()
     {
-        Collider2D[] bullets =
-        Physics2D.OverlapCircleAll(
+        Collider2D[] bullets = Physics2D.OverlapCircleAll(
             transform.position,
             detectBulletRadius,
             bulletLayer
         );
 
-        foreach (
-            Collider2D bullet
-            in bullets
-        )
+        foreach (Collider2D bullet in bullets)
         {
-            Rigidbody2D bulletRb =
-            bullet.GetComponent<Rigidbody2D>();
+            Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
+            if (bulletRb == null) continue;
 
-            if (
-                bulletRb == null
-            )
-                continue;
+            // 1. Xác định hướng bay của đạn:
+            // Nếu đạn có linearVelocity thì lấy linearVelocity, 
+            // nếu không có (đang aim / dùng MovePosition) thì lấy hướng đầu đạn (transform.right)
+            Vector2 bulletDirection = bulletRb.linearVelocity.sqrMagnitude > 0.01f
+                ? bulletRb.linearVelocity.normalized
+                : (Vector2)bullet.transform.right;
 
-            //--------------------------------
-            // đạn có đang bay về boss không
-            //--------------------------------
+            Vector2 toBoss = (transform.position - bullet.transform.position).normalized;
 
-            Vector2 toBoss =
-            (
-            transform.position -
-            bullet.transform.position
-            )
-            .normalized;
-
-            float dot =
-            Vector2.Dot(
-                bulletRb.linearVelocity.normalized,
-                toBoss
-            );
+            float dot = Vector2.Dot(bulletDirection, toBoss);
 
             if (dot > .8f)
             {
-                StartCoroutine(
-                    TeleportDodge(bulletRb)
-                );
-
+                StartCoroutine(TeleportDodge(bulletRb));
                 return;
             }
         }
     }
 
-    protected IEnumerator TeleportDodge(
- Rigidbody2D bulletRb
- )
+    protected IEnumerator TeleportDodge(Rigidbody2D bulletRb)
     {
         dodging = true;
         isMoving = true;
 
-        //--------------------------------
-        // Trừ số lần né
-        //--------------------------------
-
         currentDodgeCount++;
-
-        //--------------------------------
-        // Update Mana UI
-        //--------------------------------
-
-        targetManaFill =
-        1f - (float)currentDodgeCount / maxDodgeCount;
+        targetManaFill = 1f - (float)currentDodgeCount / maxDodgeCount;
 
         if (currentDodgeCount >= maxDodgeCount)
         {
@@ -598,136 +371,46 @@ public class BossEndController : MonoBehaviour
 
         PlayRun();
 
-        Vector2 bulletDir =
-        bulletRb.linearVelocity.normalized;
+        Vector2 bulletDir = bulletRb.linearVelocity.normalized;
+        Vector2 bestPos = rb.position;
+        float bestScore = -9999f;
 
-        Vector2 bestPos =
-        rb.position;
+        Collider2D bossCol = GetComponent<Collider2D>();
+        Vector2 colSize = bossCol != null ? bossCol.bounds.size : new Vector2(1f, 1f);
 
-        float bestScore =
-        -9999f;
-
-        //--------------------------------
-        // thử 16 vị trí quanh boss
-        //--------------------------------
-
-        for (
-            int i = 0;
-            i < 16;
-            i++
-        )
+        for (int i = 0; i < 16; i++)
         {
-            float angle =
-            i * 22.5f;
-
-            Vector2 dir =
-            new Vector2(
-                Mathf.Cos(
-                    angle *
-                    Mathf.Deg2Rad
-                ),
-                Mathf.Sin(
-                    angle *
-                    Mathf.Deg2Rad
-                )
+            float angle = i * 22.5f;
+            Vector2 dir = new Vector2(
+                Mathf.Cos(angle * Mathf.Deg2Rad),
+                Mathf.Sin(angle * Mathf.Deg2Rad)
             );
 
-            Vector2 pos =
-            rb.position +
-            dir *
-            dodgeDistance;
+            Vector2 targetPos = rb.position + dir * dodgeDistance;
 
-            //--------------------------------
-            // đụng tường
-            //--------------------------------
+            RaycastHit2D hit = Physics2D.BoxCast(rb.position, colSize, 0f, dir, dodgeDistance, wallLayer);
+            if (hit.collider != null) continue;
 
-            Collider2D wall =
-            Physics2D.OverlapCircle(
-                pos,
-                .5f,
-                wallLayer
-            );
+            Collider2D wallOverlap = Physics2D.OverlapBox(targetPos, colSize * 0.9f, 0f, wallLayer);
+            if (wallOverlap != null) continue;
 
-            if (wall != null)
-                continue;
+            float playerDist = Mathf.Abs(Vector2.Distance(targetPos, target.position) - keepDistance);
+            Vector2 toPos = (targetPos - bulletRb.position).normalized;
+            float bulletDot = Vector2.Dot(bulletDir, toPos);
+            float bulletDanger = bulletDot > 0.7f ? 100f : 0f;
 
-            //--------------------------------
-            // khoảng cách player
-            //--------------------------------
+            float score = -playerDist - bulletDanger;
 
-            float playerDist =
-            Mathf.Abs(
-                Vector2.Distance(
-                    pos,
-                    target.position
-                )
-                -
-                keepDistance
-            );
-
-            //--------------------------------
-            // vị trí có nằm
-            // trên hướng đạn không
-            //--------------------------------
-
-            Vector2 toPos =
-            (
-                pos -
-                bulletRb.position
-            ).normalized;
-
-            float bulletDot =
-            Vector2.Dot(
-                bulletDir,
-                toPos
-            );
-
-            //--------------------------------
-            // nguy hiểm
-            //--------------------------------
-
-            float bulletDanger =
-            bulletDot > .7f
-            ?
-            100f
-            :
-            0f;
-
-            //--------------------------------
-            // điểm
-            //--------------------------------
-
-            float score =
-            -playerDist
-            -
-            bulletDanger;
-
-            //--------------------------------
-
-            if (
-                score >
-                bestScore
-            )
+            if (score > bestScore)
             {
-                bestScore =
-                score;
-
-                bestPos =
-                pos;
+                bestScore = score;
+                bestPos = targetPos;
             }
         }
 
-        //--------------------------------
-        // teleport
-        //--------------------------------
+        rb.position = bestPos;
 
-        rb.position =
-        bestPos;
-
-        yield return
-        new WaitForSeconds(
-            .25f
-        );
+        yield return new WaitForSeconds(0.25f);
 
         isMoving = false;
         dodging = false;
@@ -736,18 +419,9 @@ public class BossEndController : MonoBehaviour
     protected IEnumerator UseShootSkill()
     {
         usingSkill = true;
-
-        yield return
-        StartCoroutine(
-            shootSkill.Cast()
-        );
-
+        yield return StartCoroutine(shootSkill.Cast());
         usingSkill = false;
     }
-
-    //--------------------------------
-    // ĐI TỚI
-    //--------------------------------
 
     protected IEnumerator WalkToPlayer()
     {
@@ -758,30 +432,18 @@ public class BossEndController : MonoBehaviour
 
         while (timer > 0)
         {
-            Vector2 dir =
-            (target.position - transform.position).normalized;
+            Vector2 dir = (target.position - transform.position).normalized;
 
             if (Physics2D.Raycast(rb.position, dir, 0.6f, wallLayer))
                 break;
 
-            rb.MovePosition(
-                rb.position +
-                dir *
-                moveSpeed *
-                Time.deltaTime
-            );
-
+            rb.MovePosition(rb.position + dir * moveSpeed * Time.deltaTime);
             timer -= Time.deltaTime;
-
             yield return null;
         }
 
         isMoving = false;
     }
-
-    //--------------------------------
-    // ĐI LÙI
-    //--------------------------------
 
     protected IEnumerator WalkBack()
     {
@@ -792,39 +454,25 @@ public class BossEndController : MonoBehaviour
 
         while (timer > 0)
         {
-            Vector2 dir =
-            (transform.position - target.position).normalized;
+            Vector2 dir = (transform.position - target.position).normalized;
 
             if (Physics2D.Raycast(rb.position, dir, 0.6f, wallLayer))
                 break;
 
-            rb.MovePosition(
-                rb.position +
-                dir *
-                moveSpeed *
-                Time.deltaTime
-            );
-
+            rb.MovePosition(rb.position + dir * moveSpeed * Time.deltaTime);
             timer -= Time.deltaTime;
-
             yield return null;
         }
 
         isMoving = false;
     }
-
-    //--------------------------------
-    // DASH LÙI
-    //--------------------------------
 
     protected IEnumerator DashBack()
     {
         isMoving = true;
         PlayRun();
 
-        Vector2 dir =
-        (transform.position - target.position).normalized;
-
+        Vector2 dir = (transform.position - target.position).normalized;
         float timer = .3f;
 
         while (timer > 0)
@@ -832,35 +480,20 @@ public class BossEndController : MonoBehaviour
             if (Physics2D.Raycast(rb.position, dir, 0.8f, wallLayer))
                 break;
 
-            rb.MovePosition(
-                rb.position +
-                dir *
-                dashSpeed *
-                Time.deltaTime
-            );
-
+            rb.MovePosition(rb.position + dir * dashSpeed * Time.deltaTime);
             timer -= Time.deltaTime;
-
             yield return null;
         }
 
         isMoving = false;
     }
-
-    //--------------------------------
-    // DASH NGANG
-    //--------------------------------
 
     protected IEnumerator DashSide()
     {
         isMoving = true;
         PlayRun();
 
-        Vector2 dir =
-        Random.value > .5f
-        ? Vector2.right
-        : Vector2.left;
-
+        Vector2 dir = Random.value > .5f ? Vector2.right : Vector2.left;
         float timer = .3f;
 
         while (timer > 0)
@@ -868,52 +501,26 @@ public class BossEndController : MonoBehaviour
             if (Physics2D.Raycast(rb.position, dir, 0.8f, wallLayer))
                 break;
 
-            rb.MovePosition(
-                rb.position +
-                dir *
-                dashSpeed *
-                Time.deltaTime
-            );
-
+            rb.MovePosition(rb.position + dir * dashSpeed * Time.deltaTime);
             timer -= Time.deltaTime;
-
             yield return null;
         }
 
         isMoving = false;
     }
 
-    //--------------------------------
-    // ĐI QUANH
-    //--------------------------------
-
     protected IEnumerator CircleMove()
     {
         isMoving = true;
-
         PlayRun();
 
         float timer = 1f;
-
-        Vector2 side =
-        Random.value > .5f
-        ?
-        Vector2.right
-        :
-        Vector2.left;
+        Vector2 side = Random.value > .5f ? Vector2.right : Vector2.left;
 
         while (timer > 0)
         {
-            rb.MovePosition(
-                rb.position +
-                side *
-                moveSpeed *
-                Time.deltaTime
-            );
-
-            timer -=
-            Time.deltaTime;
-
+            rb.MovePosition(rb.position + side * moveSpeed * Time.deltaTime);
+            timer -= Time.deltaTime;
             yield return null;
         }
 
@@ -923,28 +530,17 @@ public class BossEndController : MonoBehaviour
     protected IEnumerator UseDashShootSkill()
     {
         usingSkill = true;
-
-        yield return
-        StartCoroutine(
-            dashShootSkill.Cast()
-        );
-
+        yield return StartCoroutine(dashShootSkill.Cast());
         usingSkill = false;
     }
 
-    //--------------------------------
-
-    public void LockMovement(
-    bool value
-)
+    public void LockMovement(bool value)
     {
-        movementLocked =
-        value;
+        movementLocked = value;
 
         if (value)
         {
-            rb.linearVelocity =
-            Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
         }
     }
 
@@ -953,13 +549,9 @@ public class BossEndController : MonoBehaviour
         if (target == null)
             return;
 
-        Vector3 rot =
-        bossVisual.localEulerAngles;
+        Vector3 rot = bossVisual.localEulerAngles;
 
-        if (
-            target.position.x >
-            transform.position.x
-        )
+        if (target.position.x > transform.position.x)
         {
             rot.y = 0f;
         }
@@ -968,32 +560,20 @@ public class BossEndController : MonoBehaviour
             rot.y = 180f;
         }
 
-        bossVisual.localEulerAngles =
-        rot;
+        bossVisual.localEulerAngles = rot;
     }
 
     protected IEnumerator UseTeleportSkill()
     {
         usingSkill = true;
-
-        yield return
-        StartCoroutine(
-            teleportSkill.Cast()
-        );
-
+        yield return StartCoroutine(teleportSkill.Cast());
         usingSkill = false;
     }
 
     protected IEnumerator DestroyRoutine()
     {
-        yield return
-        new WaitForSeconds(
-            1f
-        );
-
-        Destroy(
-            gameObject
-        );
+        yield return new WaitForSeconds(1f);
+        Destroy(gameObject);
     }
 
     private Image FindImageByName(string imageName)
@@ -1011,90 +591,39 @@ public class BossEndController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!enableManaUI)
-            return;
-        if (!other.CompareTag("Player"))
-            return;
+        if (!enableManaUI) return;
+        if (!other.CompareTag("Player")) return;
 
-        if (manaUIRoot != null)
-            manaUIRoot.gameObject.SetActive(true);
-
-        if (manaFill != null)
-            manaFill.gameObject.SetActive(true);
+        if (manaUIRoot != null) manaUIRoot.gameObject.SetActive(true);
+        if (manaFill != null) manaFill.gameObject.SetActive(true);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (!enableManaUI)
-            return;
-        if (!other.CompareTag("Player"))
-            return;
+        if (!enableManaUI) return;
+        if (!other.CompareTag("Player")) return;
 
-        if (manaUIRoot != null)
-            manaUIRoot.gameObject.SetActive(false);
-
-        if (manaFill != null)
-            manaFill.gameObject.SetActive(false);
+        if (manaUIRoot != null) manaUIRoot.gameObject.SetActive(false);
+        if (manaFill != null) manaFill.gameObject.SetActive(false);
     }
 
-    void PlayDeath()
-    {
-        anim.Play("death");
-    }
-
-    public void PlayIdle()
-    {
-        anim.Play("idle");
-    }
-
-    public void PlayRun()
-    {
-        anim.Play("run");
-    }
-
-    public void PlayAttack()
-    {
-        anim.Play(
-            "attack",
-            0,
-            0f
-        );
-    }
-
-    //--------------------------------
+    void PlayDeath() { anim.Play("death"); }
+    public void PlayIdle() { anim.Play("idle"); }
+    public void PlayRun() { anim.Play("run"); }
+    public void PlayAttack() { anim.Play("attack", 0, 0f); }
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.color =
-        Color.yellow;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectRange);
 
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectRange
-        );
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, dangerDistance);
 
-        Gizmos.color =
-        Color.red;
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, keepDistance);
 
-        Gizmos.DrawWireSphere(
-            transform.position,
-            dangerDistance
-        );
-
-        Gizmos.color =
-        Color.green;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            keepDistance
-        );
-
-        Gizmos.color =
-        Color.magenta;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            detectBulletRadius
-        );
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position, detectBulletRadius);
     }
 }

@@ -25,6 +25,7 @@ public class BossHealth : MonoBehaviour
     public float smoothSpeed = 8f;
 
     private Animator _animator;
+    internal bool isInvincible;
 
     private Image FindImageByName(string imageName)
     {
@@ -89,8 +90,7 @@ public class BossHealth : MonoBehaviour
     // NGUYÊN VẸN 100% - KHÔNG SỬA ĐỔI THEO YÊU CẦU CỦA BẠN
     public void TakeDamage(int damage, string dealerTag)
     {
-        if (isDead) return;
-
+        if (isDead || isInvincible) return;
         // =========================
         // GIÁP GIẢM DAMAGE
         // =========================

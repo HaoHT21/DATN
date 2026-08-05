@@ -5,21 +5,38 @@ public class BossRockController : BossController
 {
     [Header("Laser Setup")]
     public GameObject laserObject;
-    public float telegraphDuration = 0.8f; // Thời gian bật laser định vị ngắm Player
-    public float laserDuration = 2f;      // Thời gian thực sự xả laser
+    public float telegraphDuration = 0.8f;
+    public float laserDuration = 2f;
     public int laserCastCount = 1;
-    public float laserInterval = .5f;
-    public GameObject aimLaserLine;       // Đường laser ngắm (telegraph warning)
+    public float laserInterval = 0.5f;
+    public GameObject aimLaserLine;
 
     [Header("Shoot")]
     public GameObject bulletPrefab;
     public Transform shootPoint;
     public int shootCount = 3;
-    public float shootInterval = .3f;
+    public float shootInterval = 0.3f;
+    private BossRockAudio _bossAudio; // Cache component audio
 
-    //--------------------------------
-    // PHASE
-    //--------------------------------
+    protected override void Awake()
+    {
+        base.Awake();
+        _bossAudio = GetComponent<BossRockAudio>();
+    }
+
+    protected override void RegisterBossSkills()
+    {
+        bossSkills.Clear();
+
+        // Di chuyển: Phase 1 weight = 30, Phase 2 weight = 20
+        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 30, 20));
+
+        // Skill 1 (LaserSkill): Phase 1 weight = 40, Phase 2 weight = 30
+        bossSkills.Add(new SkillWeight(LaserSkill, 40, 30));
+
+        // Skill 2 (ShootSkill): Phase 1 weight = 30, Phase 2 weight = 50
+        bossSkills.Add(new SkillWeight(ShootSkill, 30, 50));
+    }
 
     protected override void OnPhaseChange(int phase)
     {
@@ -35,178 +52,115 @@ public class BossRockController : BossController
     {
         if (laserObject != null) laserObject.SetActive(false);
         if (aimLaserLine != null) aimLaserLine.SetActive(false);
-    }
 
-    //--------------------------------
-    // SKILLS
-    //--------------------------------
-
-    protected override IEnumerator UseSkill1()
-    {
-        yield return LaserSkill();
-    }
-
-    protected override IEnumerator UseSkill2()
-    {
-        yield return ShootSkill();
-    }
-
-    //--------------------------------
-    // THINK
-    //--------------------------------
-
-    protected override IEnumerator Think()
-    {
-        isThinking = true;
-
-        yield return new WaitForSeconds(Random.Range(thinkMin, thinkMax));
-
-        int action = -1;
-
-        // Phase 1
-        if (currentPhase == 1)
+        // Đảm bảo ngắt âm thanh Laser nếu Boss bị tiêu diệt hoặc tắt effect
+        if (_bossAudio != null)
         {
-            int roll = Random.Range(0, 100);
-
-            if (roll < 30)
-            {
-                yield return StartCoroutine(MoveState());
-            }
-            else if (roll < 70)
-            {
-                action = 0;
-            }
-            else
-            {
-                action = 1;
-            }
+            _bossAudio.StopLaserLoopSound();
         }
-        // Phase 2
-        else
-        {
-            int roll = Random.Range(0, 100);
-
-            if (roll < 20)
-            {
-                yield return StartCoroutine(MoveState());
-            }
-            else if (roll < 50)
-            {
-                action = 0;
-            }
-            else
-            {
-                action = 1;
-            }
-        }
-
-        switch (action)
-        {
-            case 0:
-                yield return StartCoroutine(UseSkill1());
-                break;
-            case 1:
-                yield return StartCoroutine(UseSkill2());
-                break;
-        }
-
-        isThinking = false;
-    }
-
-    IEnumerator MoveState()
-    {
-        isMoving = true;
-        yield return new WaitForSeconds(Random.Range(.8f, 1.5f));
-        isMoving = false;
     }
 
     //--------------------------------
-    // LASER (Đã đồng bộ logic với SpitFire của BossFire)
+    // LASER SKILL
     //--------------------------------
-
-    IEnumerator LaserSkill()
+    private IEnumerator LaserSkill()
     {
-        usingSkill = true;
-
-        // Lấy tracker xoay từ laserObject hoặc các con của nó
-        FireLookAtPlayer tracker = laserObject.GetComponent<FireLookAtPlayer>();
-        if (tracker == null) tracker = GetComponentInChildren<FireLookAtPlayer>();
-
-        for (int i = 0; i < laserCastCount; i++)
+        canDodgeDuringSkill = false; // <--- TẮT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
+        if (bossHeath != null) bossHeath.isInvincible = true; // Bất tử trong khi bắn Laser
+        LaserLookAtPlayer tracker = laserObject != null ? laserObject.GetComponent<LaserLookAtPlayer>() : null;
+        if (tracker == null) tracker = GetComponentInChildren<LaserLookAtPlayer>();
+        try
         {
-            Laser();
-
-            // 1. Bật tracker xoay và tia ngắm cảnh báo
-            if (tracker != null) tracker.StartTracking();
-            if (aimLaserLine != null) aimLaserLine.SetActive(true);
-
-            float timer = 0f;
-            bool lostTarget = false;
-
-            // 2. Đếm ngược thời gian ngắm (kiểm tra Player có chui vào góc khuất không)
-            while (timer < telegraphDuration)
+            for (int i = 0; i < laserCastCount; i++)
             {
-                timer += Time.deltaTime;
+                SpitFire();
 
-                if (tracker != null && !tracker.CanSeePlayer())
+                if (tracker != null) tracker.StartTracking();
+                if (aimLaserLine != null) aimLaserLine.SetActive(true);
+
+                float timer = 0f;
+                bool lostTarget = false;
+
+                while (timer < telegraphDuration)
                 {
-                    lostTarget = true;
-                    break;
+                    timer += Time.deltaTime;
+
+                    if (tracker != null && !tracker.CanSeePlayer())
+                    {
+                        lostTarget = true;
+                        break;
+                    }
+
+                    yield return null;
                 }
 
-                yield return null;
+                if (aimLaserLine != null) aimLaserLine.SetActive(false);
+
+                if (!lostTarget)
+                {
+                    if (laserObject != null) laserObject.SetActive(true);
+
+                    // GỌI ÂM THANH: Bắt đầu tiếng Laser chiếu quét (Loop)
+                    if (_bossAudio != null)
+                    {
+                        _bossAudio.StartLaserLoopSound();
+                    }
+
+                    yield return new WaitForSeconds(laserDuration);
+                    if (laserObject != null) laserObject.SetActive(false);
+
+                    // GỌI ÂM THANH: Dừng tiếng Laser sau khi bắn xong
+                    if (_bossAudio != null)
+                    {
+                        _bossAudio.StopLaserLoopSound();
+                    }
+                }
+                else
+                {
+                    Debug.Log("Player đã chui vào góc khuất! Boss Rock hủy bắn Laser.");
+                }
+
+                yield return new WaitForSeconds(laserInterval);
             }
-
-            // 3. Tắt tia ngắm cảnh báo
-            if (aimLaserLine != null) aimLaserLine.SetActive(false);
-
-            // 4. Bật Laser gây xát thương nếu không bị mất dấu
-            if (!lostTarget)
-            {
-                if (laserObject != null) laserObject.SetActive(true);
-
-                yield return new WaitForSeconds(laserDuration);
-
-                if (laserObject != null) laserObject.SetActive(false);
-            }
-            else
-            {
-                Debug.Log("Player đã chui vào góc khuất! Boss Rock hủy bắn Laser.");
-            }
-
-            yield return new WaitForSeconds(laserInterval);
         }
-
-        usingSkill = false;
-        PlayIdle();
+        finally
+        {
+            // BẢO HIỂM: Luôn tắt âm thanh Laser nếu Skill kết thúc đột ngột
+            if (_bossAudio != null)
+            {
+                _bossAudio.StopLaserLoopSound();
+            }
+            if (bossHeath != null) bossHeath.isInvincible = false; // Hủy bất tử sau khi bắn Laser xong
+        }
     }
 
     //--------------------------------
-    // SHOOT
+    // SHOOT SKILL
     //--------------------------------
-
-    IEnumerator ShootSkill()
+    private IEnumerator ShootSkill()
     {
-        usingSkill = true;
-
+        canDodgeDuringSkill = true; // <--- BẬT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
         for (int i = 0; i < shootCount; i++)
         {
             Shoot();
 
-            yield return new WaitForSeconds(.3f);
+            yield return new WaitForSeconds(0.3f);
 
             if (target != null && shootPoint != null)
             {
                 Vector2 dir = (target.position - shootPoint.position).normalized;
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
+                // GỌI ÂM THANH: Phát tiếng bắn đạn đá
+                if (_bossAudio != null)
+                {
+                    _bossAudio.PlayRockShootSound(shootPoint.position);
+                }
+
                 Instantiate(bulletPrefab, shootPoint.position, Quaternion.Euler(0, 0, angle));
             }
 
             yield return new WaitForSeconds(shootInterval);
         }
-
-        usingSkill = false;
-        PlayIdle();
     }
 }

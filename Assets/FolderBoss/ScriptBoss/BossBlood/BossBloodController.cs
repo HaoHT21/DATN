@@ -6,285 +6,110 @@ public class BossBloodController : BossController
     [Header("Attack")]
     public GameObject bulletPrefab;
     public Transform firePoint;
-
     public int bulletCount = 2;
-    public float bulletInterval = .5f;
+    public float bulletInterval = 0.5f;
 
     [Header("Summon")]
     public GameObject summonPrefab;
     public Transform summonPoint;
-
     public int summonCount = 3;
     public float summonLifeTime = 3f;
 
-    //--------------------------------
-    // PHASE
-    //--------------------------------
+    private BossBloodAudio _bossAudio; // Cache component audio
 
-    protected override void OnPhaseChange(
-        int phase
-    )
+    protected override void Awake()
+    {
+        base.Awake();
+        // Cache component BossBloodAudio
+        _bossAudio = GetComponent<BossBloodAudio>();
+    }
+
+    protected override void RegisterBossSkills()
+    {
+        bossSkills.Clear();
+
+        // Di chuyển: Phase 1 weight = 30, Phase 2 weight = 20
+        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 50, 30));
+
+        // Skill 1 (AttackSkill): Phase 1 weight = 45, Phase 2 weight = 30
+        bossSkills.Add(new SkillWeight(AttackSkill, 25, 50));
+
+        // Skill 2 (SummonSkill): Phase 1 weight = 25, Phase 2 weight = 50
+        bossSkills.Add(new SkillWeight(SummonSkill, 25, 20));
+    }
+
+    protected override void OnPhaseChange(int phase)
     {
         if (phase == 2)
         {
-            bulletCount += 2;
-
+            bulletCount += 1;
             summonCount += 2;
-
             moveSpeed += 5;
         }
     }
 
     //--------------------------------
-    // SKILL 1
+    // ATTACK SKILL
     //--------------------------------
-
-    protected override IEnumerator UseSkill1()
+    private IEnumerator AttackSkill()
     {
-        yield return AttackSkill();
-    }
-
-    //--------------------------------
-    // SKILL 2
-    //--------------------------------
-
-    protected override IEnumerator UseSkill2()
-    {
-        yield return SummonSkill();
-    }
-
-    //--------------------------------
-    // THINK
-    //--------------------------------
-
-    protected override IEnumerator Think()
-    {
-        isThinking = true;
-
-        yield return
-        new WaitForSeconds(
-            Random.Range(
-                thinkMin,
-                thinkMax
-            )
-        );
-
-        int action = 0;
-
-        //--------------------------------
-        // Phase1
-        //--------------------------------
-
-        if (currentPhase == 1)
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 75)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        //--------------------------------
-        // Phase2
-        //--------------------------------
-
-        else
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 20)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 50)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
-        }
-
-        //--------------------------------
-
-        switch (action)
-        {
-            case 0:
-
-                yield return
-                StartCoroutine(
-                    UseSkill1()
-                );
-
-                break;
-
-            case 1:
-
-                yield return
-                StartCoroutine(
-                    UseSkill2()
-                );
-
-                break;
-        }
-
-        isThinking = false;
-    }
-
-    IEnumerator MoveState()
-    {
-        yield return
-        new WaitForSeconds(
-            Random.Range(
-                .8f,
-                1.5f
-            )
-        );
-    }
-
-    //--------------------------------
-    // ATTACK
-    //--------------------------------
-
-    IEnumerator AttackSkill()
-    {
-        usingSkill = true;
-
-        for (
-            int i = 0;
-            i < bulletCount;
-            i++
-        )
+        canDodgeDuringSkill = true; // <--- BẬT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
+        for (int i = 0; i < bulletCount; i++)
         {
             PlayAttack();
-
-            yield return
-            new WaitForSeconds(
-                .3f
-            );
+            yield return new WaitForSeconds(0.3f);
 
             SpawnBullet();
 
-            yield return
-            new WaitForSeconds(
-                1f
-            );
+            yield return new WaitForSeconds(1f);
 
             SpawnBullet();
 
-            yield return
-            new WaitForSeconds(
-                bulletInterval
-            );
+            yield return new WaitForSeconds(bulletInterval);
         }
 
-        usingSkill = false;
+        canDodgeDuringSkill = false; // <--- TẮT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
 
-        PlayIdle();
     }
 
-    void SpawnBullet()
+    private void SpawnBullet()
     {
-        Vector2 dir =
-        (
-            target.position -
-            firePoint.position
-        ).normalized;
+        if (target == null || firePoint == null) return;
 
-        float angle =
-        Mathf.Atan2(
-            dir.y,
-            dir.x
-        ) *
-        Mathf.Rad2Deg;
+        Vector2 dir = (target.position - firePoint.position).normalized;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-        Instantiate(
-            bulletPrefab,
-            firePoint.position,
-            Quaternion.Euler(
-                0,
-                0,
-                angle
-            )
-        );
-    }
+        Instantiate(bulletPrefab, firePoint.position, Quaternion.Euler(0, 0, angle));
 
-    //--------------------------------
-    // SUMMON
-    //--------------------------------
-
-    IEnumerator SummonSkill()
-    {
-        usingSkill = true;
-
-        Summon();
-
-        yield return
-        new WaitForSeconds(
-            .5f
-        );
-
-        for (
-            int i = 0;
-            i < summonCount;
-            i++
-        )
+        // PHÁT ÂM THANH BẮN ĐẠN MÁU TRỰC TIẾP TẠI ĐÂY
+        if (_bossAudio != null)
         {
-            Vector2 randomPos =
-            (Vector2)
-            summonPoint.position
-            +
-            Random.insideUnitCircle
-            * 2f;
-
-            GameObject summon =
-            Instantiate(
-                summonPrefab,
-                randomPos,
-                Quaternion.identity
-            );
-
-            Destroy(
-                summon,
-                summonLifeTime
-            );
+            _bossAudio.PlayBloodShootSound(firePoint.position); // <-- Gọi trực tiếp ở đây
         }
+    }
 
-        yield return
-        new WaitForSeconds(
-            .5f
-        );
+    //--------------------------------
+    // SUMMON SKILL
+    //--------------------------------
+    private IEnumerator SummonSkill()
+    {
+        canDodgeDuringSkill = false; // <--- TẮT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
+        Summon();
+        yield return new WaitForSeconds(0.5f);
 
-        usingSkill = false;
+        Transform origin = summonPoint != null ? summonPoint : transform;
 
-        PlayIdle();
+        for (int i = 0; i < summonCount; i++)
+        {
+            Vector2 randomPos = (Vector2)origin.position + Random.insideUnitCircle * 2f;
+            GameObject summon = Instantiate(summonPrefab, randomPos, Quaternion.identity);
+            Destroy(summon, summonLifeTime);
+
+            // PHÁT ÂM THANH TRIỆU HỒI TẠI VỊ TRÍ ĐỆ TỬ XUẤT HIỆN
+            if (_bossAudio != null)
+            {
+                _bossAudio.PlaySummonSound(randomPos);
+            }
+        }
     }
 }

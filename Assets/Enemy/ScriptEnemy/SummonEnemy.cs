@@ -16,6 +16,7 @@ public class SummonEnemy : MonoBehaviour
     public Transform firePoint;
 
     public GameObject bulletPrefab;
+    public Transform enemyVisual;
 
     Rigidbody2D rb;
 
@@ -26,6 +27,9 @@ public class SummonEnemy : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        if (enemyVisual == null)
+            enemyVisual = transform;
     }
 
     void Start()
@@ -56,10 +60,18 @@ public class SummonEnemy : MonoBehaviour
 
             rb.linearVelocity =
                 dir * moveSpeed;
+
+            Flip(dir);
         }
         else
         {
             rb.linearVelocity = Vector2.zero;
+
+            Vector2 dir =
+                (target.position -
+                transform.position).normalized;
+
+            Flip(dir);
 
             attackTimer -= Time.deltaTime;
 
@@ -143,5 +155,18 @@ public class SummonEnemy : MonoBehaviour
                 0,
                 0,
                 angle));
+    }
+
+    void Flip(Vector2 dir)
+    {
+        if (enemyVisual == null || Mathf.Abs(dir.x) < 0.01f)
+            return;
+
+        // Flip bằng rotation theo trục Y, hoặc dùng localScale nếu muốn.
+        enemyVisual.rotation =
+            Quaternion.Euler(
+                0f,
+                dir.x > 0 ? 0f : 180f,
+                0f);
     }
 }

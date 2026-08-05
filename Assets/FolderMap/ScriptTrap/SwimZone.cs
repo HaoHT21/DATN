@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering; // Dùng cho Post-Processing
+using UnityEngine.Rendering.Universal; // Dùng cho URP Vignette
 
 public class SwimZone : MonoBehaviour
 {
@@ -28,6 +30,12 @@ public class SwimZone : MonoBehaviour
     public GameObject effectBar;
     public Image effectFill;
 
+    [Header("Post Processing Visual")]
+    public Volume BlueVolume; // Kéo Global Volume vào đây
+    [Range(0f, 1f)]
+    public float maxVignetteIntensity = 0.5f; // Độ đậm tối đa của viền xanh
+    private Vignette blueVignette;
+
     private Transform player;
     private PlayerHealth playerHealth;
 
@@ -46,6 +54,17 @@ public class SwimZone : MonoBehaviour
 
         if (effectFill != null)
             effectFill.fillAmount = 0;
+
+        // Lấy Vignette từ Global Volume
+        if (BlueVolume != null && BlueVolume.profile != null)
+        {
+            BlueVolume.profile.TryGet(out blueVignette);
+
+            if (blueVignette != null)
+            {
+                blueVignette.intensity.value = 0f;
+            }
+        }
     }
 
     private void Update()
@@ -64,10 +83,10 @@ public class SwimZone : MonoBehaviour
         if (effectFill != null)
             effectFill.fillAmount = value;
 
-        // Bắt đầu gây sát thương
-        if (value >= 1f && damageRoutine == null)
+        // Hiệu ứng màn hình theo lượng thiếu oxy
+        if (blueVignette != null)
         {
-            damageRoutine = StartCoroutine(DamageRoutine());
+            blueVignette.intensity.value = value * maxVignetteIntensity;
         }
     }
 
@@ -177,6 +196,11 @@ public class SwimZone : MonoBehaviour
 
         if (damageRoutine != null)
             StopCoroutine(damageRoutine);
+
+        if (blueVignette != null)
+        {
+            blueVignette.intensity.value = 0f;
+        }
 
         bubbleRoutine = null;
         damageRoutine = null;

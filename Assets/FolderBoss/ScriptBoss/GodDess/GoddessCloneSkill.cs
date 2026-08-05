@@ -23,25 +23,15 @@ public class GoddessCloneSkill : MonoBehaviour
     {
         if (clonePrefab == null)
         {
-            Debug.LogWarning(
-                "Clone Skill thiếu setup"
-            );
-
+            Debug.LogWarning("Clone Skill thiếu setup");
             yield break;
         }
 
-        for (
-            int i = 0;
-            i < cloneCount;
-            i++
-        )
+        for (int i = 0; i < cloneCount; i++)
         {
             SpawnClone();
 
-            yield return
-            new WaitForSeconds(
-                .2f
-            );
+            yield return new WaitForSeconds(.2f);
         }
     }
 
@@ -49,102 +39,81 @@ public class GoddessCloneSkill : MonoBehaviour
 
     void SpawnClone()
     {
-        Vector2 spawnPos =
-        FindValidPosition();
+        Vector2 spawnPos = FindValidPosition();
 
-        GameObject clone =
-        Instantiate(
+        GameObject clone = Instantiate(
             clonePrefab,
             spawnPos,
             Quaternion.identity
         );
 
-        GodDessController goddess =
-        clone.GetComponent<
-            GodDessController
-        >();
+        // Lấy Component từ Boss gốc (chính GameObject đang chứa Skill này)
+        BossHeath masterHealth = GetComponent<BossHeath>();
+        GodDessController masterController = GetComponent<GodDessController>();
 
+        // 1. ĐỒNG BỘ MÁU CHO CLONE
+        BossHeath cloneHealth = clone.GetComponent<BossHeath>();
+        if (cloneHealth != null && masterHealth != null)
+        {
+            // Tắt UI thanh máu boss của clone để không bị đè UI
+            cloneHealth.enableHealthUI = false;
+
+            // Sử dụng hàm InitializeClone đã viết ở BossHeath để truyền máu
+            cloneHealth.InitializeClone(masterHealth.currentHeath, masterHealth.maxHeath);
+        }
+
+        // 2. ĐỒNG BỘ TRẠNG THÁI & PHASE CHO CLONE
+        GodDessController goddess = clone.GetComponent<GodDessController>();
         if (goddess != null)
         {
-            //--------------------------------
-            // đánh dấu clone
-            //--------------------------------
+            // Đồng bộ phase của clone bằng phase hiện tại của Boss gốc
+            if (masterController != null)
+            {
+                goddess.currentPhase = masterController.currentPhase;
+            }
 
+            // Đánh dấu clone
             goddess.isClone = true;
 
-            //--------------------------------
-            // clone không tạo clone
-            //--------------------------------
-
+            // Clone không tạo clone
             goddess.cloneSkill = null;
         }
 
-        Destroy(
-            clone,
-            cloneLifeTime
-        );
+        Destroy(clone, cloneLifeTime);
     }
 
     //--------------------------------
 
     Vector2 FindValidPosition()
     {
-        Vector2 center =
-        transform.position;
+        Vector2 center = transform.position;
 
-        //--------------------------------
-        // thử nhiều lần
-        //--------------------------------
-
-        for (
-            int i = 0;
-            i < maxTry;
-            i++
-        )
+        // Thử nhiều lần
+        for (int i = 0; i < maxTry; i++)
         {
-            Vector2 randomPos =
-            center +
-            Random.insideUnitCircle
-            *
-            spawnRadius;
+            Vector2 randomPos = center + Random.insideUnitCircle * spawnRadius;
 
-            //--------------------------------
-            // kiểm tra có tường không
-            //--------------------------------
-
-            Collider2D wall =
-            Physics2D.OverlapCircle(
+            // Kiểm tra có tường không
+            Collider2D wall = Physics2D.OverlapCircle(
                 randomPos,
                 .5f,
                 wallLayer
             );
 
-            //--------------------------------
-            // kiểm tra đường từ boss
-            // tới vị trí spawn
-            //--------------------------------
-
-            RaycastHit2D hit =
-            Physics2D.Linecast(
+            // Kiểm tra đường từ boss tới vị trí spawn
+            RaycastHit2D hit = Physics2D.Linecast(
                 center,
                 randomPos,
                 wallLayer
             );
 
-            if (
-                wall == null
-                &&
-                hit.collider == null
-            )
+            if (wall == null && hit.collider == null)
             {
                 return randomPos;
             }
         }
 
-        //--------------------------------
-        // nếu thử hết vẫn lỗi
-        //--------------------------------
-
+        // Nếu thử hết vẫn lỗi
         return center;
     }
 
@@ -152,12 +121,7 @@ public class GoddessCloneSkill : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.color =
-        Color.cyan;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            spawnRadius
-        );
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, spawnRadius);
     }
 }

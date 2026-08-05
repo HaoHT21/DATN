@@ -1,66 +1,53 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class TrapPoison1 : MonoBehaviour
 {
+    [Header("Effect Data")]
+    public StatusEffectSO poisonEffectSO; // Kéo ScriptableObject Độc vào đây
+
     [Header("Trap Setting")]
-    public TilemapCollider2D trapPoisonCollider;
-
-    public float inactiveTime = 1f;
-    public float outactiveTime = 1f;
-
-    [Header("Thông số sát thương độc")]
-    public int poisonDamage = 2;
-    public float damageInterval = 1f;
+    [Tooltip("Kéo Collider2D của bẫy độc vào đây. Nếu để trống, script sẽ tự lấy Collider2D trên Object này.")]
+    public Collider2D trapPoisonCollider;
 
     [Header("Hiệu ứng sau khi rời bẫy")]
-    [Tooltip("Thời gian độc còn tồn tại trên người sau khi chạy thoát khỏi bẫy")]
+    [Tooltip("Thời gian độc tồn tại trên người sau khi giẫm vào bẫy")]
     public float poisonDurationAfterExit = 3f;
 
     private void Start()
     {
+        // Nếu không kéo thủ công vào Inspector, tự động tìm Collider2D trên GameObject này
+        if (trapPoisonCollider == null)
+        {
+            trapPoisonCollider = GetComponent<Collider2D>();
+        }
+
+        // Tự động đảm bảo Collider luôn là Trigger
         if (trapPoisonCollider != null)
         {
             trapPoisonCollider.isTrigger = true;
-            trapPoisonCollider.enabled = false; 
-        }
-
-        StartCoroutine(TrapPoisonRoutine());
-    }
-
-    IEnumerator TrapPoisonRoutine()
-    {
-        while (true)
-        {
-            trapPoisonCollider.enabled = false;
-            yield return new WaitForSeconds(inactiveTime);
-
-            trapPoisonCollider.enabled = true;
-            yield return new WaitForSeconds(outactiveTime);
         }
     }
 
     private void HandlePoison(Collider2D other)
     {
-        if (other.CompareTag("Player") && other.TryGetComponent<PlayerHealth>(out PlayerHealth player))
+        if (other.CompareTag("Player") && other.TryGetComponent<EffectManager>(out EffectManager effectManager))
         {
-            PoisonEffect poison = player.GetComponent<PoisonEffect>();
-
-            if (poison == null)
+            if (poisonEffectSO != null)
             {
-                poison = player.gameObject.AddComponent<PoisonEffect>();
+                // Áp dụng status effect độc và truyền thời gian tác dụng
+                effectManager.ApplyEffect(poisonEffectSO, poisonDurationAfterExit);
             }
-
-            poison.ApplyPoison(poisonDamage, damageInterval, poisonDurationAfterExit);
         }
     }
 
+    // Dính độc ngay frame đầu tiên bước vào
     private void OnTriggerEnter2D(Collider2D other)
     {
         HandlePoison(other);
     }
 
+    // Liên tục làm mới thời gian độc nếu tiếp tục đứng trong bẫy
     private void OnTriggerStay2D(Collider2D other)
     {
         HandlePoison(other);

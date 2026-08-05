@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2811031741515219101}
   - component: {fileID: 5070804975563110709}
   - component: {fileID: -4937840924481021867}
-  - component: {fileID: -8020937008591561313}
+  - component: {fileID: -903799683540038172}
   m_Layer: 0
   m_Name: Shoot
   m_TagString: Untagged
@@ -108,7 +108,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-8020937008591561313
+--- !u!114 &-903799683540038172
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,12 +117,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7003757456173169599}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b5523c3487ea50409c563c24175fbde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
-  speed: 30
+  damage: 15
+  speed: 60
   lifeTime: 5
+  extraKnockbackForce: 50
 --- !u!1 &8960091751437290695
 GameObject:
   m_ObjectHideFlags: 0

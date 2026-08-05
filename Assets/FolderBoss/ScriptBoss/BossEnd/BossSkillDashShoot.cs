@@ -3,9 +3,6 @@ using System.Collections;
 
 public class BossSkillDashShoot : MonoBehaviour
 {
-    [Header("Detection")]
-    public float skillRange = 8f;
-
     [Header("Dash")]
     public float dashSpeed = 15f;
     public float dashDuration = .4f;
@@ -54,25 +51,9 @@ public class BossSkillDashShoot : MonoBehaviour
 
     //--------------------------------
 
-    public bool CanUse()
-    {
-        if (player == null)
-            return false;
-
-        return
-        Vector2.Distance(
-            transform.position,
-            player.position
-        )
-        <=
-        skillRange;
-    }
-
-    //--------------------------------
-
     public IEnumerator Cast()
     {
-        if (!CanUse())
+        if (player == null)
             yield break;
 
         isCasting = true;

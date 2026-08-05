@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering; // Dùng cho Post-Processing
+using UnityEngine.Rendering.Universal; // Dùng cho URP Vignette
 
 public class RedZone : MonoBehaviour
 {
@@ -10,6 +12,12 @@ public class RedZone : MonoBehaviour
     [Header("UI")]
     public GameObject effectBar;
     public Image effectFill;
+
+    [Header("Post Processing Visual")]
+    public Volume redEffectVolume; // Kéo Global Volume vào đây
+    [Range(0f, 1f)]
+    public float maxVignetteIntensity = 0.5f; // Độ đậm tối đa của viền đỏ
+    private Vignette redVignette;
 
     private bool playerInside;
     private bool isFilling = true;
@@ -26,6 +34,16 @@ public class RedZone : MonoBehaviour
 
         if (effectFill != null)
             effectFill.fillAmount = 0;
+        // Lấy Vignette từ Global Volume
+        if (redEffectVolume != null && redEffectVolume.profile != null)
+        {
+            redEffectVolume.profile.TryGet(out redVignette);
+
+            if (redVignette != null)
+            {
+                redVignette.intensity.value = 0f;
+            }
+        }
     }
 
     void Update()
@@ -76,6 +94,10 @@ public class RedZone : MonoBehaviour
 
         if (effectFill != null)
             effectFill.fillAmount = value;
+        if (redVignette != null)
+        {
+            redVignette.intensity.value = value * maxVignetteIntensity;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -106,5 +128,10 @@ public class RedZone : MonoBehaviour
 
         if (effectBar != null)
             effectBar.SetActive(false);
+
+        if (redVignette != null)
+        {
+            redVignette.intensity.value = 0f;
+        }
     }
 }

@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 
+[System.Serializable]
 public class ActiveEffect
 {
     public StatusEffectSO data;
-    public float timer;
-    public GameObject visualInstance; // Prefab đang gắn trên người Player
+    public float remainingTime;
+    public GameObject visualInstance;
 
-    public ActiveEffect(StatusEffectSO data, GameObject visualInstance)
+    public ActiveEffect(StatusEffectSO data, GameObject visualInstance, float duration)
     {
         this.data = data;
-        this.timer = data.duration;
         this.visualInstance = visualInstance;
+        this.remainingTime = duration;
     }
 }

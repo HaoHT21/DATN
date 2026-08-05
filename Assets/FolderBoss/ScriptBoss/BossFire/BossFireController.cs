@@ -1,29 +1,45 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class BossFireController : BossController
 {
-    [Header("Fireball")]
+    [Header("Fireball Settings")]
     public GameObject fireballPrefab;
     public Transform fireballPoint;
-
     public int fireballCount = 30;
     public float fireballInterval = 0.01f;
     public float randomAngle = 30f;
 
-    [Header("SpitFire Setup")]
+    [Header("SpitFire Settings")]
     public GameObject spitFireObject;
     public float telegraphDuration = 0.8f;
-    public float spitFireDuration = 1f;
+    public float spitFireDuration = 1.2f;  // Thời gian vừa phun vừa quét hết 90 độ
+    public float sweepAngle = 90f;          // Tổng góc quét (90 độ)
     public int spitFireCount = 1;
     public float spitFireInterval = 0.5f;
-
     public GameObject aimLaserLine;
 
-    //--------------------------------
-    // PHASE
-    //--------------------------------
+    private BossFireAudio _bossAudio; // Cache component audio
 
+    protected override void Awake()
+    {
+        base.Awake();
+        _bossAudio = GetComponent<BossFireAudio>();
+    }
+
+    // ------------------------------------------------
+    // 1. ĐĂNG KÝ SKILL CHO HỆ THỐNG WEIGHT
+    // ------------------------------------------------
+    protected override void RegisterBossSkills()
+    {
+        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 40, 30));
+        bossSkills.Add(new SkillWeight(FireballSkill, 30, 30));
+        bossSkills.Add(new SkillWeight(SpitFireSkill, 30, 40));
+    }
+
+    // ------------------------------------------------
+    // 2. XỬ LÝ CHUYỂN PHASE & TẮT EFFECT
+    // ------------------------------------------------
     protected override void OnPhaseChange(int phase)
     {
         if (phase == 2)
@@ -31,104 +47,27 @@ public class BossFireController : BossController
             fireballCount += 50;
             spitFireCount += 1;
             randomAngle += 5f;
-            moveSpeed += 10;
+            moveSpeed += 10f;
         }
     }
 
     protected override void DisableEffects()
     {
+        base.DisableEffects();
+
         if (spitFireObject != null) spitFireObject.SetActive(false);
         if (aimLaserLine != null) aimLaserLine.SetActive(false);
     }
 
-    protected override IEnumerator UseSkill1()
+    // ------------------------------------------------
+    // 3. SKILL 1: FIREBALL (MƯA CẦU LỬA)
+    // ------------------------------------------------
+    private IEnumerator FireballSkill()
     {
-        yield return FireballSkill();
-    }
+        // Cho phép Boss lướt né đạn trong khi đang xả đạn mưa cầu lửa
+        canDodgeDuringSkill = true;
 
-    protected override IEnumerator UseSkill2()
-    {
-        yield return SpitFireSkill();
-    }
-
-    //--------------------------------
-    // THINK
-    //--------------------------------
-
-    protected override IEnumerator Think()
-    {
-        isThinking = true;
-
-        yield return new WaitForSeconds(Random.Range(thinkMin, thinkMax));
-
-        int action = -1;
-
-        // Phase 1
-        if (currentPhase == 1)
-        {
-            int roll = Random.Range(0, 100);
-
-            if (roll < 30) // 30% Di chuyển
-            {
-                yield return StartCoroutine(MoveState());
-            }
-            else if (roll < 50)
-            {
-                action = 0;
-            }
-            else
-            {
-                action = 1;
-            }
-        }
-        // Phase 2
-        else
-        {
-            int roll = Random.Range(0, 100);
-
-            if (roll < 20)
-            {
-                yield return StartCoroutine(MoveState());
-            }
-            else if (roll < 50)
-            {
-                action = 0;
-            }
-            else
-            {
-                action = 1;
-            }
-        }
-
-        switch (action)
-        {
-            case 0:
-                yield return StartCoroutine(UseSkill1());
-                break;
-            case 1:
-                yield return StartCoroutine(UseSkill2());
-                break;
-        }
-
-        isThinking = false;
-    }
-
-    IEnumerator MoveState()
-    {
-        isMoving = true;
-        yield return new WaitForSeconds(Random.Range(0.8f, 1.5f));
-        isMoving = false;
-    }
-
-    //--------------------------------
-    // FIREBALL
-    //--------------------------------
-
-    IEnumerator FireballSkill()
-    {
-        usingSkill = true;
         FireBall();
-
         yield return new WaitForSeconds(0.5f);
 
         for (int i = 0; i < fireballCount; i++)
@@ -136,74 +75,115 @@ public class BossFireController : BossController
             SpawnFireball();
             yield return new WaitForSeconds(fireballInterval);
         }
-
-        usingSkill = false;
-        PlayIdle();
+        // Tắt quyền né đạn sau khi xong skill
+        canDodgeDuringSkill = false;
     }
 
-    void SpawnFireball()
+    private void SpawnFireball()
     {
+        if (fireballPrefab == null || fireballPoint == null) return;
+
         float offset = Random.Range(-randomAngle, randomAngle);
         Instantiate(fireballPrefab, fireballPoint.position, fireballPoint.rotation * Quaternion.Euler(0, 0, offset));
+
+        // GOI ÂM THANH BẮN CẦU LỬA DIRECTLY
+        if (_bossAudio != null)
+        {
+            _bossAudio.PlayFireballSound(fireballPoint.position);
+        }
     }
 
-    //--------------------------------
-    // SPIT FIRE
-    //--------------------------------
-
-    IEnumerator SpitFireSkill()
+    // ------------------------------------------------
+    // 4. SKILL 2: SPIT FIRE QUÉT GÓC 90 ĐỘ
+    // ------------------------------------------------
+    private IEnumerator SpitFireSkill()
     {
-        usingSkill = true;
-
-        FireLookAtPlayer tracker = spitFireObject.GetComponent<FireLookAtPlayer>();
+        canDodgeDuringSkill = false;
+        if (bossHeath != null) bossHeath.isInvincible = true; // Bất tử trong khi phun lửa
+        FireLookAtPlayer tracker = spitFireObject != null ? spitFireObject.GetComponent<FireLookAtPlayer>() : null;
         if (tracker == null) tracker = GetComponentInChildren<FireLookAtPlayer>();
 
-        for (int i = 0; i < spitFireCount; i++)
+        try
         {
-            SpitFire();
-
-            // 1. Bật tracker xoay và laser nhắm
-            if (tracker != null) tracker.StartTracking();
-            if (aimLaserLine != null) aimLaserLine.SetActive(true);
-
-            float timer = 0f;
-            bool lostTarget = false;
-
-            // 2. Đếm ngược thời gian ngắm (kiểm tra góc khuất)
-            while (timer < telegraphDuration)
+            for (int i = 0; i < spitFireCount; i++)
             {
-                timer += Time.deltaTime;
+                SpitFire();
 
-                if (tracker != null && !tracker.CanSeePlayer())
+                // STEP 1: BẬT NGẮM (Telegraph)
+                if (tracker != null) tracker.StartTracking();
+                if (aimLaserLine != null) aimLaserLine.SetActive(true);
+
+                float timer = 0f;
+                bool lostTarget = false;
+
+                while (timer < telegraphDuration)
                 {
-                    lostTarget = true;
-                    break;
+                    timer += Time.deltaTime;
+
+                    if (tracker != null && !tracker.CanSeePlayer())
+                    {
+                        lostTarget = true;
+                        break;
+                    }
+
+                    yield return null;
                 }
 
-                yield return null;
+                // STEP 2: CHỐT/KHÓA VỊ TRÍ
+                // Tắt laser ngắm và gọi StopTracking() để chốt góc lockedBaseAngle
+                if (aimLaserLine != null) aimLaserLine.SetActive(false);
+                if (tracker != null) tracker.StopTracking();
+
+                // STEP 3: PHUN LỬA & QUÉT TRÊN GÓC ĐÃ KHÓA
+                if (!lostTarget)
+                {
+                    if (spitFireObject != null) spitFireObject.SetActive(true);
+
+                    float halfAngle = sweepAngle / 2f;
+                    float startAngle = -halfAngle;
+                    float endAngle = halfAngle;
+
+                    // Chọn ngẫu nhiên hướng quét: Trái -> Phải hoặc Phải -> Trái
+                    if (Random.value > 0.5f)
+                    {
+                        startAngle = halfAngle;
+                        endAngle = -halfAngle;
+                    }
+
+                    float sweepTimer = 0f;
+                    while (sweepTimer < spitFireDuration)
+                    {
+                        sweepTimer += Time.deltaTime;
+                        float progress = sweepTimer / spitFireDuration;
+
+                        // Tính offset góc dựa trên thời gian quét
+                        float currentOffset = Mathf.Lerp(startAngle, endAngle, progress);
+
+                        // Xoay tia lửa theo góc offset + góc gốc đã khóa
+                        if (tracker != null)
+                        {
+                            tracker.SetSweepAngle(currentOffset);
+                        }
+
+                        yield return null;
+                    }
+
+                    if (spitFireObject != null) spitFireObject.SetActive(false);
+
+                    // DỪNG TIẾNG PHUN LỬA LẶP
+                    if (_bossAudio != null) _bossAudio.StopSpitFireLoop();
+                }
+                else
+                {
+                    Debug.Log("Player đã vào góc khuất! Hủy kỹ năng.");
+                }
+
+                yield return new WaitForSeconds(spitFireInterval);
             }
-
-            // 3. Tắt laser nhắm
-            if (aimLaserLine != null) aimLaserLine.SetActive(false);
-
-            // 4. Bật lửa nếu không mất dấu (Lửa chỉ ẩn/hiện, không bị khóa cứng góc)
-            if (!lostTarget)
-            {
-                if (spitFireObject != null) spitFireObject.SetActive(true);
-
-                yield return new WaitForSeconds(spitFireDuration);
-
-                if (spitFireObject != null) spitFireObject.SetActive(false);
-            }
-            else
-            {
-                Debug.Log("Player đã chui vào góc khuất! Boss hủy phun lửa.");
-            }
-
-            yield return new WaitForSeconds(spitFireInterval);
         }
-
-        usingSkill = false;
-        PlayIdle();
+        finally
+        {
+            if (bossHeath != null) bossHeath.isInvincible = false; // Hủy bất tử sau khi phun lửa xong
+        }
     }
 }

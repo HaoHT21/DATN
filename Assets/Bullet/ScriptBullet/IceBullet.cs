@@ -12,6 +12,8 @@ public class IceBullet : MonoBehaviour
     [Header("Effect")]
     public GameObject hitEffectPrefab;
 
+    public StatusEffectSO freezeEffectSO;
+
     private Rigidbody2D rb;
 
     private void Awake()
@@ -37,7 +39,8 @@ public class IceBullet : MonoBehaviour
             // Gọi EffectManager để Freeze Player (Khóa di chuyển + Tấn công)
             if (col.TryGetComponent(out EffectManager effect))
             {
-                effect.Freeze(freezeDuration);
+                effect.ApplyEffect(freezeEffectSO, freezeDuration);
+                Hit();
             }
 
             Hit();

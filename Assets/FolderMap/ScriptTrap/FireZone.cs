@@ -6,6 +6,9 @@ using UnityEngine.Rendering.Universal; // Dùng cho URP Vignette
 
 public class FireZone : MonoBehaviour
 {
+    [Header("Effect Data")]
+    public StatusEffectSO burnEffectSO; // Kéo ScriptableObject Lửa vào đây
+
     [Header("Fire")]
     public float delayBeforeCool = 5f;
     public float coolTime = 3f;
@@ -48,6 +51,10 @@ public class FireZone : MonoBehaviour
         // Tỉ lệ nhiệt độ hiện tại (từ 0.0f -> 1.0f)
         float fireRatio = effectManager.fireValue / effectManager.maxFire;
 
+        // Bật/tắt trạng thái nhận nhiệt trong EffectManager:
+        // Nếu đang trong quá trình xả nhiệt/đốt máu (burnRoutine != null) -> Khóa không cho nhận nhiệt
+        effectManager.canAddHeat = (burnRoutine == null);
+
         //--------------------------------
         // Update UI
         //--------------------------------
@@ -66,56 +73,66 @@ public class FireZone : MonoBehaviour
         }
 
         //--------------------------------
-        // Cooldown sau 5 giây
+        // Cooldown sau khoảng thời gian delayBeforeCool
+        // (Chỉ cooldown tự động nếu chưa kích hoạt BurnRoutine)
         //--------------------------------
-        if (Time.time - effectManager.LastFireTime >= delayBeforeCool)
+        if (burnRoutine == null && Time.time - effectManager.LastFireTime >= delayBeforeCool)
         {
-            effectManager.fireValue -=
-                effectManager.maxFire /
-                coolTime *
-                Time.deltaTime;
-
-            effectManager.fireValue =
-                Mathf.Clamp(
-                    effectManager.fireValue,
-                    0,
-                    effectManager.maxFire);
+            effectManager.fireValue -= (effectManager.maxFire / coolTime) * Time.deltaTime;
+            effectManager.fireValue = Mathf.Clamp(effectManager.fireValue, 0, effectManager.maxFire);
         }
 
         //--------------------------------
-        // Burn
+        // Burn kích hoạt Bỏng (KHI ĐẦY THANH LỬA)
         //--------------------------------
         if (effectManager.fireValue >= effectManager.maxFire)
         {
             if (burnRoutine == null)
             {
-                burnRoutine =
-                    StartCoroutine(BurnRoutine());
+                if (burnEffectSO != null)
+                {
+                    // 1. Chỉ áp dụng Status Effect (Visual lửa/Particle) khi bắt đầu quá trình rút thanh
+                    effectManager.ApplyEffect(burnEffectSO, coolTime);
+                }
+
+                burnRoutine = StartCoroutine(BurnRoutine());
             }
         }
     }
 
     IEnumerator BurnRoutine()
     {
+        // Trong suốt quá trình thanh nhiệt tuột về 0, không nhận thêm bất kỳ nhiệt nào
         while (effectManager.fireValue > 0)
         {
-            playerHealth.TakeDamage(burnDamage);
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(burnDamage);
+            }
 
             yield return new WaitForSeconds(burnInterval);
 
-            effectManager.fireValue -=
-                effectManager.maxFire /
-                coolTime *
-                burnInterval;
-
-            effectManager.fireValue =
-                Mathf.Clamp(
-                    effectManager.fireValue,
-                    0,
-                    effectManager.maxFire);
+            // Giảm nhiệt độ
+            effectManager.fireValue -= (effectManager.maxFire / coolTime) * burnInterval;
+            effectManager.fireValue = Mathf.Clamp(effectManager.fireValue, 0, effectManager.maxFire);
         }
 
+        StopBurnEffect();
         burnRoutine = null;
+
+        // Mở lại khả năng nhận nhiệt sau khi đã tuột hết về 0
+        if (effectManager != null)
+        {
+            effectManager.canAddHeat = true;
+        }
+    }
+
+    private void StopBurnEffect()
+    {
+        if (effectManager != null && burnEffectSO != null)
+        {
+            effectManager.RemoveEffectBySO(burnEffectSO);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -123,11 +140,8 @@ public class FireZone : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        effectManager =
-            other.GetComponent<EffectManager>();
-
-        playerHealth =
-            other.GetComponent<PlayerHealth>();
+        effectManager = other.GetComponent<EffectManager>();
+        playerHealth = other.GetComponent<PlayerHealth>();
 
         if (EffectFireBar != null)
             EffectFireBar.SetActive(true);
@@ -144,8 +158,14 @@ public class FireZone : MonoBehaviour
             burnRoutine = null;
         }
 
+        // Xóa Effect Lửa ngay lập tức nếu thoát ra ngoài
+        StopBurnEffect();
+
         if (effectManager != null)
+        {
+            effectManager.canAddHeat = true; // Mở lại quyền nhận nhiệt
             effectManager.ResetFireHeat();
+        }
 
         if (EffectFireFill != null)
             EffectFireFill.fillAmount = 0;

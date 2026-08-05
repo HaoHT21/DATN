@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  damage: 5
-  freezeEffectData: {fileID: 11400000, guid: a3c143a1e140a2d4cab549026dd07812, type: 2}
-  freezeDuration: 2
+  damage: 10
+  freezeDuration: 1
   hitEffectPrefab: {fileID: 0}
+  freezeEffectSO: {fileID: 11400000, guid: a3c143a1e140a2d4cab549026dd07812, type: 2}

@@ -17,250 +17,100 @@ public class BossSlimeController : BossController
     public float summonRadius = 3f;
     public float summonLifeTime = 10f;
 
-    int skillIndex;
+    private BossSlimeAudio _bossAudio; // Cache component audio
+
+    protected override void Awake()
+    {
+        base.Awake();
+        _bossAudio = GetComponent<BossSlimeAudio>();
+    }
+
+    //--------------------------------
+    // SETUP SKILLS
+    //--------------------------------
+    protected override void RegisterBossSkills()
+    {
+        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 40, 30));
+        bossSkills.Add(new SkillWeight(ShootSkill, 30, 40));
+        bossSkills.Add(new SkillWeight(SummonSkill, 30, 30));
+    }
 
     //--------------------------------
     // PHASE
     //--------------------------------
-
-    protected override void OnPhaseChange(
-        int phase
-    )
+    protected override void OnPhaseChange(int phase)
     {
         if (phase == 2)
         {
             bulletCount += 10;
             summonCount += 2;
             jumpAttackCount += 2;
-
             moveSpeed += 10;
         }
     }
 
     //--------------------------------
-    // SKILL 1
+    // SHOOT (ĐAN XEN GÓC BẮN)
     //--------------------------------
-
-    protected override IEnumerator UseSkill1()
-    {
-        yield return ShootSkill();
-    }
-
-    //--------------------------------
-    // SKILL 2
-    //--------------------------------
-
-    protected override IEnumerator UseSkill2()
-    {
-        yield return SummonSkill();
-    }
-
-    //--------------------------------
-    // boss tự chọn thứ tự
-    //--------------------------------
-
-    protected override IEnumerator Think()
-    {
-        isThinking = true;
-
-        yield return new WaitForSeconds(
-            Random.Range(
-                thinkMin,
-                thinkMax
-            )
-        );
-
-        int action = 0;
-
-        //--------------------------------
-        // Phase 1
-        //--------------------------------
-
-        if (currentPhase == 1)
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            //--------------------------------
-            // 70% di chuyển
-            //--------------------------------
-
-            if (roll < 50)
-            {
-                yield return StartCoroutine(
-                    MoveState()
-                );
-            }
-            else if (roll < 75)
-            {
-                action = 0;
-            }
-            else
-            {
-                action = 1;
-            }
-        }
-
-        //--------------------------------
-        // Phase 2
-        //--------------------------------
-
-        else
-        {
-            int roll =
-            Random.Range(
-                0,
-                100
-            );
-
-            if (roll < 20)
-                yield return StartCoroutine(
-                    MoveState()
-                );
-
-            else if (roll < 50)
-                action = 0;
-
-            else
-                action = 1;
-        }
-
-        //--------------------------------
-        // Execute
-        //--------------------------------
-
-        switch (action)
-        {
-            case 0:
-
-                yield return
-                StartCoroutine(
-                    UseSkill1()
-                );
-
-                break;
-
-            case 1:
-
-                yield return
-                StartCoroutine(
-                    UseSkill2()
-                );
-
-                break;
-        }
-
-        isThinking = false;
-    }
-
-    //--------------------------------
-    // SHOOT
-    //--------------------------------
-
-    IEnumerator MoveState()
-    {
-        movementLocked = false;
-
-        yield return
-        new WaitForSeconds(
-            Random.Range(
-                .8f,
-                1.5f
-            )
-        );
-    }
-
     IEnumerator ShootSkill()
     {
-        usingSkill = true;
+        canDodgeDuringSkill = true; // <--- BẬT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
 
-        for (
-            int wave = 0;
-            wave < jumpAttackCount;
-            wave++
-        )
+        float angleStep = 360f / bulletCount;
+        for (int wave = 0; wave < jumpAttackCount; wave++)
         {
-            //--------------------------------
-            // phát animation mỗi wave
-            //--------------------------------
-
             PlayAttack();
+            yield return new WaitForSeconds(.5f);
 
-            yield return
-            new WaitForSeconds(.5f);
-
-            float angleStep =
-            360f / bulletCount;
-
-            for (
-                int i = 0;
-                i < bulletCount;
-                i++
-            )
+            // GỌI ÂM THANH: Phát tiếng nện đất bung đạn
+            if (_bossAudio != null)
             {
+                Vector3 soundPos = firePoint != null ? firePoint.position : transform.position;
+                _bossAudio.PlayJumpAttackSound(soundPos);
+            }
+
+            // Đợt chẵn bắn góc chuẩn, đợt lẻ dịch chuyển 1/2 góc bước (bắn vào khe hở)
+            float waveOffset = (wave % 2 == 0) ? 0f : (angleStep / 2f);
+
+            for (int i = 0; i < bulletCount; i++)
+            {
+                float currentAngle = (i * angleStep) + waveOffset;
+
                 Instantiate(
                     bulletPrefab,
                     firePoint.position,
-                    Quaternion.Euler(
-                        0,
-                        0,
-                        i * angleStep
-                    )
+                    Quaternion.Euler(0, 0, currentAngle)
                 );
             }
 
-            yield return
-            new WaitForSeconds(.4f);
+            yield return new WaitForSeconds(.4f);
         }
 
-        usingSkill = false;
-
-        PlayIdle();
+        canDodgeDuringSkill = false;
     }
 
     //--------------------------------
     // SUMMON
     //--------------------------------
-
     IEnumerator SummonSkill()
     {
-        usingSkill = true;
+        canDodgeDuringSkill = true; // <--- BẬT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
 
         PlayAttack();
+        yield return new WaitForSeconds(.5f);
 
-        yield return
-        new WaitForSeconds(.5f);
-
-        for (
-            int i = 0;
-            i < summonCount;
-            i++
-        )
+        // GỌI ÂM THANH: Phát tiếng phân rã triệu hồi đàn em
+        if (_bossAudio != null)
         {
-            Vector2 pos =
-            (Vector2)transform.position +
-            Random.insideUnitCircle *
-            summonRadius;
-
-            GameObject enemy =
-            Instantiate(
-                enemyPrefab,
-                pos,
-                Quaternion.identity
-            );
-
-            Destroy(
-            enemy,
-            summonLifeTime
-            );
+            _bossAudio.PlaySummonSound(transform.position);
         }
 
-
-        usingSkill = false;
-
-        PlayIdle();
+        for (int i = 0; i < summonCount; i++)
+        {
+            Vector2 pos = (Vector2)transform.position + Random.insideUnitCircle * summonRadius;
+            GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.identity);
+            Destroy(enemy, summonLifeTime);
+        }
+        canDodgeDuringSkill = false;
     }
 }

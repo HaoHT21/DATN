@@ -198,7 +198,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e765d776ecf26004ebdbd345c33b3bc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
-  damage: 10
+  speed: 30
+  damage: 15
   freezeDuration: 0.5
   hitEffectPrefab: {fileID: 0}
+  freezeEffectSO: {fileID: 11400000, guid: a3c143a1e140a2d4cab549026dd07812, type: 2}

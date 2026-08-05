@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1010128809720426380}
   - component: {fileID: 1541295569496444857}
   - component: {fileID: -6254560467767682936}
+  - component: {fileID: 720720337980631381}
   m_Layer: 10
   m_Name: BulletSlime
   m_TagString: Untagged
@@ -125,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54981974975403b49bc0e33f31ad3411, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  damage: 15
   speed: 10
   lifeTime: 10
 --- !u!50 &1541295569496444857
@@ -191,3 +192,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.055
+--- !u!114 &720720337980631381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8282301630644044267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b4a851b756f1a94f89638d84caa29b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poisonEffectSO: {fileID: 11400000, guid: 45e25295ee17ee04da5cfc771d4f65c5, type: 2}
+  trapPoisonCollider: {fileID: -6254560467767682936}
+  poisonDurationAfterExit: 5

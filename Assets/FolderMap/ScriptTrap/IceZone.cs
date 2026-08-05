@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal; // Dùng cho URP Vignette
 
 public class IceZone : MonoBehaviour
 {
@@ -17,6 +19,16 @@ public class IceZone : MonoBehaviour
     public ParticleSystem snowParticle;
     public GameObject EffectIceBar;
     public Image EffectIceFill;
+
+    // Thêm trường khai báo SO ở đầu script IceZone
+    [Header("Post Processing Visual")]
+    public Volume freezeEffectVolume; // Kéo Global Volume vào đây
+    [Range(0f, 1f)]
+    public float maxFreezeIntensity = 0.5f;  //Độ đậm tối đa của viền xanh
+    private Vignette freezeVignette;
+
+    [Header("Effect Data")]
+    public StatusEffectSO freezeEffectSO;
 
     private EffectManager playerEffect;
 
@@ -53,7 +65,16 @@ public class IceZone : MonoBehaviour
                 snowParticle.Play();
             }
         }
+        // Lấy Vignette từ Global Volume
+        if (freezeEffectVolume != null && freezeEffectVolume.profile != null)
+        {
+            freezeEffectVolume.profile.TryGet(out freezeVignette);
 
+            if (freezeVignette != null)
+            {
+                freezeVignette.intensity.value = 0f;
+            }
+        }
         // Đặt mặc định bắt đầu ở trạng thái ẨN
         isSnowing = false;
         SetAlphaImmediate(0f);
@@ -201,7 +222,7 @@ public class IceZone : MonoBehaviour
         if (!freezeActive && playerEffect != null)
         {
             freezeActive = true;
-            playerEffect.AddFreeze();
+            playerEffect.ApplyEffect(freezeEffectSO, drainTime); // Sử dụng drainTime làm thời gian đóng băng
         }
     }
 
@@ -210,7 +231,7 @@ public class IceZone : MonoBehaviour
         if (freezeActive && playerEffect != null)
         {
             freezeActive = false;
-            playerEffect.RemoveFreeze();
+            playerEffect.RemoveEffectBySO(freezeEffectSO);
         }
     }
 
@@ -219,6 +240,12 @@ public class IceZone : MonoBehaviour
         if (EffectIceFill != null && playerInside)
         {
             EffectIceFill.fillAmount = value;
+        }
+
+        // Hiệu ứng màn hình theo thanh đóng băng
+        if (freezeVignette != null)
+        {
+            freezeVignette.intensity.value = value * maxFreezeIntensity;
         }
     }
 
@@ -247,6 +274,12 @@ public class IceZone : MonoBehaviour
 
             if (EffectIceBar != null)
                 EffectIceBar.SetActive(false);
+
+            // Reset viền xanh về 0 khi thoát vùng băng
+            if (freezeVignette != null)
+            {
+                freezeVignette.intensity.value = 0f;
+            }
         }
     }
 }

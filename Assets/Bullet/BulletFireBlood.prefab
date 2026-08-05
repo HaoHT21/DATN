@@ -198,10 +198,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f08086fa08e3d9643b7a36247e1c17ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 15
   lifeTime: 5
-  damage: 5
+  damage: 15
   circleBulletPrefab: {fileID: 7050138122432787268, guid: 64ae5009486392645891ae878848d707, type: 3}
   spawnCount: 6
-  spawnInterval: 1
+  spawnInterval: 2
   circleBulletSpeed: 3

@@ -1,14 +1,12 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class PoisonArea : MonoBehaviour
 {
-    [Header("Sát thương trực tiếp")]
-    [Tooltip("Vừa giẫm vào vùng độc là mất ngần này máu ngay")]
-    public int directDamage = 5;
+    [Header("Effect Data")]
+    public StatusEffectSO poisonEffectSO; // Kéo ScriptableObject Độc vào đây
 
-    [Header("Hiệu ứng độc theo thời gian")]
-    public int poisonDamage = 1;
-    public float damageInterval = 1f;
+    [Header("Sát thương trực tiếp")]
+    public int directDamage = 5;
 
     [Header("After Exit")]
     public float poisonDurationAfterExit = 3f;
@@ -18,41 +16,40 @@ public class PoisonArea : MonoBehaviour
 
     private void Start()
     {
-        // Vùng độc tự biến mất sau lifeTime (ví dụ: 5 giây)
         Destroy(gameObject, lifeTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && other.TryGetComponent<PlayerHealth>(out PlayerHealth player))
+        if (other.CompareTag("Player"))
         {
-            // 1. Trừ máu trực tiếp của bẫy ngay khi vừa chạm
-            player.TakeDamage(directDamage);
+            // 1. Trừ máu trực tiếp lập tức
+            if (other.TryGetComponent<PlayerHealth>(out PlayerHealth player)) // Gây sát thương ngay lập tức cho Player khi va chạm với PoisonArea
+            {
+                player.TakeDamage(directDamage);
+            }
 
-            // 2. Gắn hiệu ứng độc
-            ApplyOrRefreshPoison(player);
+            // 2. Gắn hiệu ứng độc từ ScriptableObject
+            ApplyOrRefreshPoison(other);
         }
     }
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        // Nếu người chơi đứng lỳ trong vũng độc, liên tục làm mới (refresh) thời gian dính độc
-        if (other.CompareTag("Player") && other.TryGetComponent<PlayerHealth>(out PlayerHealth player))
+        if (other.CompareTag("Player"))
         {
-            ApplyOrRefreshPoison(player);
+            ApplyOrRefreshPoison(other);
         }
     }
 
-    private void ApplyOrRefreshPoison(PlayerHealth player)
+    private void ApplyOrRefreshPoison(Collider2D other)
     {
-        PoisonEffect poison = player.GetComponent<PoisonEffect>();
-
-        if (poison == null)
+        if (other.TryGetComponent<EffectManager>(out EffectManager effectManager))
         {
-            poison = player.gameObject.AddComponent<PoisonEffect>();
+            if (poisonEffectSO != null)
+            {
+                effectManager.ApplyEffect(poisonEffectSO, poisonDurationAfterExit);
+            }
         }
-
-        // Gọi hàm truyền thông số độc sang cho Player xử lý
-        poison.ApplyPoison(poisonDamage, damageInterval, poisonDurationAfterExit);
     }
 }

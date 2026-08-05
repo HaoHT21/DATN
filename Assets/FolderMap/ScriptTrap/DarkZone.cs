@@ -10,7 +10,6 @@ public class DarkZone : MonoBehaviour
 
     [Header("Ánh sáng")]
     public Light2D globalLight;
-
     public float globalNormalIntensity = 1f;
     public float globalDarkIntensity = 0.2f;
 
@@ -43,9 +42,26 @@ public class DarkZone : MonoBehaviour
 
     private void Update()
     {
-        if (!playerInside)
-            return;
+        // 1. Quản lý trạng thái thanh đếm
+        if (playerInside)
+        {
+            // Nếu Player bị Destroy đột ngột khi đang trong zone
+            if (playerSpotLight == null)
+            {
+                OnPlayerLeftOrDied();
+            }
+            else
+            {
+                HandleZoneTimer();
+            }
+        }
 
+        // 2. Cập nhật ánh sáng (Luôn chạy để làm mượt đèn Global và đèn Player về 0)
+        UpdateLighting();
+    }
+
+    private void HandleZoneTimer()
+    {
         // Thanh tăng
         if (isFilling)
         {
@@ -54,12 +70,7 @@ public class DarkZone : MonoBehaviour
             if (value >= 1f)
             {
                 value = 1f;
-
-                if (!darkActive)
-                {
-                    darkActive = true;
-                }
-
+                darkActive = true;
                 isFilling = false;
             }
         }
@@ -71,52 +82,54 @@ public class DarkZone : MonoBehaviour
             if (value <= 0f)
             {
                 value = 0f;
-
                 ResetLight();
-
                 isFilling = true;
             }
         }
 
         if (effectFill != null)
             effectFill.fillAmount = value;
+    }
 
-        float targetGlobal =
-    darkActive ? globalDarkIntensity : globalNormalIntensity;
+    private void UpdateLighting()
+    {
+        // Global Light transition
+        float targetGlobal = darkActive ? globalDarkIntensity : globalNormalIntensity;
 
         if (globalLight != null)
         {
-            globalLight.intensity =
-                Mathf.MoveTowards(
-                    globalLight.intensity,
-                    targetGlobal,
-                    lightChangeSpeed * Time.deltaTime);
+            globalLight.intensity = Mathf.MoveTowards(
+                globalLight.intensity,
+                targetGlobal,
+                lightChangeSpeed * Time.deltaTime);
         }
 
-        float targetPlayer =
-            darkActive ? 1f : 0f;
-
+        // Player Light transition
         if (playerSpotLight != null)
         {
-            playerSpotLight.intensity =
-                Mathf.MoveTowards(
-                    playerSpotLight.intensity,
-                    targetPlayer,
-                    lightChangeSpeed * Time.deltaTime);
+            // Chỉ bật sáng (target = 1) khi Player ở TRONG vùng VÀ darkActive = true
+            // Nếu Player rời đi (playerInside = false), target sẽ là 0
+            float targetPlayer = (playerInside && darkActive) ? 1f : 0f;
+
+            playerSpotLight.intensity = Mathf.MoveTowards(
+                playerSpotLight.intensity,
+                targetPlayer,
+                lightChangeSpeed * Time.deltaTime);
+
+            // Khi Player đã rời đi và đèn đã tắt hoàn toàn về 0 -> Mới giải phóng tham chiếu
+            if (!playerInside && Mathf.Approximately(playerSpotLight.intensity, 0f))
+            {
+                playerSpotLight = null;
+            }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Trigger: " + other.name);
-
         if (!other.CompareTag("Player"))
             return;
 
-        Debug.Log("Player Enter");
-
         playerInside = true;
-
         playerSpotLight = other.GetComponentInChildren<Light2D>();
 
         if (playerSpotLight != null)
@@ -131,18 +144,32 @@ public class DarkZone : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        playerInside = false;
+        OnPlayerLeftOrDied();
+    }
 
-        value = 0;
+    private void OnDisable()
+    {
+        OnPlayerLeftOrDied();
+        // Force reset khẩn cấp nếu GameObject/Scene bị Disable
+        playerSpotLight = null;
+    }
+
+    private void OnPlayerLeftOrDied()
+    {
+        playerInside = false;
+        value = 0f;
         isFilling = true;
 
         ResetLight();
 
         if (effectFill != null)
-            effectFill.fillAmount = 0;
+            effectFill.fillAmount = 0f;
 
         if (effectBar != null)
             effectBar.SetActive(false);
+
+        // Lưu ý: Không set playerSpotLight = null ở đây ngay 
+        // để UpdateLighting() kịp kéo intensity của đèn Player về 0.
     }
 
     private void ResetLight()

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
@@ -11,10 +11,14 @@ public class BossHeath : MonoBehaviour
 
     public event Action OnDeath;
     [Header("Boss Settings")]
-    public bool isFinalBoss = false; // Tích chọn ô này trong Inspector cho con Boss cuối
-    [Tooltip("Tên scene Cutscene bạn muốn chạy")]
-    public string cutsceneSceneName = "CutScene"; // Nhập tên scene cutscene ở đây
+    public bool isFinalBoss = false;
 
+
+    // Biến trạng thái bất tử (không nhận sát thương)
+    public bool isInvincible = false;
+
+    [Tooltip("Tên scene Cutscene bạn muốn chạy")]
+    public string cutsceneSceneName = "CutScene";
 
     [Header("UI Health Bar")]
     public Image healthFill;
@@ -33,8 +37,7 @@ public class BossHeath : MonoBehaviour
 
     private Image FindImageByName(string imageName)
     {
-        Image[] images =
-            Resources.FindObjectsOfTypeAll<Image>();
+        Image[] images = Resources.FindObjectsOfTypeAll<Image>();
 
         foreach (Image img in images)
         {
@@ -48,39 +51,51 @@ public class BossHeath : MonoBehaviour
         Debug.LogError("Không tìm thấy Image: " + imageName);
         return null;
     }
+
     void Awake()
     {
-        if (!enableHealthUI)
-            return;
+        if (!enableHealthUI) return;
 
         Debug.Log("===== AUTO FIND UI =====");
 
         healthUIRoot = FindImageByName("BossHealthBar");
         healthFill = FindImageByName("BossHealthFill");
 
-        if (healthUIRoot != null)
-            Debug.Log("Đã gán BossHealthBar");
-
-        if (healthFill != null)
-            Debug.Log("Đã gán BossHealthFill");
+        if (healthUIRoot != null) Debug.Log("Đã gán BossHealthBar");
+        if (healthFill != null) Debug.Log("Đã gán BossHealthFill");
     }
 
     void Start()
     {
-        currentHeath = maxHeath;
-        if (!enableHealthUI)
-            return;
+        // Nếu HP chưa được khởi tạo bởi Clone thì mới set bằng maxHeath
+        if (currentHeath <= 0 || currentHeath > maxHeath)
+        {
+            currentHeath = maxHeath;
+        }
 
-        targetFill = 1f;
+        if (!enableHealthUI) return;
+
+        targetFill = (float)currentHeath / maxHeath;
+
+        if (healthFill != null) healthFill.fillAmount = targetFill;
+
+        if (healthUIRoot != null) healthUIRoot.enabled = false;
+        if (healthFill != null) healthFill.enabled = false;
+    }
+
+    /// <summary>
+    /// Khởi tạo chỉ số HP cho Clone dựa trên Boss gốc
+    /// </summary>
+    public void InitializeClone(int health, int maxHp)
+    {
+        maxHeath = maxHp;
+        currentHeath = Mathf.Clamp(health, 1, maxHp);
+        targetFill = (float)currentHeath / maxHeath;
 
         if (healthFill != null)
-            healthFill.fillAmount = 1f;
-
-        // ẩn UI lúc đầu
-        if (healthUIRoot != null)
-            healthUIRoot.enabled = false;
-        if (healthFill != null)
-            healthFill.enabled = false;
+        {
+            healthFill.fillAmount = targetFill;
+        }
     }
 
     public void Heal(int amount)
@@ -97,8 +112,10 @@ public class BossHeath : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        // Kiểm tra nếu đã chết hoặc đang bất tử
         if (isDead) return;
 
+        if (isInvincible) return;
         currentHeath -= damage;
 
         if (currentHeath <= 0)
@@ -106,26 +123,21 @@ public class BossHeath : MonoBehaviour
             currentHeath = 0;
             isDead = true;
             Debug.Log("Boss Death");
-            OnDeath?.Invoke(); // THÊM DÒNG NÀY
+            OnDeath?.Invoke();
 
             SendMessage(
                 "OnBossDeath",
                 SendMessageOptions.DontRequireReceiver
             );
 
-            // =================================================================
-            // CHỈ CẦN CHUYỂN CẢNH SANG CUTSCENE LÀ XONG, KHÔNG CẦN FLOW MANAGER
-            // =================================================================
             if (isFinalBoss)
             {
                 SceneManager.LoadScene(cutsceneSceneName);
             }
-            // =================================================================
         }
 
         targetFill = (float)currentHeath / maxHeath;
     }
-
     void Update()
     {
         if (enableHealthUI && healthFill != null)
@@ -140,10 +152,8 @@ public class BossHeath : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!enableHealthUI)
-            return;
-        if (!other.CompareTag("Player"))
-            return;
+        if (!enableHealthUI) return;
+        if (!other.CompareTag("Player")) return;
 
         if (healthUIRoot != null)
         {
@@ -159,16 +169,14 @@ public class BossHeath : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (!enableHealthUI)
-            return;
+        if (!enableHealthUI) return;
         if (other.CompareTag("Player"))
         {
-            if (healthUIRoot != null)
-                healthUIRoot.enabled = false;
-            if (healthFill != null)
-                healthFill.enabled = false;
+            if (healthUIRoot != null) healthUIRoot.enabled = false;
+            if (healthFill != null) healthFill.enabled = false;
         }
     }
+
     void UpdateHealthUI()
     {
         if (healthFill == null) return;

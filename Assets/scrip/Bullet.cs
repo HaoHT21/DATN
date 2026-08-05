@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public interface IDamageable
 {
@@ -74,12 +74,12 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        // Boss
         if (col.TryGetComponent<BossHeath>(out var boss))
         {
-            boss.TakeDamage(
-                damage
-            );
+            if (!boss.isInvincible)
+            {
+                boss.TakeDamage(damage);
+            }
 
             HitEffect();
             return;

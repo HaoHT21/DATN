@@ -3,7 +3,14 @@ using UnityEngine.UI;
 
 public class SlowZone : MonoBehaviour
 {
-    [Header("Thời gian")]
+
+    [Header("Thời gian Chờ Ngẫu Nhiên (Random Delay)")]
+    [Tooltip("Thời gian chờ tối thiểu trước khi bắt đầu chạy thanh")]
+    public float minDelay = 1f;
+    [Tooltip("Thời gian chờ tối đa trước khi bắt đầu chạy thanh")]
+    public float maxDelay = 10f;
+
+    [Header("Thời gian Tích/Xả")]
     public float fillTime = 5f;
     public float drainTime = 2f;
 
@@ -22,13 +29,21 @@ public class SlowZone : MonoBehaviour
     private SpriteRenderer sandstormSR;
 
     private bool playerInside;
-    private bool isFilling = true;
     private bool slowActive;
 
     private float value;
+    private float currentWaitTimer;
+    private ZoneState currentState = ZoneState.Waiting;
 
-    // Giới hạn Alpha tối đa: 150 / 255 ≈ 0.588f
+    // Giới hạn Alpha tối đa: 220 / 255 ≈ 0.86f
     private const float MAX_ALPHA = 220f / 255f;
+
+    private enum ZoneState
+    {
+        Waiting, // Đang chờ random time trước khi nạp
+        Filling, // Đang tích lũy thanh nhiệt/chậm
+        Draining // Đang xả thanh và áp dụng làm chậm
+    }
 
     private void Start()
     {
@@ -53,49 +68,73 @@ public class SlowZone : MonoBehaviour
         if (!playerInside)
             return;
 
-        // Tăng thanh
-        if (isFilling)
+        switch (currentState)
         {
-            value += Time.deltaTime / fillTime;
+            case ZoneState.Waiting:
+                // Đếm ngược thời gian chờ ngẫu nhiên
+                currentWaitTimer -= Time.deltaTime;
+                value = 0f;
 
-            if (value >= 1f)
-            {
-                value = 1f;
-
-                if (!slowActive && playerEffect != null)
+                if (currentWaitTimer <= 0f)
                 {
-                    slowActive = true;
-                    playerEffect.SetSlow(slowPercent);
+                    // Hết thời gian chờ -> Chuyển sang trạng thái Nạp (Filling)
+                    currentState = ZoneState.Filling;
                 }
+                break;
 
-                isFilling = false;
-            }
-        }
-        // Giảm thanh
-        else
-        {
-            value -= Time.deltaTime / drainTime;
+            case ZoneState.Filling:
+                // Tăng thanh
+                value += Time.deltaTime / fillTime;
 
-            if (value <= 0)
-            {
-                value = 0;
-
-                if (slowActive && playerEffect != null)
+                if (value >= 1f)
                 {
-                    slowActive = false;
-                    playerEffect.RemoveSlow();
-                }
+                    value = 1f;
 
-                isFilling = true;
-            }
+                    // Kích hoạt hiệu ứng làm chậm khi đầy thanh
+                    if (!slowActive && playerEffect != null)
+                    {
+                        slowActive = true;
+                        playerEffect.SetSlow(slowPercent);
+                    }
+
+                    // Đầy thanh -> Chuyển sang trạng thái Rút (Draining)
+                    currentState = ZoneState.Draining;
+                }
+                break;
+
+            case ZoneState.Draining:
+                // Giảm thanh
+                value -= Time.deltaTime / drainTime;
+
+                if (value <= 0f)
+                {
+                    value = 0f;
+
+                    // Gỡ bỏ làm chậm khi hết thanh
+                    if (slowActive && playerEffect != null)
+                    {
+                        slowActive = false;
+                        playerEffect.RemoveSlow();
+                    }
+
+                    // Hết thanh -> Random thời gian chờ mới cho chu kỳ tiếp theo
+                    StartNewWaitTimer();
+                }
+                break;
         }
 
         // Cập nhật UI
         if (effectFill != null)
             effectFill.fillAmount = value;
 
-        // Cập nhật Alpha của bão cát dựa theo value (từ 0 -> 150/255)
+        // Cập nhật Alpha của bão cát dựa theo value
         SetSandstormAlpha(value * MAX_ALPHA);
+    }
+
+    private void StartNewWaitTimer()
+    {
+        currentState = ZoneState.Waiting;
+        currentWaitTimer = Random.Range(minDelay, maxDelay);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -108,6 +147,9 @@ public class SlowZone : MonoBehaviour
 
         if (effectBar != null)
             effectBar.SetActive(true);
+
+        // Bắt đầu chu kỳ với một khoảng thời gian chờ ngẫu nhiên
+        StartNewWaitTimer();
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -123,8 +165,8 @@ public class SlowZone : MonoBehaviour
         }
 
         slowActive = false;
-        isFilling = true;
-        value = 0;
+        currentState = ZoneState.Waiting;
+        value = 0f;
 
         // Cập nhật UI và reset Alpha về 0 ngay khi thoát
         if (effectFill != null)

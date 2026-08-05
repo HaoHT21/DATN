@@ -26,6 +26,8 @@ public class TrapController : MonoBehaviour
 
     private float lastDamageTime;
 
+    private float cycleTimer;
+
     private void Start()
     {
         if (trapTilemap == null) trapTilemap = GetComponent<Tilemap>();
@@ -50,20 +52,16 @@ public class TrapController : MonoBehaviour
 
         // 1. Tính tổng thời lượng của 1 chu kỳ (1 cycle)
         float cycleDuration = totalFrames / animationSpeed;
+        cycleTimer += Time.deltaTime;
+        if (cycleTimer >= cycleDuration)
+            cycleTimer -= cycleDuration;
 
-        // 2. Lấy thời gian đã trôi qua trong chu kỳ hiện tại (luôn chuẩn xác theo Time.time)
-        float timeInCurrentCycle = Time.time % cycleDuration;
+        float frameDuration = cycleDuration / totalFrames;
+        int currentFrame = Mathf.FloorToInt(cycleTimer / frameDuration) + 1;
+        currentFrame = Mathf.Clamp(currentFrame, 1, totalFrames);
 
-        // 3. Tính chính xác Frame hiện tại (từ 1 đến totalFrames)
-        int currentFrame = Mathf.FloorToInt((timeInCurrentCycle / cycleDuration) * totalFrames) + 1;
+        trapCollider.enabled = (currentFrame == activeFrame);
 
-        // 4. Bật Collider nếu đang ở Frame 5, tắt nếu ở các Frame khác
-        bool shouldBeActive = (currentFrame == activeFrame);
-
-        if (trapCollider.enabled != shouldBeActive)
-        {
-            trapCollider.enabled = shouldBeActive;
-        }
     }
 
     private void OnTriggerStay2D(Collider2D other)

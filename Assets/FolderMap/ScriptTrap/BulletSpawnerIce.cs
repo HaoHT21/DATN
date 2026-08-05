@@ -52,5 +52,6 @@ public class BulletSpawnerIce : MonoBehaviour, IDamageable
         }
 
         Destroy(gameObject);
+
     }
 }

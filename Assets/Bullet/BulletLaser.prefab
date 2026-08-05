@@ -445,7 +445,8 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 576
-  damage: 10
+  damage: 20
+  damageInterval: 0.2
   warningHeartPrefab: {fileID: 8669524994501068786}
 --- !u!1 &8669524994501068786
 GameObject:

@@ -101,9 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ef7511508ae1674191d436822562fd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  poisonEffectSO: {fileID: 11400000, guid: 45e25295ee17ee04da5cfc771d4f65c5, type: 2}
   directDamage: 5
-  poisonDamage: 1
-  damageInterval: 1
   poisonDurationAfterExit: 3
   lifeTime: 5
 --- !u!58 &7142854621867140023

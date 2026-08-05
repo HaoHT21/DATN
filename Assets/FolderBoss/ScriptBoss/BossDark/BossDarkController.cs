@@ -3,415 +3,217 @@ using System.Collections;
 
 public class BossDarkController : BossController
 {
-    [Header("Cast Skill")]
+    [Header("Cast Skill Settings")]
     public GameObject bulletCastPrefab;
     public Transform castPoint;
+    public int castCount = 10;          // Tổng số đạn xả ra trong 1 lần
+    public float castRadius = 1.5f;      // Bán kính vòng tròn xung quanh castPoint
+    public float castInterval = 0.5f;    // Delay chờ khớp với điểm vung tay của animation Cast
 
-    public int castCount = 3;
-    public float castInterval = .5f;
-
-    [Header("Invisible Skill")]
+    [Header("Invisible Skill Settings")]
     public float invisibleDuration = 4f;
     public float invisibleMoveSpeed = 20f;
+    public float preInvisibleDelay = 0.3f;  // Delay chuẩn bị trước khi biến mất
+    public float postInvisibleDelay = 0.4f; // Delay sau khi hiện hình rồi mới tung chiêu
 
-    [Header("Spawn Attack")]
+    [Header("Spawn Attack Settings")]
     public GameObject spawnBulletPrefab;
     public Transform spawnPoint;
-
     public int spawnBulletCount = 12;
 
-    [Header("Invisible")]
-    public LayerMask wallLayer;
-
-    BoxCollider2D bodyCollider;
-
-    bool isInvisible;
+    private BoxCollider2D bodyCollider;
+    private BossDarkAudio _bossAudio; // Cache component audio
 
     //--------------------------------
     // SETUP
     //--------------------------------
-
     protected override void Awake()
     {
-        base.Awake();
+        base.Awake(); // Đảm bảo gọi logic Awake của BossController cha
+        bodyCollider = GetComponent<BoxCollider2D>();
 
-        bodyCollider =
-        GetComponent<BoxCollider2D>();
+        if (sprites == null || sprites.Length == 0)
+            sprites = GetComponentsInChildren<SpriteRenderer>();
 
-        if (
-            sprites == null ||
-            sprites.Length == 0
-        )
-        {
-            sprites =
-            GetComponentsInChildren<
-            SpriteRenderer>();
-        }
+        if (hitColliders == null || hitColliders.Length == 0)
+            hitColliders = GetComponentsInChildren<Collider2D>();
 
-        if (
-            hitColliders == null ||
-            hitColliders.Length == 0
-        )
-        {
-            hitColliders =
-            GetComponentsInChildren<
-            Collider2D>();
-        }
+        // Cache component BossDarkAudio
+        _bossAudio = GetComponent<BossDarkAudio>();
     }
 
-    protected void SetInvisible(
-bool value
-)
+    //--------------------------------
+    // SETUP SKILLS
+    //--------------------------------
+    protected override void RegisterBossSkills()
     {
-        foreach (
-            SpriteRenderer sp
-            in sprites
-        )
-        {
-            sp.enabled =
-            !value;
-        }
-
-        foreach (
-            Collider2D col
-            in hitColliders
-        )
-        {
-            col.enabled =
-            !value;
-        }
-
-        if (anim != null)
-        {
-            anim.enabled =
-            !value;
-        }
+        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 40, 30));
+        bossSkills.Add(new SkillWeight(CastSkill, 40, 30));
+        bossSkills.Add(new SkillWeight(InvisibleSkill, 20, 40));
     }
 
     //--------------------------------
-    // PHASE
+    // PHASE & HELPER
     //--------------------------------
-
-    protected override void OnPhaseChange(
-        int phase
-    )
+    protected override void OnPhaseChange(int phase)
     {
         if (phase == 2)
         {
-            castCount += 5;
-
-            spawnBulletCount += 20;
-
+            castCount += 3;
+            spawnBulletCount += 10;
             moveSpeed += 10;
         }
     }
 
-    //--------------------------------
-    // SKILL1
-    //--------------------------------
-
-    protected override IEnumerator UseSkill1()
+    /// <summary>
+    /// Ẩn/Hiện hình Boss bao gồm Renderers, Colliders, Animator và VFX Phase 2 của lớp cha
+    /// </summary>
+    protected void SetInvisible(bool value)
     {
-        yield return CastSkill();
-    }
-
-    //--------------------------------
-    // SKILL2
-    //--------------------------------
-
-    protected override IEnumerator UseSkill2()
-    {
-        yield return InvisibleSkill();
-    }
-
-    //--------------------------------
-    // THINK
-    //--------------------------------
-
-    protected override IEnumerator Think()
-    {
-        isThinking = true;
-
-        yield return
-        new WaitForSeconds(
-            Random.Range(
-                thinkMin,
-                thinkMax
-            )
-        );
-
-        int action = 0;
-
-        if (currentPhase == 1)
+        // 1. Ẩn/Hiện các Sprite Renderer
+        foreach (SpriteRenderer sp in sprites)
         {
-            int roll =
-            Random.Range(0, 100);
-
-            if (roll < 30)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 50)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
+            if (sp != null) sp.enabled = !value;
         }
 
-        else
+        // 2. Ẩn/Hiện các Colliders nhận sát thương / va chạm
+        foreach (Collider2D col in hitColliders)
         {
-            int roll =
-            Random.Range(0, 100);
-
-            if (roll < 20)
-            {
-                yield return
-                StartCoroutine(
-                    MoveState()
-                );
-            }
-
-            else if (roll < 40)
-            {
-                action = 0;
-            }
-
-            else
-            {
-                action = 1;
-            }
+            if (col != null) col.enabled = !value;
         }
 
-        switch (action)
+        // 3. Ẩn/Hiện VFX Phase 2
+        if (phase2VFXObject != null && currentPhase >= 2)
         {
-            case 0:
-
-                yield return
-                StartCoroutine(
-                    UseSkill1()
-                );
-
-                break;
-
-            case 1:
-
-                yield return
-                StartCoroutine(
-                    UseSkill2()
-                );
-
-                break;
+            phase2VFXObject.SetActive(!value);
         }
-
-        isThinking = false;
-    }
-
-    IEnumerator MoveState()
-    {
-        yield return
-        new WaitForSeconds(
-            Random.Range(
-                .8f,
-                1.5f
-            )
-        );
     }
 
     //--------------------------------
-    // CAST
+    // CAST SKILL
     //--------------------------------
-
     IEnumerator CastSkill()
     {
-        usingSkill = true;
+        canDodgeDuringSkill = true; // Cho phép né đạn trong khi tung chiêu này
 
-        for (
-            int i = 0;
-            i < castCount;
-            i++
-        )
+        Cast(); // Bật Animation gồng chiêu
+
+        // Đợi một khoảng thời gian castInterval cho khớp với khung hình vung tay của Anim
+        yield return new WaitForSeconds(castInterval);
+
+        // Xả HẾT đạn cùng 1 lúc tại vị trí ngẫu nhiên quanh castPoint
+        if (bulletCastPrefab != null && castPoint != null)
         {
-            Cast();
+            for (int i = 0; i < castCount; i++)
+            {
+                Vector2 randomOffset = Random.insideUnitCircle * castRadius;
+                Vector3 spawnPosition = castPoint.position + (Vector3)randomOffset;
 
-            yield return
-            new WaitForSeconds(
-                .3f
-            );
+                Instantiate(bulletCastPrefab, spawnPosition, castPoint.rotation);
+            }
 
-            Instantiate(
-                bulletCastPrefab,
-                castPoint.position,
-                castPoint.rotation
-            );
-
-            yield return
-            new WaitForSeconds(
-                castInterval
-            );
+            // PHÁT ÂM THANH XẢ ĐẠN MA THUẬT
+            if (_bossAudio != null)
+            {
+                _bossAudio.PlayCastShootSound(castPoint.position);
+            }
         }
 
-        usingSkill = false;
-
-        PlayIdle();
+        canDodgeDuringSkill = false;
     }
 
     //--------------------------------
-    // INVISIBLE
+    // INVISIBLE SKILL
     //--------------------------------
-
     IEnumerator InvisibleSkill()
     {
-        usingSkill = true;
+        canDodgeDuringSkill = false; // Tắt né đạn khi tàng hình
 
-        isInvisible = true;
+        // --- BƯỚC 1: Delay ngắn trước khi biến mất hoàn toàn ---
+        PlayIdle();
+        yield return new WaitForSeconds(preInvisibleDelay);
 
+        // --- BƯỚC 2: Tàng hình & Di chuyển ---
         SetInvisible(true);
+
+        // PHÁT ÂM THANH BẮT ĐẦU TÀNG HÌNH
+        if (_bossAudio != null)
+        {
+            _bossAudio.PlayInvisibleEnterSound();
+        }
 
         PickInvisibleTarget();
 
-        float timer = 0;
-
-        while (
-            timer <
-            invisibleDuration
-        )
+        float timer = 0f;
+        while (timer < invisibleDuration)
         {
             MoveInvisible();
-
-            timer +=
-            Time.deltaTime;
-
+            timer += Time.deltaTime;
             yield return null;
         }
 
+        // --- BƯỚC 3: Hiện hình trở lại ---
         SetInvisible(false);
+        rb.linearVelocity = Vector2.zero; // Reset lực di chuyển
 
-        SpawnCircleBullet();
-
+        // --- BƯỚC 4: Delay sau khi hiện hình + Chạy Anim báo hiệu ---
         PlayIdle();
+        yield return new WaitForSeconds(postInvisibleDelay);
 
-        isInvisible = false;
-
-        usingSkill = false;
+        // --- BƯỚC 5: Xả đạn vòng tròn ---
+        SpawnCircleBullet();
     }
-
-    //--------------------------------
-    // INVISIBLE MOVE
-    //--------------------------------
 
     void MoveInvisible()
     {
-        if (
-            Vector2.Distance(
-                transform.position,
-                randomTarget
-            ) < .5f
-        )
+        //Tăng khoảng cách ngẫu nhiên để di chuyển đến target mới nếu quá gần
+        if (Vector2.Distance(transform.position, randomTarget) < 1.2f)
         {
             PickInvisibleTarget();
         }
 
-        Vector2 dir =
-        (
-            randomTarget -
-            rb.position
-        ).normalized;
+        Vector2 dir = (randomTarget - (Vector2)transform.position).normalized;
 
-        rb.MovePosition(
-            rb.position +
-            dir *
-            invisibleMoveSpeed *
-            Time.deltaTime
-        );
+        // Di chuyển Boss tàng hình theo hướng dir với tốc độ invisibleMoveSpeed
+        rb.MovePosition(rb.position + dir * invisibleMoveSpeed * Time.deltaTime);
     }
 
     void PickInvisibleTarget()
     {
         for (int i = 0; i < 10; i++)
         {
-            Vector2 pos =
-            (Vector2)transform.position +
-            Random.insideUnitCircle *
-            randomMoveRadius;
+            // Mở rộng bán kính tìm điểm khi tàng hình (gấp đôi randomMoveRadius của lớp cha)
+            Vector2 pos = (Vector2)transform.position + Random.insideUnitCircle * (randomMoveRadius * 2f);
 
-            //--------------------------------
-            // điểm nằm trong tường
-            //--------------------------------
+            if (Physics2D.OverlapCircle(pos, .5f, wallLayer)) continue;
 
-            if (
-                Physics2D.OverlapCircle(
-                    pos,
-                    .5f,
-                    wallLayer
-                )
-            )
-            {
-                continue;
-            }
-
-            //--------------------------------
-            // đường đi xuyên tường
-            //--------------------------------
-
-            RaycastHit2D hit =
-            Physics2D.Linecast(
-                transform.position,
-                pos,
-                wallLayer
-            );
-
-            if (hit.collider != null)
-            {
-                continue;
-            }
-
-            //--------------------------------
+            RaycastHit2D hit = Physics2D.Linecast(transform.position, pos, wallLayer);
+            if (hit.collider != null) continue;
 
             randomTarget = pos;
             return;
         }
-
-        randomTarget =
-        transform.position;
+        randomTarget = transform.position;
     }
 
     //--------------------------------
     // BULLET CIRCLE
     //--------------------------------
-
     void SpawnCircleBullet()
     {
-        for (
-            int i = 0;
-            i < spawnBulletCount;
-            i++
-        )
+        if (spawnBulletPrefab == null || spawnPoint == null) return;
+
+        for (int i = 0; i < spawnBulletCount; i++)
         {
-            float angle =
-            (360f /
-            spawnBulletCount)
-            * i;
+            float angle = (360f / spawnBulletCount) * i;
+            Quaternion rot = Quaternion.Euler(0, 0, angle);
+            Instantiate(spawnBulletPrefab, spawnPoint.position, rot);
+        }
 
-            Quaternion rot =
-            Quaternion.Euler(
-                0,
-                0,
-                angle
-            );
-
-            Instantiate(
-                spawnBulletPrefab,
-                spawnPoint.position,
-                rot
-            );
+        // PHÁT ÂM THANH BÙNG NỔ BÃO ĐẠN VÒNG TRÒN
+        if (_bossAudio != null)
+        {
+            _bossAudio.PlayCircleBurstSound(spawnPoint.position);
         }
     }
 }
