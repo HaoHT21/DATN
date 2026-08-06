@@ -249,6 +249,9 @@ public abstract class BossController : MonoBehaviour
         }
     }
 
+    // ------------------------------------------------
+    // Logic Né Đạn Đã Tối Ưu (Chống Xuyên Tường & Giật Tele)
+    // ------------------------------------------------
     protected void TryPerformSafeDodge(Vector2 bulletDirection)
     {
         Vector2 sideDir1 = Vector2.Perpendicular(bulletDirection);
@@ -260,16 +263,19 @@ public abstract class BossController : MonoBehaviour
 
         Vector2 safeDodgeDir = Vector2.zero;
 
-        // Kiểm tra hướng an toàn không vướng tường
-        if (IsDirectionSafe(primaryDir, dodgeDistance))
+        // Bán kính va chạm của Boss
+        float bossRadius = 0.5f;
+
+        // Tìm hướng lướt an toàn
+        if (IsDirectionSafe(primaryDir, dodgeDistance, bossRadius))
         {
             safeDodgeDir = primaryDir;
         }
-        else if (IsDirectionSafe(secondaryDir, dodgeDistance))
+        else if (IsDirectionSafe(secondaryDir, dodgeDistance, bossRadius))
         {
             safeDodgeDir = secondaryDir;
         }
-        else if (IsDirectionSafe(-bulletDirection, dodgeDistance))
+        else if (IsDirectionSafe(-bulletDirection, dodgeDistance, bossRadius))
         {
             safeDodgeDir = -bulletDirection; // Né tiến lên phía đạn
         }
@@ -277,48 +283,76 @@ public abstract class BossController : MonoBehaviour
         if (safeDodgeDir != Vector2.zero)
         {
             if (currentDodgeCoroutine != null) StopCoroutine(currentDodgeCoroutine);
-            currentDodgeCoroutine = StartCoroutine(PerformDodge(safeDodgeDir));
+            currentDodgeCoroutine = StartCoroutine(PerformDodge(safeDodgeDir, bossRadius));
         }
     }
 
-    protected bool IsDirectionSafe(Vector2 direction, float distance)
+    // Hàm kiểm tra hướng lướt có khoảng trống hay không
+    protected bool IsDirectionSafe(Vector2 direction, float distance, float bossRadius)
     {
-        float bossRadius = 0.5f;
+        // Kiểm tra xem có tường ngay sát bên cạnh không (tối thiểu lướt được 1.5 units)
         RaycastHit2D hit = Physics2D.CircleCast(transform.position, bossRadius, direction, distance, wallLayer);
-        return hit.collider == null;
+        if (hit.collider != null)
+        {
+            // Nếu khoảng cách đến tường quá ngắn (< 1.5m), coi như hướng đó không an toàn
+            return hit.distance > 1.5f;
+        }
+        return true;
     }
 
-    protected IEnumerator PerformDodge(Vector2 dodgeDir)
+    protected IEnumerator PerformDodge(Vector2 dodgeDir, float bossRadius)
     {
         isDodging = true;
         lastDodgeTime = Time.time;
 
         Vector2 startPos = rb.position;
-        Vector2 targetPos = startPos + dodgeDir.normalized * dodgeDistance;
+        Vector2 dirNormalized = dodgeDir.normalized;
+
+        // 1. TÍNH TRƯỚC ĐIỂM ĐÍCH AN TOÀN (Predictive Raycast)
+        float maxAllowedDistance = dodgeDistance;
+        RaycastHit2D wallHit = Physics2D.CircleCast(startPos, bossRadius, dirNormalized, dodgeDistance, wallLayer);
+
+        if (wallHit.collider != null)
+        {
+            // Chỉ cho phép lướt tới mép tường (giữ khoảng cách an toàn bằng bossRadius)
+            maxAllowedDistance = Mathf.Max(0f, wallHit.distance - 0.05f);
+        }
+
+        Vector2 targetPos = startPos + dirNormalized * maxAllowedDistance;
 
         rb.linearVelocity = Vector2.zero;
 
+        // 2. LƯỚT MƯỢT TRONG FIXEDUPDATE
         float elapsed = 0f;
         while (elapsed < dodgeDuration)
         {
-            elapsed += Time.deltaTime;
-            float progress = elapsed / dodgeDuration;
+            elapsed += Time.fixedDeltaTime;
+            float progress = Mathf.Clamp01(elapsed / dodgeDuration);
 
-            // Động tác lướt mượt bằng Ease-Out
+            // Công thức Ease-Out cho cảm giác lướt xé gió nhưng dừng lại mượt
             float easeOutProgress = 1f - Mathf.Pow(1f - progress, 3);
-            rb.MovePosition(Vector2.Lerp(startPos, targetPos, easeOutProgress));
+            Vector2 nextPos = Vector2.Lerp(startPos, targetPos, easeOutProgress);
 
-            yield return null;
+            // Kiểm tra va chạm bổ sung theo thời gian thực (tránh trường hợp tường động)
+            Vector2 stepDir = nextPos - rb.position;
+            float stepDist = stepDir.magnitude;
+
+            if (stepDist > 0.001f)
+            {
+                RaycastHit2D stepHit = Physics2D.CircleCast(rb.position, bossRadius, stepDir.normalized, stepDist, wallLayer);
+                if (stepHit.collider != null)
+                {
+                    // Đặt Boss sát tường và dừng né ngay
+                    rb.MovePosition(stepHit.point + (stepHit.normal * bossRadius));
+                    break;
+                }
+            }
+
+            rb.MovePosition(nextPos);
+            yield return new WaitForFixedUpdate(); // Đồng bộ tuyệt đối với Physics Engine
         }
 
-        rb.MovePosition(targetPos);
         isDodging = false;
-
-        // Nếu né xong mà không ở trạng thái Moving thì cho về Idle
-        // if (currentState != BossState.Moving)
-        // {
-        //     PlayIdle();
-        // }
     }
 
     // ------------------------------------------------

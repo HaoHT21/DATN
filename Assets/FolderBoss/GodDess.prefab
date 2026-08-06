@@ -64,9 +64,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &8900365905114097902
 MonoBehaviour:
@@ -5257,8 +5257,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 500
   maxHeath: 500
-  isInvincible: 0
   isFinalBoss: 1
+  isInvincible: 0
   cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}

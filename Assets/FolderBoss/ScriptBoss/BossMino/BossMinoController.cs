@@ -21,14 +21,14 @@ public class BossMinoController : BossController
     public float redBullInterval = .5f;
 
     public float retreatDistance = 6f;
-    public float retreatSpeed = 8f; // Tăng tốc độ rút lui mượt mà hơn
+    public float retreatSpeed = 8f;
 
     [Header("Wall Check")]
-    public LayerMask obstacleMask; // Chọn Layer chứa Tường (ví dụ: Wall, Obstacle, Ground)
-    public float wallCheckDistance = 0.6f; // Khoảng cách nhận diện tường khi đang húc
+    public LayerMask obstacleMask; // Layer Tường
+    public float bossRadius = 0.5f; // Bán kính vòng tròn va chạm của Boss
 
     Vector2 chargeDirection;
-    private BossMinoAudio _bossAudio; // Cache component audio
+    private BossMinoAudio _bossAudio;
 
     protected override void Awake()
     {
@@ -36,9 +36,6 @@ public class BossMinoController : BossController
         _bossAudio = GetComponent<BossMinoAudio>();
     }
 
-    //--------------------------------
-    // SETUP SKILLS
-    //--------------------------------
     protected override void RegisterBossSkills()
     {
         bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 40, 30));
@@ -46,15 +43,12 @@ public class BossMinoController : BossController
         bossSkills.Add(new SkillWeight(RedBullSkill, 25, 40));
     }
 
-    //--------------------------------
-    // PHASE & EFFECTS
-    //--------------------------------
     protected override void OnPhaseChange(int phase)
     {
         if (phase == 2)
         {
-            bulletCount += 3;
-            shootCount += 2;
+            bulletCount += 2;
+            shootCount += 1;
             chargeDuration -= 0.2f;
             redBullCount += 1;
             moveSpeed += 5;
@@ -63,24 +57,13 @@ public class BossMinoController : BossController
 
     protected override void DisableEffects()
     {
-        if (redBullEffect != null)
-        {
-            redBullEffect.SetActive(false);
-        }
-
-        // Tắt âm thanh húc lặp nếu Boss bị hủy giữa chừng
-        if (_bossAudio != null)
-        {
-            _bossAudio.StopChargeLoopSound();
-        }
-
+        if (redBullEffect != null) redBullEffect.SetActive(false);
+        if (_bossAudio != null) _bossAudio.StopChargeLoopSound();
     }
-    //--------------------------------
-    // SHOOT
-    //--------------------------------
+
     IEnumerator ShootSkill()
     {
-        canDodgeDuringSkill = true; // <--- BẬT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
+        canDodgeDuringSkill = true;
         for (int i = 0; i < shootCount; i++)
         {
             PlayAttack();
@@ -92,14 +75,13 @@ public class BossMinoController : BossController
             FireBullets();
             yield return new WaitForSeconds(shootInterval);
         }
-        canDodgeDuringSkill = false; // <--- TẮT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
+        canDodgeDuringSkill = false;
     }
 
     void FireBullets()
     {
         float spread = 50f;
 
-        // GỌI ÂM THANH BẮN ĐẠN
         if (_bossAudio != null && firePoint != null)
         {
             _bossAudio.PlayShootSpreadSound(firePoint.position);
@@ -120,12 +102,13 @@ public class BossMinoController : BossController
     }
 
     //--------------------------------
-    // REDBULL
+    // REDBULL SKILL (ĐÃ FIX KẸT TƯỜNG)
     //--------------------------------
     IEnumerator RedBullSkill()
     {
-        canDodgeDuringSkill = false; // <--- TẮT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
-        if (bossHeath != null) bossHeath.isInvincible = true; // Bất tử trong khi húc
+        canDodgeDuringSkill = false;
+        if (bossHeath != null) bossHeath.isInvincible = true;
+
         try
         {
             for (int i = 0; i < redBullCount; i++)
@@ -135,7 +118,6 @@ public class BossMinoController : BossController
                 chargeDirection = (target.position - transform.position).normalized;
                 RedBull();
 
-                // GỌI ÂM THANH: Tiếng gầm chuẩn bị húc
                 if (_bossAudio != null)
                 {
                     _bossAudio.PlayChargeRoarSound(transform.position);
@@ -145,32 +127,52 @@ public class BossMinoController : BossController
 
                 if (redBullEffect != null) redBullEffect.SetActive(true);
 
-                float timer = 0;
+                float timer = 0f;
+                bool hitWall = false;
+
                 while (timer < chargeDuration)
                 {
-                    // KIỂM TRA VA CHẠM TƯỜNG KHÔNG CHO ĐỊNH VỊ
-                    RaycastHit2D hit = Physics2D.CircleCast(transform.position, 0.4f, chargeDirection, wallCheckDistance, obstacleMask);
+                    // Tính khoảng cách Boss sẽ di chuyển trong frame vật lý này
+                    float moveDistance = chargeSpeed * Time.fixedDeltaTime;
+
+                    // Quét trước đường đi xem có đụng tường không
+                    RaycastHit2D hit = Physics2D.CircleCast(rb.position, bossRadius, chargeDirection, moveDistance, obstacleMask);
+
                     if (hit.collider != null)
                     {
-                        Debug.Log("Boss Mino đã tông vào tường! Hủy lao tới lập tức.");
-                        break; // Thoát khỏi vòng lặp lao tới ngay lập tức!
+                        // Đặt Boss sát mép tường (trừ đi bán kính của Boss để không dính vào trong)
+                        Vector2 safePosition = hit.point + (hit.normal * bossRadius);
+                        rb.MovePosition(safePosition);
+
+                        Debug.Log("Boss Mino chạm tường! Đang bật lùi ra...");
+                        hitWall = true;
+                        break; // Thoát vòng lặp húc
                     }
 
-                    rb.MovePosition(rb.position + chargeDirection * chargeSpeed * Time.deltaTime);
-                    timer += Time.deltaTime;
-                    yield return null;
+                    // Nếu đường đi an toàn -> Di chuyển tiếp
+                    rb.MovePosition(rb.position + chargeDirection * moveDistance);
+
+                    timer += Time.fixedDeltaTime;
+                    yield return new WaitForFixedUpdate(); // Đồng bộ với Physics
                 }
 
                 if (redBullEffect != null) redBullEffect.SetActive(false);
 
-                // Ngay lập tức rút lui sau khi húc xong/đụng tường
+                // Nếu chạm tường, đẩy nhẹ lùi ra 0.2 unit để giải phóng collider hoàn toàn
+                if (hitWall)
+                {
+                    rb.MovePosition(rb.position - chargeDirection * 0.2f);
+                    yield return new WaitForSeconds(0.05f);
+                }
+
+                // Chuyển sang trạng thái rút lui khỏi vị trí va chạm/người chơi
                 yield return RetreatAfterCharge();
                 yield return new WaitForSeconds(redBullInterval);
             }
         }
         finally
         {
-            if (bossHeath != null) bossHeath.isInvincible = false; // Hủy bất tử sau khi húc xong
+            if (bossHeath != null) bossHeath.isInvincible = false;
         }
     }
 
@@ -180,9 +182,19 @@ public class BossMinoController : BossController
 
         while (Vector2.Distance(transform.position, target.position) < retreatDistance)
         {
-            Vector2 dir = (transform.position - target.position).normalized;
-            rb.MovePosition(rb.position + dir * retreatSpeed * Time.deltaTime);
-            yield return null;
+            Vector2 retreatDir = ((Vector2)transform.position - (Vector2)target.position).normalized;
+            float moveDistance = retreatSpeed * Time.fixedDeltaTime;
+
+            // Kiểm tra phía sau lưng khi rút lui xem có vướng tường không
+            RaycastHit2D hit = Physics2D.CircleCast(rb.position, bossRadius, retreatDir, moveDistance, obstacleMask);
+            if (hit.collider != null)
+            {
+                // Nếu lùi trúng tường khác thì dừng lùi ngay
+                break;
+            }
+
+            rb.MovePosition(rb.position + retreatDir * moveDistance);
+            yield return new WaitForFixedUpdate();
         }
     }
 }

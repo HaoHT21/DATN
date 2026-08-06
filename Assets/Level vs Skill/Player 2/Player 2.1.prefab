@@ -359,7 +359,7 @@ MonoBehaviour:
   healSound: {fileID: 0}
   dropSound: {fileID: 0}
   visual: {fileID: 6217321255606330290}
-  playerAvatar: {fileID: 0}
+  playerAvatar: {fileID: 7939751004942950254, guid: 1375541538a26e941acba6e724760564, type: 3}
   isKnocked: 0
   reverseControl: 0
   isFrozen: 0
@@ -444,6 +444,7 @@ MonoBehaviour:
   currentMoveSpeed: 0
   fireValue: 0
   maxFire: 1
+  canAddHeat: 1
 --- !u!114 &5336805264897951525
 MonoBehaviour:
   m_ObjectHideFlags: 0

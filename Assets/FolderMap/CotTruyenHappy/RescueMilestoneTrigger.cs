@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public class RescueMilestoneTrigger : MonoBehaviour
 {
     [Header("Mốc điều kiện")]
@@ -10,25 +11,26 @@ public class RescueMilestoneTrigger : MonoBehaviour
     [Tooltip("Kéo AncientGateController vào đây")]
     public AncientGateController ancientGate;
 
-    [Header("1. Vùng Trigger (Môi trường)")]
-    [Tooltip("GameObject chứa vùng Trigger sẽ được BẬT khi đủ 8 con tin")]
-    public GameObject targetTriggerZone;
-
-    [Header("2. GameObject xuất hiện cạnh Player")]
-    [Tooltip("Prefab hoặc GameObject sẽ xuất hiện ngay cạnh Player")]
+    [Header("1. GameObject xuất hiện cạnh Player khi vào Trigger")]
+    [Tooltip("Prefab hoặc GameObject sẽ xuất hiện ngay cạnh Player khi bước vào Trigger này")]
     public GameObject objectToSpawnNextToPlayer;
 
     [Tooltip("Khoảng cách xuất hiện so với vị trí Player")]
     public Vector3 spawnOffset = new Vector3(1.5f, 0f, 0f);
 
-    private bool _hasTriggered;
+    [Header("2. Vùng Trigger (Môi trường) - Kích hoạt BẬT SAU")]
+    [Tooltip("GameObject chứa vùng Trigger sẽ được BẬT SAU KHI NPC đã xuất hiện")]
+    public GameObject targetTriggerZone;
+
+    private bool _isMilestoneUnlocked; // Đã đủ 8 con tin chưa
+    private bool _hasSpawnedObject;     // Đã spawn NPC cạnh Player chưa
+    private GameObject _spawnedInstance;
 
     private void OnEnable()
     {
         HostageRescueManager manager = HostageRescueManager.EnsureInstance();
         manager.OnRescueCountChanged += HandleRescueCountChanged;
 
-        // Kiểm tra ngay khi Enable (nếu đã cứu đủ 8 con tin trước đó)
         CheckCondition(manager.RescuedCount);
     }
 
@@ -47,54 +49,59 @@ public class RescueMilestoneTrigger : MonoBehaviour
 
     private void CheckCondition(int count)
     {
-        // Nếu đã kích hoạt rồi hoặc chưa đủ 8 con tin thì BỎ QUA
-        if (_hasTriggered || count < requiredHostageCount)
+        if (_isMilestoneUnlocked || count < requiredHostageCount)
             return;
 
         if (ancientGate == null)
             ancientGate = FindFirstObjectByType<AncientGateController>();
 
-        // Nếu cổng đã bị mở trước đó (ví dụ do 8 viên ngọc mở) thì ngưng không đè lên nữa
         if (ancientGate != null && ancientGate.State != GateState.Closed)
             return;
 
-        // Khóa lại để tránh chạy lặp
-        _hasTriggered = true;
+        _isMilestoneUnlocked = true;
 
-        // 1. Mở Cổng + Chạy Animation + Chỉ BẬT PORTAL TRẮNG
+        // Mở Cổng
         if (ancientGate != null)
         {
             ancientGate.OpenGateWithWhitePortal();
         }
 
-        // 2. Kích hoạt vùng Trigger môi trường
-        if (targetTriggerZone != null)
-        {
-            targetTriggerZone.SetActive(true);
-            Debug.Log($"[Milestone] Đã kích hoạt Vùng Trigger: {targetTriggerZone.name}");
-        }
-
-        // 3. Spawn GameObject cạnh vị trí Player
-        SpawnObjectNearPlayer();
+        // LƯU Ý: Đã bỏ bước bật targetTriggerZone ở đây để chờ Spawn NPC trước
     }
 
-    private void SpawnObjectNearPlayer()
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Điều kiện: Đã đủ 8 con tin + Là Player + Chưa Spawn NPC
+        if (_isMilestoneUnlocked && !_hasSpawnedObject && other.CompareTag("Player"))
+        {
+            _hasSpawnedObject = true;
+
+            // BƯỚC 1: Spawn/Đưa NPC ra cạnh Player trước
+            SpawnOrMoveObjectNextToPlayer(other.gameObject);
+
+            // BƯỚC 2: Rồi mới kích hoạt targetTriggerZone
+            ActivateTargetTriggerZone();
+        }
+    }
+
+    private void SpawnOrMoveObjectNextToPlayer(GameObject player)
     {
         if (objectToSpawnNextToPlayer == null)
             return;
-
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null)
-        {
-            Debug.LogWarning("[RescueMilestoneTrigger] Không tìm thấy GameObject có Tag 'Player'!");
-            return;
-        }
 
         Vector3 spawnPosition = player.transform.position + spawnOffset;
 
         if (!objectToSpawnNextToPlayer.scene.IsValid())
         {
-            Instantiate(objectToSpawnNextToPlayer, spawnPosition, Quaternion.identity);
+            if (_spawnedInstance == null)
+            {
+                _spawnedInstance = Instantiate(objectToSpawnNextToPlayer, spawnPosition, Quaternion.identity);
+            }
+            else
+            {
+                _spawnedInstance.transform.position = spawnPosition;
+                _spawnedInstance.SetActive(true);
+            }
         }
         else
         {
@@ -102,6 +109,15 @@ public class RescueMilestoneTrigger : MonoBehaviour
             objectToSpawnNextToPlayer.SetActive(true);
         }
 
-        Debug.Log($"[Milestone] Đã xuất hiện {objectToSpawnNextToPlayer.name} cạnh Player!");
+        Debug.Log($"[Milestone] BƯỚC 1: Đã xuất hiện {objectToSpawnNextToPlayer.name} cạnh Player!");
+    }
+
+    private void ActivateTargetTriggerZone()
+    {
+        if (targetTriggerZone != null)
+        {
+            targetTriggerZone.SetActive(true);
+            Debug.Log($"[Milestone] BƯỚC 2: Kích hoạt Vùng Trigger môi trường: {targetTriggerZone.name}");
+        }
     }
 }

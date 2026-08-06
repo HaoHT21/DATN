@@ -5103,8 +5103,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHeath: 1000
   maxHeath: 1000
-  isInvincible: 0
   isFinalBoss: 0
+  isInvincible: 0
   cutsceneSceneName: CutScene
   healthFill: {fileID: 0}
   healthUIRoot: {fileID: 0}
@@ -5421,9 +5421,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &7536416907198798687
 MonoBehaviour:
@@ -5469,7 +5469,7 @@ MonoBehaviour:
   shootCount: 1
   shootInterval: 0.3
   redBullEffect: {fileID: 1882404717578487663}
-  chargeSpeed: 100
+  chargeSpeed: 80
   chargeDuration: 2
   redBullCount: 1
   redBullInterval: 1
@@ -5478,7 +5478,7 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 512
-  wallCheckDistance: 0.6
+  bossRadius: 1
 --- !u!114 &-6730315901157025249
 MonoBehaviour:
   m_ObjectHideFlags: 0
