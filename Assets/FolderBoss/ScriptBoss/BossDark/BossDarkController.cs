@@ -47,9 +47,9 @@ public class BossDarkController : BossController
     //--------------------------------
     protected override void RegisterBossSkills()
     {
-        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 40, 30));
-        bossSkills.Add(new SkillWeight(CastSkill, 40, 30));
-        bossSkills.Add(new SkillWeight(InvisibleSkill, 20, 40));
+        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 30, 20));
+        bossSkills.Add(new SkillWeight(CastSkill, 50, 30));
+        bossSkills.Add(new SkillWeight(InvisibleSkill, 20, 50));
     }
 
     //--------------------------------

@@ -109,10 +109,10 @@ RectTransform:
   - {fileID: 3976200766972367738}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 841.2, y: 288.2}
-  m_SizeDelta: {x: 200, y: 200}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -135, y: -10}
+  m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.9999999, y: 0.5}
 --- !u!222 &3358762012466456249
 CanvasRenderer:
@@ -167,9 +167,9 @@ MonoBehaviour:
   mapContainer: {fileID: 3976200766972367738}
   roomPrefab: {fileID: 7450277611862849115, guid: b0ebed404a9cc1348a731f66b77fefb9, type: 3}
   defaultRoomColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  currentRoomColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  currentRoomColor: {r: 1, g: 1, b: 1, a: 1}
   clearedRoomColor: {r: 0, g: 1, b: 0, a: 1}
   bossRoomColor: {r: 1, g: 0, b: 0, a: 1}
-  specialRoomColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  bossIcon: {fileID: -1083275252, guid: 7e1a795f97c3bab4c85f81642d60ce5c, type: 3}
-  specialIcon: {fileID: 0}
+  specialRoomColor: {r: 1, g: 0.9166383, b: 0, a: 1}
+  bossIcon: {fileID: 6848405739004670407, guid: fe90a1a529acd954a8dedc79889fe47e, type: 3}
+  specialIcon: {fileID: -3517261582283616480, guid: 7df6ccf422ca5aa47b22d70ca219406d, type: 3}

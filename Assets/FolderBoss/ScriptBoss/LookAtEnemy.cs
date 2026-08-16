@@ -2,9 +2,10 @@
 
 public class LookAtEnemy : MonoBehaviour
 {
-    public float rotateSpeed = 15f; // Tăng tốc độ xoay lên một chút để xoay mượt và nhanh hơn
+    public float rotateSpeed = 15f;
     public float detectRadius = 8f;
 
+    private float originalDetectRadius; // Lưu lại giá trị ban đầu (vd: 8)
     private Transform target;
     private PlayerController player;
 
@@ -14,6 +15,7 @@ public class LookAtEnemy : MonoBehaviour
     void Start()
     {
         player = GetComponentInParent<PlayerController>();
+        originalDetectRadius = detectRadius; // Ghi nhớ bán kính phát hiện gốc
     }
 
     void Update()
@@ -52,7 +54,7 @@ public class LookAtEnemy : MonoBehaviour
             rotateSpeed * Time.deltaTime
         );
 
-        // 6. Flip lại Sprite nếu hướng quay sang trái để tránh bị ngửa bụng (cho súng/mắt 2D)
+        // 6. Flip lại Sprite nếu hướng quay sang trái
         Vector3 scale = transform.localScale;
         if (direction.x < 0)
             scale.y = -Mathf.Abs(scale.y);
@@ -62,18 +64,30 @@ public class LookAtEnemy : MonoBehaviour
         transform.localScale = scale;
     }
 
+    /// <summary>
+    /// Thay đổi bán kính nhắm kẻ địch khi bị tối om
+    /// </summary>
+    public void SetCustomDetectRadius(float customRadius)
+    {
+        detectRadius = customRadius;
+    }
+
+    /// <summary>
+    /// Trả bán kính nhắm kẻ địch về lại giá trị ban đầu khi có ánh sáng
+    /// </summary>
+    public void ResetDetectRadius()
+    {
+        detectRadius = originalDetectRadius;
+    }
+
     void FindNearestTarget()
     {
         float closestDistance = Mathf.Infinity;
         Transform closest = null;
 
-        // Tìm trong nhóm Enemy
         FindTargetByTag("Enemy", ref closest, ref closestDistance);
-
-        // Tìm trong nhóm Boss
         FindTargetByTag("Boss", ref closest, ref closestDistance);
 
-        // Cập nhật target mới nhất (luôn là kẻ gần nhất)
         target = closest;
     }
 
@@ -83,15 +97,10 @@ public class LookAtEnemy : MonoBehaviour
 
         foreach (GameObject obj in objects)
         {
-            // Bỏ qua nếu GameObject bị ẩn/đã chết
             if (!obj.activeInHierarchy) continue;
 
             float distance = Vector2.Distance(transform.position, obj.transform.position);
 
-            // Điều kiện để chọn: 
-            // - Nằm trong tầm detectRadius
-            // - Gần hơn khoảng cách của kẻ địch hiện tại
-            // - Không bị tường che
             if (distance <= detectRadius && distance < closestDistance && CanSeeTarget(obj.transform))
             {
                 closestDistance = distance;
@@ -102,14 +111,12 @@ public class LookAtEnemy : MonoBehaviour
 
     private bool CanSeeTarget(Transform enemy)
     {
-        // Kiểm tra xem có bức tường nào chắn giữa Player và Enemy không
         RaycastHit2D hit = Physics2D.Linecast(
             transform.position,
             enemy.position,
             wallLayer
         );
 
-        // Nếu collider trả về null tức là không đụng tường -> Nhìn thấy được
         return hit.collider == null;
     }
 

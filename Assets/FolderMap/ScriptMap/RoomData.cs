@@ -12,6 +12,10 @@ public class RoomData
     public bool isBossRoom = false;
     public bool hasSpecialObject = false; // Miễn trừ quái nếu có bảo vật
 
+    // --- LƯU DANH SÁCH CÁC PHÒNG KẾT NỐI VỚI PHÒNG NÀY ---
+    [System.NonSerialized]
+    public List<RoomData> connectedRooms = new List<RoomData>();
+
     // --- Dữ liệu điều khiển trận đấu chạy Runtime ---
     public bool isActivated = false;
     public bool isCleared = false;

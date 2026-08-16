@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal; // Dùng cho URP Vignette
+using UnityEngine.Rendering.Universal;
 
 public class IceZone : MonoBehaviour
 {
@@ -13,18 +13,17 @@ public class IceZone : MonoBehaviour
     [Header("Thời gian Chu kỳ Bão tuyết")]
     public float snowDuration = 5f;   // Thời gian tuyết rơi đầy đủ
     public float pauseDuration = 3f;  // Thời gian tạm nghỉ
-    public float fadeDuration = 1.5f; // Tăng lên 1.5s để thấy rõ hiệu ứng hiện/ẩn
+    public float fadeDuration = 1.5f; // Tốc độ hiện/ẩn mượt
 
     [Header("Particle System & UI")]
     public ParticleSystem snowParticle;
     public GameObject EffectIceBar;
     public Image EffectIceFill;
 
-    // Thêm trường khai báo SO ở đầu script IceZone
     [Header("Post Processing Visual")]
-    public Volume freezeEffectVolume; // Kéo Global Volume vào đây
+    public Volume freezeEffectVolume;
     [Range(0f, 1f)]
-    public float maxFreezeIntensity = 0.5f;  //Độ đậm tối đa của viền xanh
+    public float maxFreezeIntensity = 0.5f;
     private Vignette freezeVignette;
 
     [Header("Effect Data")]
@@ -39,8 +38,6 @@ public class IceZone : MonoBehaviour
     private float value = 0f;
     private float stormTimer = 0f;
 
-    private ParticleSystemRenderer particleRenderer;
-    private Material particleMaterial;
     private Coroutine fadeCoroutine;
 
     void Start()
@@ -51,31 +48,26 @@ public class IceZone : MonoBehaviour
         if (EffectIceFill != null)
             EffectIceFill.fillAmount = 0;
 
-        if (snowParticle != null)
+        if (snowParticle != null && !snowParticle.isPlaying)
         {
-            // Lấy Renderer và tạo bản sao Material riêng cho Zone này
-            particleRenderer = snowParticle.GetComponent<ParticleSystemRenderer>();
-            if (particleRenderer != null)
-            {
-                particleMaterial = particleRenderer.material; // Auto instance material
-            }
+            snowParticle.Play();
+        }
 
-            if (!snowParticle.isPlaying)
+        if (freezeEffectVolume != null)
+        {
+            freezeEffectVolume.weight = 0f; // Mặc định ẩn Volume
+            if (freezeEffectVolume.profile != null)
             {
-                snowParticle.Play();
+                freezeEffectVolume.profile = Instantiate(freezeEffectVolume.profile);
+                if (freezeEffectVolume.profile.TryGet(out freezeVignette))
+                {
+                    freezeVignette.intensity.overrideState = true;
+                    freezeVignette.intensity.value = 0f;
+                }
             }
         }
-        // Lấy Vignette từ Global Volume
-        if (freezeEffectVolume != null && freezeEffectVolume.profile != null)
-        {
-            freezeEffectVolume.profile.TryGet(out freezeVignette);
 
-            if (freezeVignette != null)
-            {
-                freezeVignette.intensity.value = 0f;
-            }
-        }
-        // Đặt mặc định bắt đầu ở trạng thái ẨN
+        // Mặc định bắt đầu trạng thái ẩn
         isSnowing = false;
         SetAlphaImmediate(0f);
     }
@@ -91,12 +83,10 @@ public class IceZone : MonoBehaviour
     {
         stormTimer += Time.deltaTime;
 
-        // Chỉ cần đợi đúng snowDuration là bắt đầu ẩn
         if (isSnowing && stormTimer >= snowDuration)
         {
             HideSnowstorm();
         }
-        // Chỉ cần đợi đúng pauseDuration là bắt đầu hiện
         else if (!isSnowing && stormTimer >= pauseDuration)
         {
             ShowSnowstorm();
@@ -135,59 +125,42 @@ public class IceZone : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             float currentAlpha = Mathf.Lerp(startAlpha, targetAlpha, elapsedTime / fadeDuration);
-            ApplyAlpha(currentAlpha);
+            ApplyAlphaToParticleLifetime(currentAlpha);
             yield return null;
         }
 
-        ApplyAlpha(targetAlpha);
+        ApplyAlphaToParticleLifetime(targetAlpha);
         fadeCoroutine = null;
     }
 
-    // Đổi Alpha trực tiếp qua Material của Particle để có hiệu lực lên TOÀN BỘ hạt đang rơi
-    private void ApplyAlpha(float alpha)
+    /// <summary>
+    /// Thay đổi Gradient Alpha của Color Over Lifetime (Mode: Blend)
+    /// Làm hạt tuyết mượt mà ẩn/hiện toàn bộ
+    /// </summary>
+    private void ApplyAlphaToParticleLifetime(float targetAlpha)
     {
-        if (particleMaterial != null)
-        {
-            // Thay đổi tint color của Material (thường là _Color)
-            if (particleMaterial.HasProperty("_Color"))
-            {
-                Color c = particleMaterial.color;
-                c.a = alpha;
-                particleMaterial.color = c;
-            }
-            // Hỗ trợ Shaders của Universal Render Pipeline (URP)
-            else if (particleMaterial.HasProperty("_BaseColor"))
-            {
-                Color c = particleMaterial.GetColor("_BaseColor");
-                c.a = alpha;
-                particleMaterial.SetColor("_BaseColor", c);
-            }
-        }
+        if (snowParticle == null) return;
 
-        // Đồng thời cập nhật MainModule startColor cho chắc chắn
-        if (snowParticle != null)
-        {
-            var main = snowParticle.main;
-            Color c = main.startColor.color;
-            c.a = alpha;
-            main.startColor = c;
-        }
+        var colorOverLifetime = snowParticle.colorOverLifetime;
+        colorOverLifetime.enabled = true;
+
+        // Tạo Gradient Blend từ Alpha mong muốn về 0 ở cuối đời hạt
+        Gradient grad = new Gradient();
+        grad.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(Color.white, 0.0f), new GradientColorKey(Color.white, 1.0f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(targetAlpha, 0.0f), new GradientAlphaKey(targetAlpha * 0.5f, 0.8f), new GradientAlphaKey(0f, 1.0f) }
+        );
+
+        colorOverLifetime.color = new ParticleSystem.MinMaxGradient(grad);
     }
 
     private void SetAlphaImmediate(float alpha)
     {
-        ApplyAlpha(alpha);
+        ApplyAlphaToParticleLifetime(alpha);
     }
 
     private float GetCurrentAlpha()
     {
-        if (particleMaterial != null)
-        {
-            if (particleMaterial.HasProperty("_Color"))
-                return particleMaterial.color.a;
-            if (particleMaterial.HasProperty("_BaseColor"))
-                return particleMaterial.GetColor("_BaseColor").a;
-        }
         return isSnowing ? 0f : 1f;
     }
 
@@ -217,12 +190,28 @@ public class IceZone : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Hàm public cho phép HeaterTrigger gọi sang để làm giảm độ đóng băng
+    /// </summary>
+    public void ReduceFreezeValue(float amount)
+    {
+        if (value > 0f)
+        {
+            value -= amount;
+            if (value <= 0f)
+            {
+                value = 0f;
+                UnfreezePlayer();
+            }
+        }
+    }
+
     private void FreezePlayer()
     {
         if (!freezeActive && playerEffect != null)
         {
             freezeActive = true;
-            playerEffect.ApplyEffect(freezeEffectSO, drainTime); // Sử dụng drainTime làm thời gian đóng băng
+            playerEffect.ApplyEffect(freezeEffectSO, drainTime);
         }
     }
 
@@ -242,7 +231,6 @@ public class IceZone : MonoBehaviour
             EffectIceFill.fillAmount = value;
         }
 
-        // Hiệu ứng màn hình theo thanh đóng băng
         if (freezeVignette != null)
         {
             freezeVignette.intensity.value = value * maxFreezeIntensity;
@@ -255,6 +243,9 @@ public class IceZone : MonoBehaviour
         {
             playerInside = true;
             playerEffect = other.GetComponent<EffectManager>();
+
+            if (freezeEffectVolume != null)
+                freezeEffectVolume.weight = 1f; // Bật Volume vùng băng
 
             if (EffectIceBar != null)
                 EffectIceBar.SetActive(true);
@@ -275,11 +266,11 @@ public class IceZone : MonoBehaviour
             if (EffectIceBar != null)
                 EffectIceBar.SetActive(false);
 
-            // Reset viền xanh về 0 khi thoát vùng băng
             if (freezeVignette != null)
-            {
                 freezeVignette.intensity.value = 0f;
-            }
+
+            if (freezeEffectVolume != null)
+                freezeEffectVolume.weight = 0f; // Tắt Volume vùng băng khi rời đi
         }
     }
 }

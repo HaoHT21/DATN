@@ -34,14 +34,18 @@ public class RedZone : MonoBehaviour
 
         if (effectFill != null)
             effectFill.fillAmount = 0;
-        // Lấy Vignette từ Global Volume
-        if (redEffectVolume != null && redEffectVolume.profile != null)
-        {
-            redEffectVolume.profile.TryGet(out redVignette);
 
-            if (redVignette != null)
+        if (redEffectVolume != null)
+        {
+            redEffectVolume.weight = 0f; // Mặc định ẩn Volume
+            if (redEffectVolume.profile != null)
             {
-                redVignette.intensity.value = 0f;
+                redEffectVolume.profile = Instantiate(redEffectVolume.profile);
+                if (redEffectVolume.profile.TryGet(out redVignette))
+                {
+                    redVignette.intensity.overrideState = true;
+                    redVignette.intensity.value = 0f;
+                }
             }
         }
     }
@@ -107,7 +111,12 @@ public class RedZone : MonoBehaviour
 
         playerInside = true;
         playerController = other.GetComponent<PlayerController>();
-        effectBar?.SetActive(true);
+
+        if (redEffectVolume != null)
+            redEffectVolume.weight = 1f; // Bật Volume RedZone
+
+        if (effectBar != null)
+            effectBar.SetActive(true);
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -130,8 +139,9 @@ public class RedZone : MonoBehaviour
             effectBar.SetActive(false);
 
         if (redVignette != null)
-        {
             redVignette.intensity.value = 0f;
-        }
+
+        if (redEffectVolume != null)
+            redEffectVolume.weight = 0f; // Tắt Volume RedZone khi rời đi
     }
 }

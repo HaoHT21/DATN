@@ -172,7 +172,8 @@ public class MapGenerator : MonoBehaviour
             if (child != container && child != null) children.Add(child.gameObject);
         }
 
-        children.ForEach(child => {
+        children.ForEach(child =>
+        {
             if (child != null) DestroyImmediate(child);
         });
 

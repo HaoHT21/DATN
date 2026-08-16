@@ -204,6 +204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
+  onlyTakeBombDamage: 0
   expReward: 30
   destroyDelay: 0.5
   showHealthBar: 1
@@ -237,12 +238,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 5
   hurtDuration: 0.2
   knockbackForce: 5
-  enemyVisual: {fileID: 4711513089070483500}
   nextWaypointDistance: 0.2
   updateRate: 0.25
+  enemyVisual: {fileID: 4711513089070483500}
+  loseTargetDistance: 10
+  wanderRadius: 5
+  wanderWaitTime: 2
 --- !u!114 &6514760475785069092
 MonoBehaviour:
   m_ObjectHideFlags: 0

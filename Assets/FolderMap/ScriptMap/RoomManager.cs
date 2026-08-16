@@ -401,6 +401,18 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    // Thêm hàm public này vào RoomManager.cs để TimedRoomManager gọi an toàn
+    public void ResetSingleRoomPublic(RoomData room)
+    {
+        ResetSingleRoom(room);
+    }
+
+    // Thêm hàm public này vào RoomManager.cs
+    public void OpenDoorsPublic(RoomData room)
+    {
+        OpenDoors(room);
+    }
+
     [System.Serializable]
     public class WaveDataEnemy
     {

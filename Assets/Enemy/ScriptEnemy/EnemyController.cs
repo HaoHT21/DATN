@@ -22,6 +22,14 @@ public class EnemyController : MonoBehaviour
     [Header("Visual")]
     public Transform enemyVisual;
 
+    [Header("Detection & Wandering")]
+    public float loseTargetDistance = 10f;
+    public float wanderRadius = 5f;      // Bán kính tìm điểm đi tuần ngẫu nhiên
+    public float wanderWaitTime = 2f;    // Thời gian đứng nghỉ giữa các lần đi tuần
+
+    // Cache Stealth
+    private PlayerStealth playerStealth;
+
     // Components
     private Seeker seeker;
     private Path path;
@@ -38,6 +46,11 @@ public class EnemyController : MonoBehaviour
     private string currentAnim;
     private Vector2 hitDirection;
     private Coroutine hurtCoroutine;
+
+    // Wandering State Variables
+    private bool isWandering;
+    private Vector2 wanderTarget;
+    private Coroutine wanderCoroutine;
 
     // Public Getters
     public Transform Target => target;
@@ -80,13 +93,18 @@ public class EnemyController : MonoBehaviour
 
         FindPlayer();
 
-        if (target == null || movementLocked)
+        // Kiểm tra xem Player có đang trốn không
+        if (target != null && playerStealth != null && playerStealth.IsHidden)
         {
-            if (!movementLocked && target == null)
-            {
-                StopMovement();
-                PlayAnimation("idle");
-            }
+            // Mất dấu Player -> Xóa target và chuyển sang đi tuần ngẫu nhiên
+            ClearTargetAndStartWander();
+            return;
+        }
+
+        // Nếu không có target và chưa bắt đầu Wandering -> Kích hoạt Wander
+        if (target == null && !isWandering && !movementLocked)
+        {
+            StartWandering();
         }
     }
 
@@ -100,10 +118,18 @@ public class EnemyController : MonoBehaviour
     #region Pathfinding Logic
     void UpdatePath()
     {
-        if (movementLocked || target == null || !seeker.IsDone() || isDead)
-            return;
+        if (movementLocked || !seeker.IsDone() || isDead) return;
 
-        seeker.StartPath(rb.position, target.position, OnPathComplete);
+        // Ưu tiên 1: Đuổi theo Player nếu có Target
+        if (target != null)
+        {
+            seeker.StartPath(rb.position, target.position, OnPathComplete);
+        }
+        // Ưu tiên 2: Đi tuần đến điểm Wander ngẫu nhiên
+        else if (isWandering && wanderTarget != Vector2.zero)
+        {
+            seeker.StartPath(rb.position, wanderTarget, OnPathComplete);
+        }
     }
 
     void OnPathComplete(Path p)
@@ -119,10 +145,17 @@ public class EnemyController : MonoBehaviour
     {
         if (path == null) return;
 
+        // Khi đã đến cuối đường đi (Đã tới nơi)
         if (currentWaypoint >= path.vectorPath.Count)
         {
             rb.linearVelocity = Vector2.zero;
             PlayAnimation("idle");
+
+            // Nếu đang đi tuần mà tới điểm cần tới -> Bắt đầu chờ để tìm điểm tiếp theo
+            if (isWandering && wanderCoroutine == null)
+            {
+                wanderCoroutine = StartCoroutine(WanderWaitRoutine());
+            }
             return;
         }
 
@@ -141,6 +174,52 @@ public class EnemyController : MonoBehaviour
     }
     #endregion
 
+    #region Wandering Logic
+    void StartWandering()
+    {
+        isWandering = true;
+        PickNewWanderTarget();
+    }
+
+    void StopWandering()
+    {
+        isWandering = false;
+        wanderTarget = Vector2.zero;
+        if (wanderCoroutine != null)
+        {
+            StopCoroutine(wanderCoroutine);
+            wanderCoroutine = null;
+        }
+    }
+
+    void PickNewWanderTarget()
+    {
+        // Chọn 1 điểm ngẫu nhiên trong bán kính wanderRadius
+        Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * wanderRadius;
+        wanderTarget = randomPoint;
+        UpdatePath();
+    }
+
+    IEnumerator WanderWaitRoutine()
+    {
+        // Nghỉ giữa các lần đi tuần
+        yield return new WaitForSeconds(wanderWaitTime);
+        if (isWandering && target == null)
+        {
+            PickNewWanderTarget();
+        }
+        wanderCoroutine = null;
+    }
+
+    void ClearTargetAndStartWander()
+    {
+        target = null;
+        playerStealth = null;
+        StopMovement();
+        StartWandering();
+    }
+    #endregion
+
     #region Movement Helpers
     public void StopMovement()
     {
@@ -152,7 +231,11 @@ public class EnemyController : MonoBehaviour
     public void LockMovement(bool value)
     {
         movementLocked = value;
-        if (value) StopMovement();
+        if (value)
+        {
+            StopMovement();
+            StopWandering();
+        }
     }
 
     public void LookAt(Vector2 targetPos)
@@ -172,9 +255,33 @@ public class EnemyController : MonoBehaviour
 
     void FindPlayer()
     {
-        if (target != null) return;
+        // Kiểm tra nếu đã có target
+        if (target != null)
+        {
+            if (playerStealth != null && playerStealth.IsHidden)
+            {
+                ClearTargetAndStartWander();
+            }
+            return;
+        }
+
+        // Tìm Player trong Scene
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null) target = player.transform;
+        if (player != null)
+        {
+            PlayerStealth stealth = player.GetComponent<PlayerStealth>();
+
+            // Nhìn thấy Player -> HỦY WANDER và QUAY LẠI ĐUỔI THEO
+            if (stealth == null || !stealth.IsHidden)
+            {
+                target = player.transform;
+                playerStealth = stealth;
+
+                // Tắt trạng thái Wander để tập trung chốt target
+                StopWandering();
+                StopMovement();
+            }
+        }
     }
     #endregion
 
@@ -183,12 +290,10 @@ public class EnemyController : MonoBehaviour
     {
         if (animator == null || currentAnim == "death") return;
 
-        // Nếu trùng animation và không yêu cầu phát lại từ đầu thì bỏ qua
         if (currentAnim == animName && !forceReset) return;
 
         currentAnim = animName;
 
-        // Chỉ phát lại từ frame 0 nếu là attack/hurt hoặc được yêu cầu forceReset
         if (animName == "attack" || animName == "hurt" || forceReset)
         {
             animator.Play(animName, 0, 0f);
@@ -215,24 +320,21 @@ public class EnemyController : MonoBehaviour
         if (isDead) yield break;
 
         isHurting = true;
+        StopWandering();
         LockMovement(true);
 
-        // Reset trạng thái animation để phát hurt chuẩn xác
         currentAnim = "";
         PlayAnimation("hurt", true);
 
-        // Đẩy lùi (Knockback)
         rb.linearVelocity = hitDirection * knockbackForce;
 
         yield return new WaitForSeconds(hurtDuration);
 
-        // Xong Hurt
         rb.linearVelocity = Vector2.zero;
         isHurting = false;
         LockMovement(false);
         hurtCoroutine = null;
 
-        // Reset currentAnim về rỗng để ép Animator chuyển sang state mới ngay lập tức
         currentAnim = "";
         PlayAnimation(target != null ? "run" : "idle", true);
     }
@@ -240,6 +342,7 @@ public class EnemyController : MonoBehaviour
     void HandleDeath()
     {
         isDead = true;
+        StopWandering();
         StopMovement();
         currentAnim = "";
         PlayAnimation("death", true);

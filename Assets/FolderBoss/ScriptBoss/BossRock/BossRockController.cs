@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BossRockController : BossController
 {
@@ -9,14 +10,17 @@ public class BossRockController : BossController
     public float laserDuration = 2f;
     public int laserCastCount = 1;
     public float laserInterval = 0.5f;
-    public GameObject aimLaserLine;
+    public List<GameObject> aimLaserLine = new List<GameObject>(); // Danh sách 4 tia line nhắm
 
     [Header("Shoot")]
     public GameObject bulletPrefab;
     public Transform shootPoint;
     public int shootCount = 3;
     public float shootInterval = 0.3f;
-    private BossRockAudio _bossAudio; // Cache component audio
+    public int bulletsPerSpread = 3;     // Số đạn xòe ra mỗi đợt bắn
+    public float spreadAngle = 30f;      // Góc xòe của chùm đạn
+
+    private BossRockAudio _bossAudio;
 
     protected override void Awake()
     {
@@ -42,7 +46,8 @@ public class BossRockController : BossController
     {
         if (phase == 2)
         {
-            shootCount += 5;
+            shootCount += 1;
+            bulletsPerSpread += 2;
             laserCastCount += 1;
             moveSpeed += 5;
         }
@@ -51,9 +56,10 @@ public class BossRockController : BossController
     protected override void DisableEffects()
     {
         if (laserObject != null) laserObject.SetActive(false);
-        if (aimLaserLine != null) aimLaserLine.SetActive(false);
 
-        // Đảm bảo ngắt âm thanh Laser nếu Boss bị tiêu diệt hoặc tắt effect
+        // Tắt toàn bộ List đường line nhắm
+        SetAimLinesActive(false);
+
         if (_bossAudio != null)
         {
             _bossAudio.StopLaserLoopSound();
@@ -65,18 +71,21 @@ public class BossRockController : BossController
     //--------------------------------
     private IEnumerator LaserSkill()
     {
-        canDodgeDuringSkill = false; // <--- TẮT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
-        if (bossHeath != null) bossHeath.isInvincible = true; // Bất tử trong khi bắn Laser
+        canDodgeDuringSkill = false;
+        if (bossHeath != null) bossHeath.isInvincible = true;
+
         LaserLookAtPlayer tracker = laserObject != null ? laserObject.GetComponent<LaserLookAtPlayer>() : null;
         if (tracker == null) tracker = GetComponentInChildren<LaserLookAtPlayer>();
+
         try
         {
             for (int i = 0; i < laserCastCount; i++)
             {
                 SpitFire();
 
-                if (tracker != null) tracker.StartTracking();
-                if (aimLaserLine != null) aimLaserLine.SetActive(true);
+                // Phase ngắm: Bắt đầu khóa vị trí/hướng ngẫu nhiên và BẬT danh sách Line
+                if (tracker != null) tracker.StartTelegraph();
+                SetAimLinesActive(true);
 
                 float timer = 0f;
                 bool lostTarget = false;
@@ -94,22 +103,28 @@ public class BossRockController : BossController
                     yield return null;
                 }
 
-                if (aimLaserLine != null) aimLaserLine.SetActive(false);
+                // TẮT danh sách Line báo hiệu
+                SetAimLinesActive(false);
 
                 if (!lostTarget)
                 {
                     if (laserObject != null) laserObject.SetActive(true);
 
-                    // GỌI ÂM THANH: Bắt đầu tiếng Laser chiếu quét (Loop)
+                    // Bắt đầu xoay Laser
+                    if (tracker != null) tracker.StartLaserRotation(true);
+
                     if (_bossAudio != null)
                     {
                         _bossAudio.StartLaserLoopSound();
                     }
 
                     yield return new WaitForSeconds(laserDuration);
+
+                    // Dừng xoay Laser
+                    if (tracker != null) tracker.StopLaserRotation();
+
                     if (laserObject != null) laserObject.SetActive(false);
 
-                    // GỌI ÂM THANH: Dừng tiếng Laser sau khi bắn xong
                     if (_bossAudio != null)
                     {
                         _bossAudio.StopLaserLoopSound();
@@ -125,12 +140,11 @@ public class BossRockController : BossController
         }
         finally
         {
-            // BẢO HIỂM: Luôn tắt âm thanh Laser nếu Skill kết thúc đột ngột
             if (_bossAudio != null)
             {
                 _bossAudio.StopLaserLoopSound();
             }
-            if (bossHeath != null) bossHeath.isInvincible = false; // Hủy bất tử sau khi bắn Laser xong
+            if (bossHeath != null) bossHeath.isInvincible = false;
         }
     }
 
@@ -139,7 +153,8 @@ public class BossRockController : BossController
     //--------------------------------
     private IEnumerator ShootSkill()
     {
-        canDodgeDuringSkill = true; // <--- BẬT QUYỀN NÉ ĐẠN CHO SKILL NÀY!
+        canDodgeDuringSkill = true;
+
         for (int i = 0; i < shootCount; i++)
         {
             Shoot();
@@ -149,18 +164,54 @@ public class BossRockController : BossController
             if (target != null && shootPoint != null)
             {
                 Vector2 dir = (target.position - shootPoint.position).normalized;
-                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                float centerAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-                // GỌI ÂM THANH: Phát tiếng bắn đạn đá
                 if (_bossAudio != null)
                 {
                     _bossAudio.PlayRockShootSound(shootPoint.position);
                 }
 
-                Instantiate(bulletPrefab, shootPoint.position, Quaternion.Euler(0, 0, angle));
+                // Bắn xòe chùm đạn
+                FireSpreadBullets(centerAngle);
             }
 
             yield return new WaitForSeconds(shootInterval);
+        }
+
+        canDodgeDuringSkill = false;
+    }
+
+    //--------------------------------
+    // HELPER METHODS
+    //--------------------------------
+    private void SetAimLinesActive(bool active)
+    {
+        if (aimLaserLine == null) return;
+
+        foreach (GameObject line in aimLaserLine)
+        {
+            if (line != null)
+            {
+                line.SetActive(active);
+            }
+        }
+    }
+
+    private void FireSpreadBullets(float centerAngle)
+    {
+        if (bulletsPerSpread <= 1)
+        {
+            Instantiate(bulletPrefab, shootPoint.position, Quaternion.Euler(0, 0, centerAngle));
+            return;
+        }
+
+        float startAngle = centerAngle - (spreadAngle / 2f);
+        float step = spreadAngle / (bulletsPerSpread - 1);
+
+        for (int b = 0; b < bulletsPerSpread; b++)
+        {
+            float currentAngle = startAngle + (step * b);
+            Instantiate(bulletPrefab, shootPoint.position, Quaternion.Euler(0, 0, currentAngle));
         }
     }
 }

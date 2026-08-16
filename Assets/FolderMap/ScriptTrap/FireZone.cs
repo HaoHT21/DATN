@@ -36,10 +36,18 @@ public class FireZone : MonoBehaviour
         if (EffectFireBar != null)
             EffectFireBar.SetActive(false);
 
-        // Lấy Component Vignette từ Global Volume
-        if (globalVolume != null && globalVolume.profile != null)
+        if (globalVolume != null)
         {
-            globalVolume.profile.TryGet(out vignetteEffect);
+            globalVolume.weight = 0f; // Mặc định ẩn Volume khi chưa vào vùng
+            if (globalVolume.profile != null)
+            {
+                globalVolume.profile = Instantiate(globalVolume.profile);
+                if (globalVolume.profile.TryGet(out vignetteEffect))
+                {
+                    vignetteEffect.intensity.overrideState = true;
+                    vignetteEffect.intensity.value = 0f;
+                }
+            }
         }
     }
 
@@ -143,6 +151,9 @@ public class FireZone : MonoBehaviour
         effectManager = other.GetComponent<EffectManager>();
         playerHealth = other.GetComponent<PlayerHealth>();
 
+        if (globalVolume != null)
+            globalVolume.weight = 1f; // Bật Volume vùng cháy
+
         if (EffectFireBar != null)
             EffectFireBar.SetActive(true);
     }
@@ -173,11 +184,11 @@ public class FireZone : MonoBehaviour
         if (EffectFireBar != null)
             EffectFireBar.SetActive(false);
 
-        // Reset viền đỏ về 0 khi thoát vùng cháy
         if (vignetteEffect != null)
-        {
             vignetteEffect.intensity.value = 0f;
-        }
+
+        if (globalVolume != null)
+            globalVolume.weight = 0f; // Tắt Volume vùng cháy khi rời đi
 
         effectManager = null;
         playerHealth = null;

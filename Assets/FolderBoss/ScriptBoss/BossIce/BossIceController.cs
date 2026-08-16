@@ -27,13 +27,13 @@ public class BossIceController : BossController
         bossSkills.Clear();
 
         // Di chuyển: Phase 1 weight = 50, Phase 2 weight = 20
-        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 40, 30));
+        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 30, 20));
 
         // Skill 1 (IceSkill): Phase 1 weight = 25, Phase 2 weight = 30
-        bossSkills.Add(new SkillWeight(IceSkill, 30, 30));
+        bossSkills.Add(new SkillWeight(IceSkill, 30, 40));
 
         // Skill 2 (AttackIceSkill): Phase 1 weight = 25, Phase 2 weight = 50
-        bossSkills.Add(new SkillWeight(AttackIceSkill, 30, 40));
+        bossSkills.Add(new SkillWeight(AttackIceSkill, 40, 40));
     }
 
     protected override void OnPhaseChange(int phase)

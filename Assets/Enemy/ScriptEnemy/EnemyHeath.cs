@@ -7,6 +7,10 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
     public int maxHealth = 100;
     public int currentHealth = 100;
 
+    [Header("Damage Settings")]
+    [Tooltip("Tick vào đây để Enemy chỉ nhận sát thương từ Bom, miễn nhiễm với Đạn.")]
+    public bool onlyTakeBombDamage = false;
+
     [Header("EXP")]
     public int expReward = 30;
 
@@ -34,19 +38,19 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
         rb = GetComponent<Rigidbody2D>();
         colliders = GetComponents<Collider2D>();
 
-        currentHealth =
-            Mathf.Clamp(
-                currentHealth,
-                0,
-                maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         if (showHealthBar && GetComponent<SimpleEnemyHealthBar>() == null)
             gameObject.AddComponent<SimpleEnemyHealthBar>();
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool isBomb = false)
     {
         if (isDead)
+            return;
+
+        // Nếu bật checkbox chỉ nhận sát thương từ Bom mà nguồn gây dame không phải Bom -> Bỏ qua
+        if (onlyTakeBombDamage && !isBomb)
             return;
 
         int previous = currentHealth;
@@ -71,13 +75,11 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
 
         OnDeath?.Invoke();
 
-        GameObject player =
-            GameObject.FindWithTag("Player");
+        GameObject player = GameObject.FindWithTag("Player");
 
         if (player != null)
         {
-            PlayerHealth hp =
-                player.GetComponent<PlayerHealth>();
+            PlayerHealth hp = player.GetComponent<PlayerHealth>();
 
             if (hp != null)
             {
@@ -90,13 +92,10 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
             c.enabled = false;
         }
 
-        rb.linearVelocity =
-            Vector2.zero;
-
+        rb.linearVelocity = Vector2.zero;
         rb.simulated = false;
 
-        yield return new WaitForSeconds(
-            destroyDelay);
+        yield return new WaitForSeconds(destroyDelay);
 
         Destroy(gameObject);
     }
@@ -109,10 +108,7 @@ public class EnemyHeath : MonoBehaviour, IHealthProvider
         int previous = currentHealth;
         currentHealth += amount;
 
-        currentHealth =
-            Mathf.Min(
-                currentHealth,
-                maxHealth);
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
 
         NotifyHealthChanged(previous);
     }

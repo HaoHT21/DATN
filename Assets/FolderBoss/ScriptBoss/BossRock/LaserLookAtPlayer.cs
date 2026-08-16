@@ -2,12 +2,19 @@ using UnityEngine;
 
 public class LaserLookAtPlayer : MonoBehaviour
 {
+    [Header("Tracking & Obstacle Check")]
     public Transform target;
-    public float rotateSpeed = 15f;
     public LayerMask obstacleMask;
+    public float rotateSpeed = 15f;
 
-    private bool isTracking = false;
-    private Vector3 lockedPosition; // Lưu vị trí tĩnh của Player tại thời điểm bắt đầu ngắm
+    [Header("Laser Rotation Settings")]
+    public float laserRotateSpeed = 180f; // Tốc độ xoay khi xả Laser (độ/giây)
+    public bool rotateClockwise = true;   // Chiều xoay
+
+    private bool isTrackingPlayer = true; // Bình thường liên tục xoay theo Player
+    private bool isFiringLaser = false;
+
+    private float currentAngle = 0f;
 
     void Start()
     {
@@ -20,31 +27,66 @@ public class LaserLookAtPlayer : MonoBehaviour
 
     void Update()
     {
-        if (!isTracking) return;
-
-        // Xoay về vị trí ĐÃ KHÓA (lockedPosition) chứ không theo đuổi target.position liên tục
-        RotateTowardsPoint(lockedPosition, false);
+        // 1. Trạng thái bình thường: Xoay nhìn theo Player để cho ShootSkill bắn chuẩn
+        if (isTrackingPlayer && target != null)
+        {
+            RotateTowardsPoint(target.position, false);
+        }
+        // 2. Trạng thái xả Laser: Xoay tròn liên tục
+        else if (isFiringLaser)
+        {
+            float dir = rotateClockwise ? -1f : 1f;
+            currentAngle += dir * laserRotateSpeed * Time.deltaTime;
+            transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
+        }
     }
 
-    // Bắt đầu ngắm: Khóa luôn vị trí hiện tại của Player làm "vị trí cũ"
-    public void StartTracking()
+    //------------------------------------------------------------------------
+    // Called by BossRockController: Bắt đầu Telegraph ngắm 4 hướng ngẫu nhiên
+    //------------------------------------------------------------------------
+    public void StartTelegraph()
     {
+        isTrackingPlayer = false;
+        isFiringLaser = false;
+
         if (target != null)
         {
-            lockedPosition = target.position; // Chụp lại vị trí lúc này!
+            Vector3 dir = target.position - transform.position;
+            float baseAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+            // Ngẫu nhiên chọn 1 trong 4 nòng (0°, 90°, 180°, 270°) chĩa về phía Player
+            int randomBarrelIndex = Random.Range(0, 4);
+            currentAngle = baseAngle + (randomBarrelIndex * 90f);
+
+            // Gán trực tiếp rotation ngắm ngẫu nhiên
+            transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
         }
-        isTracking = true;
     }
 
-    public void StopTracking()
+    //------------------------------------------------------------------------
+    // Called by BossRockController: Bắt đầu xoay Laser xả đạn
+    //------------------------------------------------------------------------
+    public void StartLaserRotation(bool randomizeDirection = true)
     {
-        if (isTracking)
+        isTrackingPlayer = false;
+
+        if (randomizeDirection)
         {
-            RotateTowardsPoint(lockedPosition, true); // Chốt góc chính xác vào vị trí đã khóa
-            isTracking = false;
+            rotateClockwise = Random.value > 0.5f;
         }
+
+        isFiringLaser = true;
     }
 
+    public void StopLaserRotation()
+    {
+        isFiringLaser = false;
+        isTrackingPlayer = true; // Trở về trạng thái nhìn theo Player bình thường
+    }
+
+    //------------------------------------------------------------------------
+    // Helper Methods
+    //------------------------------------------------------------------------
     public bool CanSeePlayer()
     {
         if (target == null) return false;
@@ -53,7 +95,6 @@ public class LaserLookAtPlayer : MonoBehaviour
         float distToPlayer = dirToPlayer.magnitude;
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dirToPlayer.normalized, distToPlayer, obstacleMask);
-
         return hit.collider == null;
     }
 
@@ -62,24 +103,17 @@ public class LaserLookAtPlayer : MonoBehaviour
         Vector3 direction = point - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        Quaternion targetRotation;
-
-        if (direction.x < 0)
-        {
-            targetRotation = Quaternion.Euler(180f, 0f, -angle);
-        }
-        else
-        {
-            targetRotation = Quaternion.Euler(0f, 0f, angle);
-        }
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
 
         if (instant)
         {
             transform.rotation = targetRotation;
+            currentAngle = angle;
         }
         else
         {
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
+            currentAngle = transform.eulerAngles.z; // Cập nhật currentAngle đồng bộ theo transform
         }
     }
 }

@@ -13,30 +13,41 @@ public class BombAudio : MonoBehaviour
 
     private Bomb _bombComponent;
     private bool _hasPlayedSound = false;
-    private int _initialHP;
 
     private void Awake()
     {
         _bombComponent = GetComponent<Bomb>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
         if (_bombComponent != null)
         {
-            _initialHP = _bombComponent.hp;
+            _bombComponent.OnExplode += HandleExplosion;
+            _bombComponent.OnRespawn += HandleRespawn;
         }
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        if (_bombComponent == null || _hasPlayedSound) return;
-
-        // Đón đầu vụ nổ: Nếu HP của thùng giảm về 0 hoặc ít hơn, lập tức nổ phát tiếng qua Mixer!
-        if (_bombComponent.hp <= 0 && _initialHP > 0)
+        if (_bombComponent != null)
         {
-            PlayExplosionSound();
+            _bombComponent.OnExplode -= HandleExplosion;
+            _bombComponent.OnRespawn -= HandleRespawn;
         }
+    }
+
+    private void HandleExplosion()
+    {
+        if (_hasPlayedSound) return;
+
+        PlayExplosionSound();
+    }
+
+    private void HandleRespawn()
+    {
+        // Reset lại cờ để chuẩn bị cho lần nổ tiếp theo
+        _hasPlayedSound = false;
     }
 
     private void PlayExplosionSound()

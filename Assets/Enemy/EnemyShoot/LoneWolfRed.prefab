@@ -252,6 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
+  onlyTakeBombDamage: 0
   expReward: 30
   destroyDelay: 0.5
   showHealthBar: 1
@@ -273,6 +274,9 @@ MonoBehaviour:
   nextWaypointDistance: 0.2
   updateRate: 0.25
   enemyVisual: {fileID: 5966900587009629842}
+  loseTargetDistance: 10
+  wanderRadius: 5
+  wanderWaitTime: 2
 --- !u!114 &4301729510072944522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,7 +316,7 @@ MonoBehaviour:
   attackDuration: 0.3
   burstCount: 3
   burstInterval: 0.3
-  bulletsPerShot: 2
+  bulletsPerShot: 3
   spreadAngle: 60
   randomBulletCount: 20
   bulletInterval: 0.05

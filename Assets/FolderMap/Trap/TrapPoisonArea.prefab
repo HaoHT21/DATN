@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 935288626764140310}
   - component: {fileID: 2750357110502494464}
-  - component: {fileID: 2691334552833785062}
   - component: {fileID: 7142854621867140023}
+  - component: {fileID: -283159755726636197}
   m_Layer: 0
   m_Name: TrapPoisonArea
   m_TagString: Untagged
@@ -89,22 +89,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2691334552833785062
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6471939960268831734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ef7511508ae1674191d436822562fd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  poisonEffectSO: {fileID: 11400000, guid: 45e25295ee17ee04da5cfc771d4f65c5, type: 2}
-  directDamage: 5
-  poisonDurationAfterExit: 3
-  lifeTime: 5
 --- !u!58 &7142854621867140023
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -141,3 +125,19 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &-283159755726636197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6471939960268831734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef7511508ae1674191d436822562fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poisonEffectSO: {fileID: 11400000, guid: 45e25295ee17ee04da5cfc771d4f65c5, type: 2}
+  directDamage: 5
+  poisonDurationAfterExit: 3
+  lifeTime: 10

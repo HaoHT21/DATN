@@ -6,6 +6,9 @@ public class CoinMagnet : MonoBehaviour
     [SerializeField] private int coinValue = 1;
     public AudioClip coinPickupSound;
 
+    [Header("--- CẤU HÌNH ÂM LƯỢNG XU ---")]
+    [Range(0f, 100f)] public float soundVolume = 100f; // Thanh trượt âm lượng từ 0 đến 100 ngoài Inspector
+
     [Header("Khoảng hút")]
     public float detectRange = 3f;
 
@@ -40,7 +43,7 @@ public class CoinMagnet : MonoBehaviour
 
         if (hit != null)
         {
-            // Kiểm tra Tag "Player" thay vì tìm GetComponent để tránh lỗi do xóa script trên Prefab
+            // Kiểm tra Tag "Player"
             if (hit.CompareTag("Player"))
             {
                 targetPlayer = hit.transform;
@@ -72,13 +75,28 @@ public class CoinMagnet : MonoBehaviour
 
     void CollectCoin()
     {
-        // 1. PHÁT ÂM THANH NHẶT XU
-        if (AudioManager.Instance != null && coinPickupSound != null)
+        // 1. PHÁT ÂM THANH NHẶT XU (Tạo AudioSource 2D độc lập & Route qua AudioStaticManager)
+        if (coinPickupSound != null)
         {
-            AudioManager.Instance.PlaySound(coinPickupSound);
+            GameObject tempAudio = new GameObject("TempCoinAudio");
+            tempAudio.transform.position = transform.position;
+            AudioSource aSource = tempAudio.AddComponent<AudioSource>();
+
+            aSource.clip = coinPickupSound;
+            aSource.spatialBlend = 0f; // Ép về âm thanh 2D hoàn toàn
+            aSource.volume = Mathf.Clamp01(soundVolume / 100f);
+
+            // Gán đi qua kênh envGroup của AudioStaticManager
+            if (AudioStaticManager.Instance != null)
+            {
+                aSource.outputAudioMixerGroup = AudioStaticManager.Instance.envGroup;
+            }
+
+            aSource.Play();
+            Destroy(tempAudio, coinPickupSound.length); // Phát xong tự dọn dẹp
         }
 
-        // 2. CỘNG XU VÀO STATS (Sử dụng Singleton Instance thay vì GetComponent)
+        // 2. CỘNG XU VÀO STATS
         if (PlayerStats.Instance != null)
         {
             PlayerStats.Instance.AddCoin(coinValue);

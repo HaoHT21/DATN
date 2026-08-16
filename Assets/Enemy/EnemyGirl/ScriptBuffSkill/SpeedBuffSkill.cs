@@ -3,7 +3,6 @@ using UnityEngine;
 public class SpeedBuffSkill : NPCSkill
 {
     public float bonusSpeed = 2f;
-    public float duration = 5f;
 
     public override void Use(GameObject player)
     {

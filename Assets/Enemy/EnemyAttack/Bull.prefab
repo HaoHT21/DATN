@@ -298,6 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
+  onlyTakeBombDamage: 0
   expReward: 30
   destroyDelay: 0.5
   showHealthBar: 1
@@ -313,12 +314,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58d3a89370d5b04597d704ee109e5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 5
   hurtDuration: 0.3
   knockbackForce: 5
   nextWaypointDistance: 0.2
   updateRate: 0.25
   enemyVisual: {fileID: 7383447775959963826}
+  loseTargetDistance: 10
+  wanderRadius: 5
+  wanderWaitTime: 2
 --- !u!114 &9065450580040860227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,7 +355,7 @@ MonoBehaviour:
   dashSpeed: 15
   dashDuration: 0.6
   recoveryTime: 1
-  attackHitbox: {fileID: 0}
+  attackHitbox: {fileID: 2123265964911816926}
 --- !u!114 &8853945477737485994
 MonoBehaviour:
   m_ObjectHideFlags: 0

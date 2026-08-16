@@ -55,14 +55,17 @@ public class SwimZone : MonoBehaviour
         if (effectFill != null)
             effectFill.fillAmount = 0;
 
-        // Lấy Vignette từ Global Volume
-        if (BlueVolume != null && BlueVolume.profile != null)
+        if (BlueVolume != null)
         {
-            BlueVolume.profile.TryGet(out blueVignette);
-
-            if (blueVignette != null)
+            BlueVolume.weight = 0f; // Mặc định ẩn Volume
+            if (BlueVolume.profile != null)
             {
-                blueVignette.intensity.value = 0f;
+                BlueVolume.profile = Instantiate(BlueVolume.profile);
+                if (BlueVolume.profile.TryGet(out blueVignette))
+                {
+                    blueVignette.intensity.overrideState = true;
+                    blueVignette.intensity.value = 0f;
+                }
             }
         }
     }
@@ -168,8 +171,16 @@ public class SwimZone : MonoBehaviour
         player = other.transform;
         playerHealth = other.GetComponent<PlayerHealth>();
 
+        if (BlueVolume != null)
+            BlueVolume.weight = 1f;
+
+        // 1. Kích hoạt Coroutine spawn bong bóng
         if (bubbleRoutine == null)
             bubbleRoutine = StartCoroutine(BubbleRoutine());
+
+        // 2. BỔ SUNG: Kích hoạt Coroutine gây sát thương khi ngộp thở
+        if (damageRoutine == null)
+            damageRoutine = StartCoroutine(DamageRoutine());
 
         if (effectBar != null)
             effectBar.SetActive(true);
@@ -198,9 +209,10 @@ public class SwimZone : MonoBehaviour
             StopCoroutine(damageRoutine);
 
         if (blueVignette != null)
-        {
             blueVignette.intensity.value = 0f;
-        }
+
+        if (BlueVolume != null)
+            BlueVolume.weight = 0f; // Tắt Volume vùng nước khi rời đi
 
         bubbleRoutine = null;
         damageRoutine = null;
