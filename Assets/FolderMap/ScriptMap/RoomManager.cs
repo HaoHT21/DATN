@@ -23,6 +23,8 @@ public class RoomManager : MonoBehaviour
     public BossCameraZoom bossCameraZoom;
 
     // Property giúp lấy danh sách phòng an toàn từ MapGenerator
+    // Trả về danh sách phòng runtime được tạo bởi MapGenerator.
+    // Nếu chưa gán MapGenerator thì trả về null.
     public List<RoomData> AllRooms
     {
         get
@@ -32,6 +34,8 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    // Khởi tạo trạng thái chiến đấu của toàn bộ phòng
+    // và bật lại object đặc biệt của phòng cuối.
     void Start()
     {
         if (barrierTilemap != null)
@@ -64,6 +68,8 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    // Theo dõi vị trí người chơi, kích hoạt chiến đấu khi người chơi
+    // đi sâu vào phòng và xử lý việc hoàn thành boss room.
     void Update()
     {
         if (mapGenerator == null || barrierTilemap == null || mapGenerator.runtimeRooms == null || mapGenerator.runtimeRooms.Count == 0)
@@ -130,6 +136,8 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    // Kiểm tra người chơi có nằm bên trong vùng an toàn phía trong phòng.
+    // Padding giúp tránh kích hoạt trận chiến khi người chơi chỉ đứng ở cửa.
     bool IsPlayerDeepInsideRoom(RoomData room, Vector3Int playerCell)
     {
         int padding = 1;
@@ -142,6 +150,8 @@ public class RoomManager : MonoBehaviour
                playerCell.y >= minY && playerCell.y < maxY;
     }
 
+    // Gán MapGenerator và xóa trạng thái barrier,
+    // coroutine chiến đấu còn đang hoạt động.
     public void Initialize(MapGenerator generator)
     {
         mapGenerator = generator;
@@ -152,6 +162,8 @@ public class RoomManager : MonoBehaviour
         activeWaveRoutines.Clear();
     }
 
+    // Đồng bộ cấu hình RoomWave với số lượng phòng hiện tại.
+    // Phòng đầu tiên không sinh enemy, phòng cuối được đánh dấu là boss room.
     public void SyncRooms()
     {
         if (mapGenerator == null || mapGenerator.runtimeRooms == null)
@@ -187,6 +199,8 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    // Kích hoạt trận chiến của phòng, đóng cửa,
+    // xử lý boss hoặc bắt đầu chuỗi wave thông thường.
     void StartRoomBattle(RoomData room)
     {
         int settingIndex = room.roomID - 1;
@@ -234,6 +248,8 @@ public class RoomManager : MonoBehaviour
         activeWaveRoutines[room.roomID] = routine;
     }
 
+    // Chạy lần lượt các wave của phòng.
+    // Mỗi wave phải được dọn sạch trước khi chuyển sang wave tiếp theo.
     IEnumerator RoomWaveRoutine(RoomData room)
     {
         room.currentWaveIndex = 0;
@@ -264,6 +280,8 @@ public class RoomManager : MonoBehaviour
         activeWaveRoutines.Remove(room.roomID);
     }
 
+    // Sinh enemy cho một wave mới và xóa các enemy còn sót lại
+    // từ wave trước đó.
     void SpawnWaveInRoom(RoomData room, WaveDataEnemy wave)
     {
         foreach (GameObject enemy in room.aliveEnemies)
@@ -287,6 +305,9 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    // Chọn một vị trí spawn chưa bị enemy khác chiếm.
+    // Nếu không tìm được vị trí phù hợp sau nhiều lần thử,
+    // sử dụng một vị trí ngẫu nhiên làm phương án dự phòng.
     Vector3 GetRandomSpawnPos(RoomData room)
     {
         if (room.spawnPositions.Count == 0)
@@ -322,12 +343,17 @@ public class RoomManager : MonoBehaviour
         return barrierTilemap.GetCellCenterWorld(fallbackTile);
     }
 
+    // Xóa các reference enemy đã bị Destroy và kiểm tra
+    // phòng còn enemy đang sống hay không.
     bool AllEnemiesDeadInRoom(RoomData room)
     {
         room.aliveEnemies.RemoveAll(enemy => enemy == null);
         return room.aliveEnemies.Count == 0;
     }
 
+    // Đặt barrier tại các vị trí cửa để khóa phòng
+    // khi trận chiến bắt đầu.
+    // Đóng toàn bộ lối ra vào được lưu trong barrierPositions.
     void FindAndCloseDoors(RoomData room)
     {
         foreach (var pos in room.barrierPositions)
@@ -336,6 +362,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    // Xóa barrier tại các vị trí cửa sau khi phòng được dọn sạch.
     void OpenDoors(RoomData room)
     {
         foreach (var pos in room.barrierPositions)
@@ -344,6 +371,8 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    // Dừng wave đang chạy, hủy enemy còn lại,
+    // khôi phục trạng thái ban đầu và mở cửa phòng.
     void ResetSingleRoom(RoomData room)
     {
         if (activeWaveRoutines.ContainsKey(room.roomID))
@@ -372,6 +401,8 @@ public class RoomManager : MonoBehaviour
         OpenDoors(room);
     }
 
+    // Reset toàn bộ các trận chiến đang hoạt động,
+    // khôi phục object phòng cuối và camera boss.
     public void ResetAllActiveBattles()
     {
         foreach (var pair in activeWaveRoutines)
@@ -402,17 +433,23 @@ public class RoomManager : MonoBehaviour
     }
 
     // Thêm hàm public này vào RoomManager.cs để TimedRoomManager gọi an toàn
+    // API công khai để TimedRoomManager reset một phòng
+    // mà không cần truy cập trực tiếp vào hàm nội bộ.
     public void ResetSingleRoomPublic(RoomData room)
     {
         ResetSingleRoom(room);
     }
 
     // Thêm hàm public này vào RoomManager.cs
+    // API công khai để hệ thống khác mở cửa phòng
+    // mà không phụ thuộc vào hàm private OpenDoors.
     public void OpenDoorsPublic(RoomData room)
     {
         OpenDoors(room);
     }
 
+    // Cấu hình một wave: danh sách prefab enemy
+    // và số lượng enemy cần sinh.
     [System.Serializable]
     public class WaveDataEnemy
     {
@@ -420,6 +457,8 @@ public class RoomManager : MonoBehaviour
         public int enemyCount = 5;
     }
 
+    // Cấu hình chiến đấu của một phòng,
+    // bao gồm loại phòng, boss và danh sách các wave.
     [System.Serializable]
     public class RoomWave
     {

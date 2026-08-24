@@ -804,11 +804,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 414963663}
   m_CullTransparentMesh: 1
---- !u!1 &536303741 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2518873520825815000, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
-  m_PrefabInstance: {fileID: 1105788726}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &590738510
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1755,6 +1750,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f3f289bb6bab8e43a4ae7a5cb40e3b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &1085785019
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -227.83229
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.5300045
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569400592205055665, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1369314834448905914, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
+      propertyPath: m_Name
+      value: GunGreen
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a91c7c13fcf7bb94f84f6da13088a50c, type: 3}
 --- !u!1 &1087752232
 GameObject:
   m_ObjectHideFlags: 0
@@ -1830,7 +1882,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1087752232}
   m_CullTransparentMesh: 1
---- !u!1001 &1105788726
+--- !u!1001 &1149301412
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1840,11 +1892,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 78844253347526648, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -235.3
+      value: -229.21463
       objectReference: {fileID: 0}
     - target: {fileID: 78844253347526648, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -651.5
+      value: 13.530489
       objectReference: {fileID: 0}
     - target: {fileID: 78844253347526648, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1878,25 +1930,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2161616668489108450, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
-      propertyPath: effectHolder
-      value: 
-      objectReference: {fileID: 1287808239}
     - target: {fileID: 2518873520825815000, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
       propertyPath: m_Name
-      value: Player (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 5387325176480026069, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
-      propertyPath: m_Intensity
-      value: 0
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2518873520825815000, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1287808251}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
 --- !u!1001 &1215781956
 PrefabInstance:
@@ -1964,23 +2005,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1383845238294188555, guid: af557b1a301d7d34aa255b626cc9f3f6, type: 3}
   m_PrefabInstance: {fileID: 964774952}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1287808239 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 78844253347526648, guid: 30f6e8bee35211e46ad9f60da2435c85, type: 3}
-  m_PrefabInstance: {fileID: 1105788726}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1287808251
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 536303741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b77e6eb17928984c9a743e2681d91ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1349170205
 GameObject:
   m_ObjectHideFlags: 0
@@ -3877,7 +3901,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 1287808239}
+    TrackingTarget: {fileID: 0}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -4872,7 +4896,6 @@ SceneRoots:
   - {fileID: 1951328341}
   - {fileID: 5200334872328419323}
   - {fileID: 2183830345617414129}
-  - {fileID: 1105788726}
   - {fileID: 614077529}
   - {fileID: 8802515622097196611}
   - {fileID: 8387183917055424751}
@@ -4887,3 +4910,5 @@ SceneRoots:
   - {fileID: 1215781956}
   - {fileID: 896138123}
   - {fileID: 1696427783}
+  - {fileID: 1149301412}
+  - {fileID: 1085785019}

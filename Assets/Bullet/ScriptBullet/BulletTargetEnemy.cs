@@ -147,11 +147,18 @@ public class BulletTargetEnemy : MonoBehaviour
             return;
         }
 
+        // 1. UƯ TIÊN KIỂM TRA IDamageable TRƯỚC (Sẽ trúng cả Bomb, Enemy, BreakableTile,...)
+        if (other.TryGetComponent<IDamageable>(out var damageableTarget))
+        {
+            damageableTarget.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
+        }
+
+        // 2. Dự phòng nếu Enemy/Boss không kế thừa IDamageable
         if (other.CompareTag("Enemy"))
         {
-            EnemyHeath enemy =
-                other.GetComponent<EnemyHeath>();
-
+            EnemyHeath enemy = other.GetComponent<EnemyHeath>();
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
@@ -163,23 +170,12 @@ public class BulletTargetEnemy : MonoBehaviour
 
         if (other.CompareTag("Boss"))
         {
-            Debug.Log("Boss Trigger");
-
             BossHeath boss = other.GetComponent<BossHeath>();
-
-            Debug.Log(boss);
-
             if (boss != null)
             {
                 boss.TakeDamage(damage);
             }
 
-            Destroy(gameObject);
-        }
-
-        if (other.TryGetComponent<IDamageable>(out var damageableTarget))
-        {
-            damageableTarget.TakeDamage(damage);
             Destroy(gameObject);
             return;
         }

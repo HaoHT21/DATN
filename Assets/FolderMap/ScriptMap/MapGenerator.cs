@@ -93,18 +93,26 @@ public class MapGenerator : MonoBehaviour
     private int[,] map;
     private List<RectInt> roomList = new List<RectInt>();
 
+    // Trả về giá trị của một ô trên map:
+    // -1: ngoài phạm vi hoặc map chưa khởi tạo
+    //  0: ô không đi được
+    //  1: ô đi được
+    //  2: vật cản
+    //  3: bẫy
     public int GetMapValue(int x, int y)
     {
         if (map == null || x < 0 || x >= width || y < 0 || y >= height) return -1;
         return map[x, y];
     }
 
+    // Kiểm tra một ô có thể đi qua hay không.
     public bool IsWalkable(int x, int y)
     {
         if (map == null || x < 0 || x >= width || y < 0 || y >= height) return false;
         return map[x, y] == 1;
     }
 
+    // Chuyển tọa độ ô lưới sang tọa độ thế giới dựa trên Tilemap nền.
     private Vector3 GridToWorldPosition(int x, int y)
     {
         Vector3Int cellPosition = new Vector3Int(x, y, 0);
@@ -115,6 +123,8 @@ public class MapGenerator : MonoBehaviour
         return new Vector3(x + 0.5f, y + 0.5f, 0);
     }
 
+    // Tạo lại toàn bộ bản đồ, bao gồm phòng, hành lang,
+    // vật cản, bẫy và các GameObject đặc biệt.
     public void GenerateMapInEditor()
     {
         if (groundTilemaps == null || groundTilemaps.Count == 0)
@@ -159,6 +169,7 @@ public class MapGenerator : MonoBehaviour
         Debug.Log($"Đã tạo mê cung thành công và lưu lại cấu trúc! Tổng số phòng: {runtimeRooms.Count}");
     }
 
+    // Xóa tile, GameObject và dữ liệu runtime của bản đồ hiện tại.
     public void ClearMapInEditor()
     {
         foreach (var tm in groundTilemaps) if (tm != null) tm.ClearAllTiles();
@@ -190,6 +201,8 @@ public class MapGenerator : MonoBehaviour
 #endif
     }
 
+    // Sinh các phòng chính theo bố cục tuyến tính hoặc hình tròn.
+    // Mỗi phòng phải cách các phòng khác ít nhất minRoomDistance ô.
     void GenerateRooms()
     {
         Vector2 mapCenter = new Vector2(width / 2f, height / 2f);
@@ -235,6 +248,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Sinh phòng cuối ở hướng được chỉ định và bảo đảm vùng an toàn
+    // xung quanh phòng không giao với các phòng hiện có.
     void GenerateFinalRoom()
     {
         RectInt lastNormalRoom = roomList[roomList.Count - 1];
@@ -304,6 +319,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Kiểm tra phòng mới có nằm trong vùng khoảng cách an toàn
+    // của bất kỳ phòng nào đã tạo hay không.
     bool IsTooCloseToOtherRooms(RectInt targetRoom, int distance)
     {
         foreach (var room in roomList)
@@ -314,6 +331,7 @@ public class MapGenerator : MonoBehaviour
         return false;
     }
 
+    // Kết nối tâm các phòng liên tiếp bằng hành lang vuông góc.
     void ConnectRooms()
     {
         for (int i = 0; i < roomList.Count; i++)
@@ -327,6 +345,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Tạo vùng đi được bên trong phòng theo hình chữ nhật hoặc hình tròn.
     void CarveRoom(RectInt room)
     {
         if (roomShape == RoomShapeType.Rectangle)
@@ -363,6 +382,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Tạo hành lang theo hai đoạn: trước hết theo trục X,
+    // sau đó theo trục Y.
     void CreateCorridor(Vector2Int start, Vector2Int end)
     {
         int currentX = start.x;
@@ -380,6 +401,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Mở rộng một ô hành lang thành vùng có độ rộng pathWidth.
     void CarvePathBrush(int centerX, int centerY)
     {
         int halfWidth = pathWidth / 2;
@@ -394,6 +416,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Sinh vật cản theo layout đã chọn và đặt bẫy ngẫu nhiên
+    // trong các phòng thường, không áp dụng cho phòng bắt đầu và phòng cuối.
     void SpawnObstaclesAndTraps()
     {
         for (int i = 1; i < roomList.Count - 1; i++)
@@ -407,6 +431,7 @@ public class MapGenerator : MonoBehaviour
 
             switch (obstacleLayout)
             {
+                // Tạo khối vuông rỗng ở giữa phòng và chừa lối đi rộng 3 ô.
                 case ObstacleLayoutType.CenterBlock:
                     if (roomData.hasSpecialObject) break;
 
@@ -429,6 +454,8 @@ public class MapGenerator : MonoBehaviour
                     }
                     break;
 
+
+                // Tạo vật cản dạng chữ thập, chừa khoảng trống ở khu vực trung tâm.
                 case ObstacleLayoutType.Cross:
                     // Tăng offset viền (ví dụ: +4) để cắt bớt 2 tile ở phía ngoài cùng của mỗi nhánh
                     int outerOffset = 4;
@@ -457,6 +484,7 @@ public class MapGenerator : MonoBehaviour
                     }
                     break;
 
+                // Tạo bốn cụm vật cản gần bốn góc bên trong phòng.
                 case ObstacleLayoutType.Columns:
                     // Cộng thêm 2 ô offset vào khoảng cách lùi từ mép tường
                     int extraWallDistance = 2;
@@ -489,6 +517,7 @@ public class MapGenerator : MonoBehaviour
                     }
                     break;
 
+                // Đặt vật cản ngẫu nhiên, đôi khi mở rộng thành cụm hai ô liền nhau.
                 case ObstacleLayoutType.Scatter:
                 default:
                     int obsCount = 0;
@@ -534,6 +563,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Khởi tạo metadata cho từng phòng, bao gồm loại phòng,
+    // vị trí trung tâm, vị trí barrier và danh sách vị trí spawn.
     void InitializeRoomData()
     {
         runtimeRooms.Clear();
@@ -565,6 +596,9 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Cập nhật các ô hợp lệ để sinh GameObject ngẫu nhiên.
+    // Vị trí spawn phải là ô đi được, không gần barrier và không nằm
+    // trong vùng nguy hiểm quanh vật cản hoặc bẫy.
     void UpdateSelectableSpawnPositions()
     {
         foreach (var data in runtimeRooms)
@@ -602,6 +636,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Kiểm tra vùng 3x3 quanh vị trí có hoàn toàn là ô đi được hay không.
     bool IsSafeSpawnZone(int centerX, int centerY)
     {
         for (int xOffset = -1; xOffset <= 1; xOffset++)
@@ -618,6 +653,8 @@ public class MapGenerator : MonoBehaviour
         return true;
     }
 
+    // Thêm vị trí vào danh sách barrier nếu đó là ô nền đi được.
+    // Barrier trên hành lang sẽ không được thêm vào danh sách của phòng.
     void CheckAndAddBarrier(int x, int y, List<Vector3Int> barrierList)
     {
         if (x >= 0 && x < width && y >= 0 && y < height)
@@ -629,6 +666,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Sinh object đặc biệt cho phòng bắt đầu, phòng cuối
+    // và một số phòng thường được chọn ngẫu nhiên.
     void SpawnSpecialGameObjects()
     {
         Transform parentTransform = objectContainer != null ? objectContainer : transform;
@@ -691,6 +730,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Sinh các object ngẫu nhiên tại những vị trí hợp lệ trong phòng thường.
+    // Mỗi vị trí chỉ được sử dụng một lần. 
     void SpawnRandomObjects()
     {
         if (randomObjectPrefab == null || randomObjectCount <= 0) return;
@@ -728,6 +769,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Hiển thị dữ liệu map lên các Tilemap tương ứng:
+    // nền, vật cản và bẫy.
     void RenderMap()
     {
         for (int x = 0; x < width; x++)

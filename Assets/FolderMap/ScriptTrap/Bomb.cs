@@ -11,12 +11,10 @@ public class Bomb : MonoBehaviour, IDamageable
     [Header("Explosion")]
     public float radius = 3f;
     public int damage = 50;
+    public float knockbackForce = 10f; // Lực đẩy lùi kẻ địch và người chơi
 
     [Header("Respawn Settings")]
     public float respawnDelay = 10f; // Thời gian hồi phục bom (10 giây)
-
-    [Header("Collider sẽ bật khi nổ")]
-    public Collider2D col;
 
     private Animator animator;
     private SpriteRenderer spriteRenderer;
@@ -43,10 +41,6 @@ public class Bomb : MonoBehaviour, IDamageable
 
         // Lưu lại Tag ban đầu cài đặt trong Unity Inspector (VD: "Bomb", "Breakable",...)
         originalTag = gameObject.tag;
-
-        // Collider khu vực nổ mặc định tắt
-        if (col != null)
-            col.enabled = false;
     }
 
     public void TakeDamage(int damageAmount)
@@ -70,13 +64,10 @@ public class Bomb : MonoBehaviour, IDamageable
         // Phát sự kiện nổ cho BombAudio biết
         OnExplode?.Invoke();
 
-        if (col != null)
-            col.enabled = true;
-
         if (animator != null)
             animator.Play("Boom");
 
-        DamageNearby();
+        DamageAndKnockbackNearby();
 
         // Bắt đầu chuỗi ẩn bom và hồi phục lại sau 10 giây
         StartCoroutine(RespawnSequence());
@@ -87,17 +78,13 @@ public class Bomb : MonoBehaviour, IDamageable
         // Chờ animation nổ diễn ra (0.5s)
         yield return new WaitForSeconds(0.5f);
 
-        // 1. Tắt khu vực nổ
-        if (col != null)
-            col.enabled = false;
-
-        // 2. Ẩn quả bom, tắt collider và xóa Tag
+        // 1. Ẩn quả bom, tắt collider và xóa Tag
         SetBombActive(false);
 
-        // 3. Chờ 10 giây (respawnDelay)
+        // 2. Chờ 10 giây (respawnDelay)
         yield return new WaitForSeconds(respawnDelay);
 
-        // 4. Hồi sinh quả bom trở lại (Khôi phục Tag)
+        // 3. Hồi sinh quả bom trở lại (Khôi phục Tag)
         ResetBomb();
     }
 
@@ -130,31 +117,48 @@ public class Bomb : MonoBehaviour, IDamageable
         OnRespawn?.Invoke();
     }
 
-    private void DamageNearby()
+    private void DamageAndKnockbackNearby()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
 
         foreach (Collider2D hit in hits)
         {
-            // Các vật thể gần đó nhận damage nếu có IDamageable (Trừ chính quả bom này)
-            if (hit.gameObject != gameObject && hit.TryGetComponent<IDamageable>(out var target))
+            if (hit.gameObject == gameObject) continue;
+
+            // Tính hướng đẩy lùi từ tâm quả bom ra phía đối tượng
+            Vector2 pushDirection = (hit.transform.position - transform.position).normalized;
+
+            // Nếu vị trí quá gần tâm (trùng khớp), mặc định đẩy lên trên
+            if (pushDirection == Vector2.zero) pushDirection = Vector2.up;
+
+            // 1. Gây sát thương chung cho các object có IDamageable (vật thể phá hủy được,...)
+            if (hit.TryGetComponent<IDamageable>(out var target))
             {
                 target.TakeDamage(damage);
             }
 
-            // Damage Enemy
+            // 2. Damage & Knockback cho Enemy
             EnemyHeath enemy = hit.GetComponent<EnemyHeath>();
             if (enemy != null)
             {
                 enemy.TakeDamage(damage, true);
             }
 
-            // Damage Player
+            // 3. Damage & Knockback cho Player
             PlayerHealth player = hit.GetComponent<PlayerHealth>();
             if (player != null)
             {
-                Vector2 hitDirection = (player.transform.position - transform.position).normalized;
-                player.TakeDamage(damage, hitDirection);
+                player.TakeDamage(damage, pushDirection);
+            }
+
+            // 4. Áp dụng lực đẩy vật lý (Rigidbody2D)
+            Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
+            // Thay thế isKinematic bằng bodyType != RigidbodyType2D.Kinematic
+            if (rb != null && rb.bodyType != RigidbodyType2D.Kinematic)
+            {
+                // Thay thế velocity cũ bằng linearVelocity
+                rb.linearVelocity = Vector2.zero;
+                rb.AddForce(pushDirection * knockbackForce, ForceMode2D.Impulse);
             }
         }
     }

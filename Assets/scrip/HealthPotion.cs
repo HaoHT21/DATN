@@ -25,7 +25,7 @@ public class HealthPotion : MonoBehaviour
                 {
                     visual = Instantiate(potionVisualPrefab, pc.weaponHolder);
                     visual.transform.localPosition = Vector3.zero; // Căn giữa tại holder
-                    visual.transform.localScale = new Vector3(2f, 2f, 2f); // Đồng bộ tỉ lệ với súng
+                    visual.transform.localScale = new Vector3(4f, 4f, 4f); // Đồng bộ tỉ lệ với súng
                     visual.SetActive(false); // Ẩn đi, chỉ hiện khi được chọn trong inventory
                 }
 

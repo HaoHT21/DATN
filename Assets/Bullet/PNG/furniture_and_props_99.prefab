@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 42.50054, y: -28.20143, z: 0}
-  m_LocalScale: {x: 5.6628, y: 5.6628, z: 5.6628}
+  m_LocalScale: {x: 4, y: 4, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -166,13 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaa22e86789148844932553c6f544ab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemIcon: {fileID: 1917365263, guid: 57384e3e200e7894ab6388c334a13241, type: 3}
-  itemID: 0
-  weaponVisualPrefab: {fileID: 5509279923031117867}
-  weaponPickupPrefab: {fileID: 5509279923031117867}
-  bulletPrefab: {fileID: 0}
-  isGun: 1
-  damage: 0
+  itemData: {fileID: 11400000, guid: 72f3ca4419c8ae246a0a78097bffabf1, type: 2}
 --- !u!114 &800920751955364696
 MonoBehaviour:
   m_ObjectHideFlags: 0

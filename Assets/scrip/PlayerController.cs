@@ -45,8 +45,6 @@ public class PlayerController : MonoBehaviour
         public int healAmount;
     }
 
-
-
     // Kết nối tới kho đồ dùng chung
     public List<WeaponItem> inventory
     {
@@ -67,49 +65,25 @@ public class PlayerController : MonoBehaviour
         set { if (InventoryData.Instance != null) InventoryData.Instance.currentWeaponIndex = value; }
     }
 
-
-
     public event Action OnInventoryChanged;
 
-
-
     private Animator _animator;
-
     private SpriteRenderer _sprite;
-
     private Rigidbody2D rb;
-
     private Vector2 moveInput;
-
     private float _attackTimer;
-
-    //private float gunScaleValue = 0.5f;
 
     public bool isFrozen = false; // Thêm biến này
 
-
-
     private void Awake()
-
     {
-
         _animator = GetComponent<Animator>();
-
         _sprite = GetComponent<SpriteRenderer>();
-
         rb = GetComponent<Rigidbody2D>();
-
         rb.gravityScale = 0;
-
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
-
         rb.freezeRotation = true;
-
-        //FixFirePointPosition();
-
     }
-
-
 
     private void Update()
 
@@ -123,92 +97,37 @@ public class PlayerController : MonoBehaviour
         }
 
         if (moveInput.x != 0)
-
         {
-
             _sprite.flipX = moveInput.x < 0;
-
             if (moveInput.x != 0)
-
             {
-
                 if (moveInput.x > 0)
-
                 {
-
                     visual.rotation = Quaternion.Euler(0, 0, 0);
-
                 }
-
                 else
-
                 {
-
                     visual.rotation = Quaternion.Euler(0, 180, 0);
-
                 }
-
             }
-
-            //if (visual != null)
-
-            //{
-
-            //    Vector3 scale = visual.localScale;
-
-            //    scale.x = _sprite.flipX ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-
-            //    visual.localScale = scale;
-
-            //}
-
-            //if (weaponHolder != null)
-
-            //{
-
-            //    float s = gunScaleValue;
-
-            //    //weaponHolder.localRotation = Quaternion.Euler(0, 0, !_sprite.flipX ? weaponRotationOffset : 180f - weaponRotationOffset);
-
-            //    //weaponHolder.localScale = new Vector3(s, !_sprite.flipX ? s : -s, s);
-
-            //}
-
-            //FixFirePointPosition();
-
         }
-
-
 
         _animator.SetBool("isWalking", moveInput.magnitude > 0.1f);
 
         if (_attackTimer > 0) _attackTimer -= Time.deltaTime;
-
-
 
         if (Input.GetKeyDown(KeyCode.K) && !isFrozen && _attackTimer <= 0 && inventory != null && inventory.Count > 0)
         {
             PerformAttack();
         }
 
-
-
         if (Input.GetKeyDown(KeyCode.R) && inventory != null && inventory.Count > 1)
-
         {
-
             currentWeaponIndex = (currentWeaponIndex + 1) % inventory.Count;
 
             UpdateWeaponVisuals();
-
-            //FixFirePointPosition();
-
         }
-
-
-
         if (Input.GetKeyDown(KeyCode.T) && inventory != null && inventory.Count > 0) DropWeapon();
-
     }
 
 
@@ -277,7 +196,12 @@ public class PlayerController : MonoBehaviour
         else if (weapon.isPotion)
         {
             PlayerHealth ph = GetComponent<PlayerHealth>();
-            if (ph != null) { ph.Heal(weapon.healAmount); RemoveWeapon(currentWeaponIndex); }
+            if (ph != null)
+            {
+                ph.Heal(weapon.healAmount);
+                // Xóa bình máu và cập nhật giao diện
+                RemoveWeapon(currentWeaponIndex);
+            }
         }
         else
         {
@@ -295,8 +219,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
     public void UpdateWeaponVisuals()
 
     {
@@ -304,17 +226,11 @@ public class PlayerController : MonoBehaviour
         if (inventory == null) return;
 
         for (int i = 0; i < inventory.Count; i++)
-
         {
-
             if (inventory[i].visualPrefab != null)
-
             {
-
                 // Chỉ bật vũ khí đang cầm (trùng index), tắt toàn bộ vũ khí ẩn còn lại
-
                 inventory[i].visualPrefab.SetActive(i == currentWeaponIndex);
-
             }
 
         }
@@ -501,15 +417,4 @@ public class PlayerController : MonoBehaviour
 
         UpdateWeaponVisuals();
     }
-
-
-
-    //void FixFirePointPosition()
-
-    //{
-
-    //    if (firePoint != null) { firePoint.localPosition = new Vector3(firePointXOffset, firePointYOffset, 0); firePoint.localRotation = Quaternion.identity; }
-
-    //}
 }
-

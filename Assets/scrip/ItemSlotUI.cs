@@ -36,9 +36,9 @@ public class ItemSlotUI : MonoBehaviour
                 _data.itemID
             );
 
-        if (success)
-        {
-            InventoryManager.Instance.AddItem(_data);
-        }
+        // if (success)
+        // {
+        //     InventoryManager.Instance.AddItem(_data);
+        // }
     }
 }
