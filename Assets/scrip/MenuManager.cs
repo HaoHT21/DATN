@@ -69,10 +69,18 @@ public class MenuManager : MonoBehaviour
 
     /// <summary>
     /// New Game:
-    /// Xóa save cũ → load scene đầu tiên → tạo save mới sau khi scene load xong.
+    /// Xóa save cũ → Reset dữ liệu Hero đã sở hữu về mặc định → load scene đầu tiên → tạo save mới sau khi scene load xong.
     /// </summary>
     public void NewGame()
     {
+        // Reset danh sách Hero đã sở hữu trong RAM về ban đầu
+        HeroSlot.ResetOwnedHeroes();
+
+        // Xóa Key lưu cũ nếu có
+        PlayerPrefs.DeleteKey("OwnedHeroes");
+        PlayerPrefs.Save();
+
+        // Xóa file Save và bắt đầu Game Mới
         SaveGameService.DeleteSave();
         SaveGameRuntime.BeginNewGameCreateSaveAfterLoad();
         PlayGame();

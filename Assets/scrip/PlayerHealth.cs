@@ -179,8 +179,7 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     }
 
     // --- LOGIC QUẢN LÝ MÁU (HP) ---
-    public void TakeDamage(int damage,
-    Vector2 hitDirection = default)
+    public void TakeDamage(int damage, Vector2 hitDirection = default)
     {
         if (IsDead || isInvincible || skillInvincible)
             return;
@@ -285,6 +284,21 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         UpdateUI(); // Cập nhật UI tăng máu
     }
 
+    // --- HÀM BỔ SUNG ĐỂ TĂNG MAX HP / MANA KHI MUA ITEM HOẶC ĐỔI HERO ---
+    public void SetMaxHealth(int newMaxHP, bool refill = true)
+    {
+        maxHealth = newMaxHP;
+        if (refill || currentHealth > maxHealth) currentHealth = maxHealth;
+        UpdateUI();
+    }
+
+    public void SetMaxMana(int newMaxMP, bool refill = true)
+    {
+        maxMana = newMaxMP;
+        if (refill || currentMana > maxMana) currentMana = maxMana;
+        UpdateUI();
+    }
+
     // --- LOGIC QUẢN LÝ MANA (MP) ---
     public bool UseMana(int amount)
     {
@@ -315,21 +329,24 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
     }
 
     // --- HÀM ĐỒNG BỘ CẬP NHẬT UI GÓC TRÁI MÀN HÌNH ---
-    private void UpdateUI()
+    public void UpdateUI()
     {
         // 1. Đồng bộ thanh Máu (HP Slider + Text số)
-        if (healthSlider != null)
-        {
-            healthSlider.value = (float)currentHealth / maxHealth;
-        }
-        else
+        if (healthSlider == null)
         {
             GameObject hpObj = GameObject.Find("HP_Slider");
             if (hpObj != null)
             {
                 healthSlider = hpObj.GetComponent<Slider>();
-                healthSlider.value = (float)currentHealth / maxHealth;
             }
+        }
+
+        if (healthSlider != null)
+        {
+            // Ép Slider về chuẩn min 0 max 1 để tính tỉ lệ float chính xác không bị tụt Slider
+            healthSlider.minValue = 0f;
+            healthSlider.maxValue = 1f;
+            healthSlider.value = maxHealth > 0 ? (float)currentHealth / maxHealth : 0f;
         }
 
         // TỰ ĐỘNG TÌM "HP_Text" NẾU CHƯA GÁN TRONG INSPECTOR
@@ -349,18 +366,21 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         }
 
         // 2. Đồng bộ thanh Mana (MP Slider + Text số)
-        if (manaSlider != null)
-        {
-            manaSlider.value = (float)currentMana / maxMana;
-        }
-        else
+        if (manaSlider == null)
         {
             GameObject mpObj = GameObject.Find("MP_Slider");
             if (mpObj != null)
             {
                 manaSlider = mpObj.GetComponent<Slider>();
-                manaSlider.value = (float)currentMana / maxMana;
             }
+        }
+
+        if (manaSlider != null)
+        {
+            // Ép Slider về chuẩn min 0 max 1 để tính tỉ lệ float chính xác không bị tụt Slider
+            manaSlider.minValue = 0f;
+            manaSlider.maxValue = 1f;
+            manaSlider.value = maxMana > 0 ? (float)currentMana / maxMana : 0f;
         }
 
         // TỰ ĐỘNG TÌM "MP_Text" NẾU CHƯA GÁN TRONG INSPECTOR
@@ -380,18 +400,18 @@ public class PlayerHealth : MonoBehaviour, IHealthProvider
         }
 
         // 3. Đồng bộ hiển thị chữ Level (TMP) lên góc trái
-        if (levelText != null)
-        {
-            levelText.text = "LV. " + currentLevel;
-        }
-        else
+        if (levelText == null)
         {
             GameObject lvlObj = GameObject.Find("Level_Text");
             if (lvlObj != null)
             {
                 levelText = lvlObj.GetComponent<TextMeshProUGUI>();
-                levelText.text = "LV. " + currentLevel;
             }
+        }
+
+        if (levelText != null)
+        {
+            levelText.text = "LV. " + currentLevel;
         }
     }
 

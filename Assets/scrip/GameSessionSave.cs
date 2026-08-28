@@ -2,13 +2,20 @@ using UnityEngine;
 
 /// <summary>
 /// Lưu / tải dữ liệu phiên chơi tối thiểu khi thoát màn hoặc thoát ứng dụng.
-/// Mở rộng thêm key PlayerPrefs hoặc file save tại đây khi dự án phát triển.
+/// Đã được đồng bộ với SaveManager và SavesData.
 /// </summary>
 public static class GameSessionSave
 {
     public static void SaveCurrentSession()
     {
-        SaveGameService.Save(SaveGameService.CaptureFromCurrentScene());
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+        else
+        {
+            Debug.LogWarning("[GameSessionSave] Không tìm thấy SaveManager Instance trong Scene!");
+        }
     }
 
     public static void LoadInto(PlayerStats stats)
@@ -16,11 +23,14 @@ public static class GameSessionSave
         if (stats == null)
             return;
 
-        SaveData data = SaveGameService.Load();
-        if (data == null)
-            return;
-
-        stats.Score = data.score;
-        stats.UpdateUI();
+        if (SaveManager.Instance != null && SaveManager.Instance.HasSave())
+        {
+            // Tải lại toàn bộ dữ liệu game (gồm Vị trí, Hero, Máu, Coins, Inventory...)
+            SaveManager.Instance.LoadGame();
+        }
+        else
+        {
+            Debug.LogWarning("[GameSessionSave] Không thể Load vì thiếu SaveManager hoặc chưa có file Save!");
+        }
     }
 }

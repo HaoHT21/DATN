@@ -11,7 +11,8 @@ public class PlayerController : MonoBehaviour
     public Transform weaponHolder;
     public Transform firePoint;
     public float weaponRotationOffset = -45f;
-
+    [Header("Hero Config")]
+    public int heroID = 100;
 
     [Header("Âm thanh")]
     public AudioClip shootSound;
@@ -186,10 +187,13 @@ public class PlayerController : MonoBehaviour
                 Destroy(tempAudio, shootSound.length); // Phát xong tự hủy Object tạm
             }
 
+            // Fallback vị trí bắn nếu firePoint bị null hoặc chưa được gán
+            Transform actualFirePoint = firePoint != null ? firePoint : (weapon.visualPrefab != null ? weapon.visualPrefab.transform : transform);
+
             GameObject b = Instantiate(
                 weapon.bulletPrefab,
-                firePoint.position,
-                firePoint.rotation
+                actualFirePoint.position,
+                actualFirePoint.rotation
             );
             if (b.TryGetComponent<Bullet>(out var bs)) bs.damage = weapon.damage;
         }
@@ -230,7 +234,25 @@ public class PlayerController : MonoBehaviour
             if (inventory[i].visualPrefab != null)
             {
                 // Chỉ bật vũ khí đang cầm (trùng index), tắt toàn bộ vũ khí ẩn còn lại
-                inventory[i].visualPrefab.SetActive(i == currentWeaponIndex);
+                bool isActive = (i == currentWeaponIndex);
+                inventory[i].visualPrefab.SetActive(isActive);
+
+                // =========================================================
+                // CẬP NHẬT VỊ TRÍ BẮN (firePoint) DỰA THEO VŨ KHÍ ĐANG HÀNH HOẠT
+                // =========================================================
+                if (isActive && inventory[i].isGun)
+                {
+                    Transform fp = inventory[i].visualPrefab.transform.Find("FirePoint");
+                    if (fp != null)
+                    {
+                        firePoint = fp;
+                    }
+                    else
+                    {
+                        firePoint = inventory[i].visualPrefab.transform; // Fallback lấy gốc của Model Súng
+                    }
+                }
+                // =========================================================
             }
 
         }

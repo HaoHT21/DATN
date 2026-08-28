@@ -329,8 +329,8 @@ MonoBehaviour:
   maxLevel: 8
   currentEXP: 0
   expToNextLevel: 64000000fa000000f4010000e8030000dc05000098080000b80b0000
-  currentHealth: 100
-  maxHealth: 100
+  currentHealth: 120
+  maxHealth: 120
   currentMana: 100
   maxMana: 100
   manaRegenRate: 5
@@ -355,6 +355,7 @@ MonoBehaviour:
   weaponHolder: {fileID: 1085258241069408909}
   firePoint: {fileID: 1185850068575581733}
   weaponRotationOffset: -45
+  heroID: 21
   shootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
   shootVolume: 100
   healSound: {fileID: 0}

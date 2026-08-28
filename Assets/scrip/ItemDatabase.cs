@@ -23,29 +23,65 @@ public class ItemDatabase : MonoBehaviour
         InitializeDatabase();
     }
 
-    private void InitializeDatabase()
+    private void OnValidate()
     {
+        // Tự động nạp lại Database khi thay đổi danh sách trong Unity Editor
+        InitializeDatabase();
+    }
+
+    /// <summary>
+    /// Nạp dữ liệu từ List allItems vào Dictionary để truy xuất nhanh O(1)
+    /// </summary>
+    public void InitializeDatabase()
+    {
+        if (itemDict == null)
+        {
+            itemDict = new Dictionary<int, ItemData>();
+        }
+
         itemDict.Clear();
+
+        if (allItems == null) return;
+
         foreach (var item in allItems)
         {
-            if (item != null && !itemDict.ContainsKey(item.itemID))
+            if (item != null)
             {
-                itemDict.Add(item.itemID, item);
+                if (!itemDict.ContainsKey(item.itemID))
+                {
+                    itemDict.Add(item.itemID, item);
+                }
+                else
+                {
+                    Debug.LogWarning($"[ItemDatabase] Phát hiện trùng lặp ID {item.itemID} trên item '{item.name}'!");
+                }
             }
         }
     }
 
     /// <summary>
-    /// Tìm ItemData bằng ID
+    /// Tìm ItemData bằng ID (Có cơ chế Fallback tìm trực tiếp trong List nếu Dictionary thiếu)
     /// </summary>
     public ItemData GetItemByID(int id)
     {
-        if (itemDict.TryGetValue(id, out var item))
+        // 1. Tìm nhanh trong Dictionary
+        if (itemDict.TryGetValue(id, out var item) && item != null)
         {
             return item;
         }
 
-        Debug.LogWarning($"[ItemDatabase] Không tìm thấy ItemData có ID: {id}");
+        // 2. Fallback: Nếu không tìm thấy trong Dictionary, duyệt trực tiếp List allItems
+        foreach (var checkItem in allItems)
+        {
+            if (checkItem != null && checkItem.itemID == id)
+            {
+                // Cập nhật ngược lại vào Dictionary để lần sau truy xuất nhanh
+                itemDict[id] = checkItem;
+                return checkItem;
+            }
+        }
+
+        Debug.LogWarning($"[ItemDatabase] Không tìm thấy ItemData có ID: {id}. Hãy kiểm tra lại danh sách allItems trong Inspector!");
         return null;
     }
 }

@@ -12,7 +12,15 @@ public class HiroManager : MonoBehaviour
 
     private void Awake()
     {
+        // Giữ Singleton tồn tại xuyên suốt các Scene để SaveManager luôn truy cập được
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -49,12 +57,30 @@ public class HiroManager : MonoBehaviour
 
     public GameObject GetHeroPrefabByID(int id)
     {
-        foreach (HeroData hero in allHeroes)
+        if (allHeroes == null || allHeroes.Count == 0)
         {
-            if (hero.itemID == id)
-                return hero.heroPrefab;
+            Debug.LogError("[HIRO MANAGER] Danh sách allHeroes đang bị TRỐNG hoặc NULL!");
+            return null;
         }
 
+        foreach (HeroData hero in allHeroes)
+        {
+            // Bổ sung kiểm tra null cho phần tử hero trong danh sách
+            if (hero == null) continue;
+
+            if (hero.itemID == id)
+            {
+                if (hero.heroPrefab == null)
+                {
+                    Debug.LogError($"[HIRO MANAGER] Tìm thấy HeroData có ID {id} nhưng heroPrefab chưa gán trong Inspector!");
+                    return null;
+                }
+
+                return hero.heroPrefab;
+            }
+        }
+
+        Debug.LogWarning($"[HIRO MANAGER] Không tìm thấy HeroData nào có itemID = {id} trong danh sách allHeroes!");
         return null;
     }
 }
