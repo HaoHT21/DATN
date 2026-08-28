@@ -193813,6 +193813,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1824960589136374397, guid: cd09a9a4a9fb1d24cbb3edde4dda145e, type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3425520511913110979, guid: cd09a9a4a9fb1d24cbb3edde4dda145e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -193908,6 +193912,10 @@ PrefabInstance:
     - target: {fileID: 3451257340383295007, guid: cd09a9a4a9fb1d24cbb3edde4dda145e, type: 3}
       propertyPath: m_Name
       value: PlayerStatusUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 3786456412555288839, guid: cd09a9a4a9fb1d24cbb3edde4dda145e, type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4111803609442432327, guid: cd09a9a4a9fb1d24cbb3edde4dda145e, type: 3}
       propertyPath: m_AnchorMax.x
