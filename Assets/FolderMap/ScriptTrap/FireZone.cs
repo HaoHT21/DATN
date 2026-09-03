@@ -10,14 +10,23 @@ public class FireZone : MonoBehaviour
     public StatusEffectSO burnEffectSO; // Kéo ScriptableObject Lửa vào đây
 
     [Header("Fire")]
+    [Tooltip("Thời gian chờ (giây) sau khi ngừng nhận nhiệt rồi mới bắt đầu tự động hạ nhiệt")]
     public float delayBeforeCool = 5f;
+
+    [Tooltip("Tổng thời gian (giây) để thanh nhiệt độ giảm hoàn toàn từ 100% về 0%")]
     public float coolTime = 3f;
 
+    [Tooltip("Lượng sát thương Player phải nhận mỗi lần rút máu khi đang bị Bỏng")]
     public int burnDamage = 5;
+
+    [Tooltip("Khoảng thời gian nghỉ (giây) giữa các lần rút máu (ví dụ: 0.3s gây sát thương 1 lần)")]
     public float burnInterval = .3f;
 
     [Header("UI")]
+    [Tooltip("GameObject cha chứa toàn bộ khung thanh UI nhiệt độ (dùng để Ẩn/Hiện)")]
     public GameObject EffectFireBar;
+
+    [Tooltip("Component Image dạng Filled (dùng để làm hiệu ứng tăng/giảm thanh lửa)")]
     public Image EffectFireFill;
 
     [Header("Post Processing Visual")]
