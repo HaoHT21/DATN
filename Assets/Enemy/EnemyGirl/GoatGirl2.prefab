@@ -267,7 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75492beb5f6c9b8469c6c9aaa593f017, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7
+  moveSpeed: 5
   stopDistance: 3
   resumeDistance: 4
   teleportDistance: 15
@@ -310,8 +310,8 @@ MonoBehaviour:
   skillIcon: {fileID: 7110878671101974141, guid: ac074b5d7bd69484b88e8dc9d5829a93, type: 3}
   duration: 0
   cooldown: 3
-  dashDistance: 4
-  dashTime: 0.15
+  dashDistance: 6
+  dashTime: 0.1
 --- !u!1 &2020172152371118371
 GameObject:
   m_ObjectHideFlags: 0

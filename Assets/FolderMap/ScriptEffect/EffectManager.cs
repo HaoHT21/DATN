@@ -22,8 +22,11 @@ public class EffectManager : MonoBehaviour
     public float currentMoveSpeed;
 
     private float speedBonus = 0f;
-    private float slowMultiplier = 1f;
-    private float slideSlowMultiplier = 1f;
+    // ==========================================
+    // QUẢN LÝ CÁC NGUỒN LÀM CHẬM (MULTIPLE SLOW SOURCES)
+    // ==========================================
+    private List<float> generalSlowSources = new List<float>();
+    private List<float> slideSlowSources = new List<float>();
 
     private int freezeCount = 0;
 
@@ -142,7 +145,7 @@ public class EffectManager : MonoBehaviour
                 AddFreeze();
                 break;
             case EffectType.Slow:
-                SetSlow(0.5f); // Ví dụ slow 50%
+                AddSlow(0.5f); // Ví dụ slow 50%
                 break;
             case EffectType.Burn:
                 // Burn sẽ được xử lý trong FireZone.cs, nên không cần logic ở đây
@@ -170,7 +173,7 @@ public class EffectManager : MonoBehaviour
                 RemoveFreeze();
                 break;
             case EffectType.Slow:
-                RemoveSlow();
+                RemoveSlow(0.5f); // Ví dụ slow 50%
                 break;
             case EffectType.Poison:
                 if (poisonRoutine != null)
@@ -215,18 +218,33 @@ public class EffectManager : MonoBehaviour
         }
         else
         {
-            // Tắt trạng thái đóng băng
             if (player != null)
                 player.isFrozen = false;
 
-            // 2. Tính toán lại Tốc độ di chuyển khi hết Freeze
             float speed = baseMoveSpeed + speedBonus;
-            speed *= slowMultiplier;
-            speed *= slideSlowMultiplier;
+
+            // Lấy ra tỉ lệ Slow mạnh nhất từ danh sách General Slow
+            float maxSlow = 0f;
+            foreach (float slow in generalSlowSources)
+            {
+                if (slow > maxSlow) maxSlow = slow;
+            }
+            speed *= (1f - maxSlow);
+
+            // Lấy ra tỉ lệ Slow mạnh nhất từ danh sách Slide Slow
+            float maxSlideSlow = 0f;
+            foreach (float slow in slideSlowSources)
+            {
+                if (slow > maxSlideSlow) maxSlideSlow = slow;
+            }
+            speed *= (1f - maxSlideSlow);
 
             currentMoveSpeed = speed;
-            player.moveSpeed = speed;
-            player.attackRate = currentAttackRate; // Giữ nguyên attackRate chuẩn
+            if (player != null)
+            {
+                player.moveSpeed = speed;
+                player.attackRate = currentAttackRate;
+            }
         }
     }
 
@@ -258,29 +276,32 @@ public class EffectManager : MonoBehaviour
     }
 
     //=========================
-    // Slow
+    // General Slow (Tích lũy theo danh sách)
     //=========================
-    public void SetSlow(float percent)
+    public void AddSlow(float percent)
     {
-        slowMultiplier = 1f - percent;
+        generalSlowSources.Add(percent);
         ApplyStats();
     }
 
-    public void RemoveSlow()
+    public void RemoveSlow(float percent)
     {
-        slowMultiplier = 1f;
+        generalSlowSources.Remove(percent);
         ApplyStats();
     }
 
-    public void SetSlideSlow(float percent)
+    //=========================
+    // Slide Slow (Tích lũy theo danh sách)
+    //=========================
+    public void AddSlideSlow(float percent)
     {
-        slideSlowMultiplier = 1f - percent;
+        slideSlowSources.Add(percent);
         ApplyStats();
     }
 
-    public void RemoveSlideSlow()
+    public void RemoveSlideSlow(float percent)
     {
-        slideSlowMultiplier = 1f;
+        slideSlowSources.Remove(percent);
         ApplyStats();
     }
 

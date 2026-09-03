@@ -29,13 +29,13 @@ public class BossBloodController : BossController
         bossSkills.Clear();
 
         // Di chuyển: Phase 1 weight = 30, Phase 2 weight = 20
-        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 40, 20));
+        bossSkills.Add(new SkillWeight(() => DoMoveBehavior(Random.Range(0.8f, 1.5f)), 30, 20));
 
         // Skill 1 (AttackSkill): Phase 1 weight = 45, Phase 2 weight = 30
-        bossSkills.Add(new SkillWeight(AttackSkill, 30, 40));
+        bossSkills.Add(new SkillWeight(AttackSkill, 40, 30));
 
         // Skill 2 (SummonSkill): Phase 1 weight = 25, Phase 2 weight = 50
-        bossSkills.Add(new SkillWeight(SummonSkill, 30, 40));
+        bossSkills.Add(new SkillWeight(SummonSkill, 30, 50));
     }
 
     protected override void OnPhaseChange(int phase)

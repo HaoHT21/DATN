@@ -27,6 +27,11 @@ public class EnemyController : MonoBehaviour
     public float wanderRadius = 5f;      // Bán kính tìm điểm đi tuần ngẫu nhiên
     public float wanderWaitTime = 2f;    // Thời gian đứng nghỉ giữa các lần đi tuần
 
+    [Header("Wall Avoidance")]
+    public float wallCheckDistance = 0.8f;   // Khoảng cách quét tường phía trước
+    public float sideRayOffset = 0.4f;        // Độ rộng 2 tia bên hông (tương ứng bán kính Collider)
+    public LayerMask obstacleLayer;          // Layer của Tường / Chướng ngại vật
+
     // Cache Stealth
     private PlayerStealth playerStealth;
 
@@ -145,13 +150,11 @@ public class EnemyController : MonoBehaviour
     {
         if (path == null) return;
 
-        // Khi đã đến cuối đường đi (Đã tới nơi)
         if (currentWaypoint >= path.vectorPath.Count)
         {
             rb.linearVelocity = Vector2.zero;
             PlayAnimation("idle");
 
-            // Nếu đang đi tuần mà tới điểm cần tới -> Bắt đầu chờ để tìm điểm tiếp theo
             if (isWandering && wanderCoroutine == null)
             {
                 wanderCoroutine = StartCoroutine(WanderWaitRoutine());
@@ -162,15 +165,43 @@ public class EnemyController : MonoBehaviour
         Vector2 next = path.vectorPath[currentWaypoint];
         Vector2 dir = (next - rb.position).normalized;
 
-        rb.linearVelocity = dir * moveSpeed;
+        // --- XỬ LÝ LÁCH TƯỜNG (OBSTACLE AVOIDANCE) ---
+        Vector2 finalDir = AvoidWalls(dir);
 
-        Flip(dir);
+        rb.linearVelocity = finalDir * moveSpeed;
+
+        Flip(dir); // Vẫn Flip theo hướng mục tiêu
         PlayAnimation("run");
 
         if (Vector2.Distance(rb.position, next) < nextWaypointDistance)
         {
             currentWaypoint++;
         }
+    }
+    Vector2 AvoidWalls(Vector2 moveDir)
+    {
+        // Tạo 3 tia Raycast: Trung tâm, Trái, Phải
+        Vector2 perp = new Vector2(-moveDir.y, moveDir.x) * sideRayOffset;
+
+        RaycastHit2D hitCenter = Physics2D.Raycast(rb.position, moveDir, wallCheckDistance, obstacleLayer);
+        RaycastHit2D hitLeft = Physics2D.Raycast(rb.position + perp, moveDir, wallCheckDistance, obstacleLayer);
+        RaycastHit2D hitRight = Physics2D.Raycast(rb.position - perp, moveDir, wallCheckDistance, obstacleLayer);
+
+        // Nếu phát hiện chướng ngại vật ở phía trước hoặc 2 hông
+        if (hitCenter.collider != null || hitLeft.collider != null || hitRight.collider != null)
+        {
+            // Chọn điểm hit gần nhất để lấy Pháp tuyến (Normal) đẩy Enemy ra
+            RaycastHit2D hit = hitCenter ? hitCenter : (hitLeft ? hitLeft : hitRight);
+
+            // Tạo lực đẩy vuông góc với mặt tường để lách qua mép
+            Vector2 avoidance = hit.normal;
+
+            // Kết hợp hướng di chuyển ban đầu với hướng lách tường
+            Vector2 adjustedDir = (moveDir + avoidance * 1.5f).normalized;
+            return adjustedDir;
+        }
+
+        return moveDir;
     }
     #endregion
 

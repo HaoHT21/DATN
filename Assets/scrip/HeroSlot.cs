@@ -30,18 +30,13 @@ public class HeroSlot : MonoBehaviour
     // =========================================================
     // NHÂN VẬT HIỆN TẠI
     // =========================================================
-    // ID nhân vật đang được sử dụng.
-    // Mặc định = 20 để khớp nhân vật mặc định ban đầu.
     public static int CurrentHeroID = 20;
-
 
     // =========================================================
     // DANH SÁCH NHÂN VẬT ĐÃ MUA TRONG RAM
     // =========================================================
-    // Danh sách này sẽ được Save/Load thông qua SavesData.
     private static HashSet<int> sessionOwnedHeroes =
         new HashSet<int>();
-
 
     // =========================================================
     // LẤY DANH SÁCH NHÂN VẬT ĐÃ MUA
@@ -50,7 +45,6 @@ public class HeroSlot : MonoBehaviour
     {
         return new List<int>(sessionOwnedHeroes);
     }
-
 
     // =========================================================
     // LOAD DANH SÁCH NHÂN VẬT ĐÃ MUA
@@ -68,7 +62,6 @@ public class HeroSlot : MonoBehaviour
         }
     }
 
-
     // =========================================================
     // SET HERO HIỆN TẠI KHI LOAD SAVE
     // =========================================================
@@ -84,7 +77,6 @@ public class HeroSlot : MonoBehaviour
         );
     }
 
-
     // =========================================================
     // LẤY HERO HIỆN TẠI
     // =========================================================
@@ -92,7 +84,6 @@ public class HeroSlot : MonoBehaviour
     {
         return CurrentHeroID;
     }
-
 
     // =========================================================
     // SETUP SHOP
@@ -113,7 +104,6 @@ public class HeroSlot : MonoBehaviour
             Debug.LogError(
                 "HeroSlot chưa được gán đầy đủ UI trong Inspector!"
             );
-
             return;
         }
 
@@ -130,7 +120,6 @@ public class HeroSlot : MonoBehaviour
 
         UpdateDisplay();
     }
-
 
     // =========================================================
     // KIỂM TRA HERO ĐÃ SỞ HỮU CHƯA
@@ -151,7 +140,6 @@ public class HeroSlot : MonoBehaviour
         // Kiểm tra danh sách hero đã mua
         return sessionOwnedHeroes.Contains(hero.itemID);
     }
-
 
     // =========================================================
     // CẬP NHẬT HIỂN THỊ SHOP
@@ -174,7 +162,6 @@ public class HeroSlot : MonoBehaviour
         bool isOwned =
             CheckIsOwned(hero);
 
-
         // =====================================================
         // HERO ĐÃ SỞ HỮU
         // =====================================================
@@ -188,8 +175,6 @@ public class HeroSlot : MonoBehaviour
                 btnBuyText.text = "Đổi nhân vật";
             }
         }
-
-
         // =====================================================
         // HERO CHƯA SỞ HỮU
         // =====================================================
@@ -208,7 +193,6 @@ public class HeroSlot : MonoBehaviour
         }
     }
 
-
     // =========================================================
     // NEXT HERO
     // =========================================================
@@ -225,7 +209,6 @@ public class HeroSlot : MonoBehaviour
 
         UpdateDisplay();
     }
-
 
     // =========================================================
     // PREVIOUS HERO
@@ -245,7 +228,6 @@ public class HeroSlot : MonoBehaviour
         UpdateDisplay();
     }
 
-
     // =========================================================
     // MUA / ĐỔI NHÂN VẬT
     // =========================================================
@@ -261,11 +243,9 @@ public class HeroSlot : MonoBehaviour
         if (hero == null)
             return;
 
-
         // Kiểm tra đã sở hữu chưa
         bool isOwned =
             CheckIsOwned(hero);
-
 
         // =====================================================
         // ĐÃ SỞ HỮU -> ĐỔI NHÂN VẬT
@@ -276,21 +256,14 @@ public class HeroSlot : MonoBehaviour
                 $"[Shop] Đã chọn đổi sang nhân vật: {hero.heroName}"
             );
 
-
-            // =================================================
-            // LƯU ID HERO ĐANG SỬ DỤNG
-            // =================================================
-            CurrentHeroID =
-                hero.itemID;
-
-
-            // Đổi Player trên map
+            // Đổi Player trên map (hàm sẽ tự lưu hero cũ và nạp hero mới)
             SwapPlayerOnMap(hero);
+
+            // LƯU ID HERO ĐANG SỬ DỤNG
+            CurrentHeroID = hero.itemID;
 
             UpdateDisplay();
         }
-
-
         // =====================================================
         // CHƯA SỞ HỮU -> MUA
         // =====================================================
@@ -305,29 +278,20 @@ public class HeroSlot : MonoBehaviour
                         hero.itemID
                     );
 
-
                 if (isSuccess)
                 {
-                    // =========================================
                     // THÊM HERO VÀO DANH SÁCH ĐÃ MUA
-                    // =========================================
                     sessionOwnedHeroes.Add(
                         hero.itemID
                     );
 
-
-                    // =========================================
-                    // LƯU HERO ĐANG SỬ DỤNG TRONG RAM
-                    // =========================================
-                    CurrentHeroID =
-                        hero.itemID;
-
-
-                    // Đổi Player trên map
+                    // Đổi Player trên map (hàm sẽ tự lưu hero cũ và nạp hero mới)
                     SwapPlayerOnMap(hero);
 
-                    UpdateDisplay();
+                    // LƯU HERO ĐANG SỬ DỤNG TRONG RAM
+                    CurrentHeroID = hero.itemID;
 
+                    UpdateDisplay();
 
                     Debug.Log(
                         $"<color=green>[Shop]</color> " +
@@ -353,7 +317,6 @@ public class HeroSlot : MonoBehaviour
         }
     }
 
-
     // =========================================================
     // SWAP PLAYER
     // =========================================================
@@ -368,10 +331,13 @@ public class HeroSlot : MonoBehaviour
                 $"[Shop] HeroData {hero.heroName} " +
                 $"chưa gán Hero Prefab!"
             );
-
             return;
         }
 
+        // =====================================================
+        // 0. LƯU TIẾN TRÌNH LEVEL & EXP CỦA HERO CŨ TRƯỚC KHI BỊ XÓA
+        // =====================================================
+        SaveHeroProgress(CurrentHeroID);
 
         // =====================================================
         // 1. TÌM PLAYER CŨ
@@ -385,20 +351,14 @@ public class HeroSlot : MonoBehaviour
         Quaternion spawnRot =
             Quaternion.identity;
 
-
-        // =====================================================
-        // DANH SÁCH SÚNG ĐANG CẦM
-        // =====================================================
+        // Danh sách súng đang cầm
         List<Transform> currentGuns =
             new List<Transform>();
 
         List<Vector3> originalGunScales =
             new List<Vector3>();
 
-
-        // =====================================================
-        // LẤY VỊ TRÍ PLAYER CŨ
-        // =====================================================
+        // Lấy vị trí Player cũ
         if (oldPlayers.Length > 0)
         {
             spawnPos =
@@ -407,21 +367,16 @@ public class HeroSlot : MonoBehaviour
             spawnRot =
                 oldPlayers[0].transform.rotation;
 
-
             foreach (GameObject p in oldPlayers)
             {
                 p.tag = "Untagged";
 
-
-                // =============================================
-                // TÌM WEAPON HOLDER
-                // =============================================
+                // Tìm WeaponHolder
                 Transform oldHolder =
                     FindDeepChild(
                         p.transform,
                         "WeaponHolder"
                     );
-
 
                 if (oldHolder != null)
                 {
@@ -436,7 +391,6 @@ public class HeroSlot : MonoBehaviour
 
                         currentGuns.Add(gun);
 
-
                         // Lưu scale gốc
                         originalGunScales.Add(
                             gun.localScale
@@ -444,22 +398,16 @@ public class HeroSlot : MonoBehaviour
                     }
                 }
 
-
-                // =============================================
-                // TÁCH SÚNG RA KHỎI PLAYER CŨ
-                // =============================================
+                // Tách súng ra khỏi Player cũ
                 foreach (Transform gun in currentGuns)
                 {
                     gun.SetParent(null);
                 }
 
-
                 p.SetActive(false);
-
                 Destroy(p);
             }
         }
-
 
         // =====================================================
         // 2. SINH PLAYER MỚI
@@ -473,6 +421,10 @@ public class HeroSlot : MonoBehaviour
 
         newPlayer.tag = "Player";
 
+        // =====================================================
+        // 2.1 KHÔI PHỤC TIẾN TRÌNH CHO HERO MỚI ĐƯỢC CHỌN
+        // =====================================================
+        LoadHeroProgress(hero.itemID, newPlayer);
 
         // =====================================================
         // 3. CẬP NHẬT CINEMACHINE CAMERA
@@ -481,7 +433,6 @@ public class HeroSlot : MonoBehaviour
             FindFirstObjectByType<
                 Unity.Cinemachine.CinemachineCamera
             >();
-
 
         if (cmCam6 != null)
         {
@@ -492,7 +443,6 @@ public class HeroSlot : MonoBehaviour
                 newPlayer.transform;
         }
 
-
         // =====================================================
         // 4. TÌM WEAPON HOLDER PLAYER MỚI
         // =====================================================
@@ -501,7 +451,6 @@ public class HeroSlot : MonoBehaviour
                 newPlayer.transform,
                 "WeaponHolder"
             );
-
 
         // =====================================================
         // 5. GẮN LẠI TOÀN BỘ SÚNG
@@ -518,7 +467,6 @@ public class HeroSlot : MonoBehaviour
                 Transform gun =
                     currentGuns[i];
 
-
                 gun.SetParent(
                     newHolder
                 );
@@ -529,20 +477,16 @@ public class HeroSlot : MonoBehaviour
                 gun.localRotation =
                     Quaternion.identity;
 
-
                 // Trả scale ban đầu
                 gun.localScale =
                     originalGunScales[i];
-
 
                 gun.gameObject.SetActive(
                     true
                 );
 
-
                 SpriteRenderer sr =
                     gun.GetComponent<SpriteRenderer>();
-
 
                 if (sr == null)
                 {
@@ -552,24 +496,17 @@ public class HeroSlot : MonoBehaviour
                         >();
                 }
 
-
                 if (sr != null)
                 {
                     sr.enabled = true;
-
                     sr.sortingOrder = 15;
                 }
             }
         }
 
-
-        // =====================================================
-        // QUAN TRỌNG
-        // SAU KHI ĐỔI PLAYER, ĐỒNG BỘ WEAPON VISUAL
-        // =====================================================
+        // Đồng bộ Weapon Visual
         PlayerController newController =
             newPlayer.GetComponent<PlayerController>();
-
 
         if (newController != null)
         {
@@ -577,6 +514,48 @@ public class HeroSlot : MonoBehaviour
         }
     }
 
+    // =========================================================
+    // HỆ THỐNG LƯU / TẢI LEVEL & CHỈ SỐ TỪ PLAYERHEALTH
+    // =========================================================
+    private void SaveHeroProgress(int heroID)
+    {
+        PlayerHealth health = FindFirstObjectByType<PlayerHealth>();
+        if (health != null)
+        {
+            PlayerPrefs.SetInt("Hero_Level_" + heroID, health.currentLevel);
+            PlayerPrefs.SetInt("Hero_EXP_" + heroID, health.currentEXP);
+            PlayerPrefs.SetInt("Hero_MaxHP_" + heroID, health.maxHealth);
+            PlayerPrefs.SetInt("Hero_MaxMP_" + heroID, health.maxMana);
+            PlayerPrefs.Save();
+
+            Debug.Log($"<color=cyan>[Shop Save Progress]</color> Hero ID: {heroID} | Level: {health.currentLevel}, EXP: {health.currentEXP}, MaxHP: {health.maxHealth}, MaxMP: {health.maxMana}");
+        }
+    }
+
+    private void LoadHeroProgress(int heroID, GameObject newPlayer)
+    {
+        PlayerHealth health = newPlayer.GetComponent<PlayerHealth>();
+        if (health == null) health = FindFirstObjectByType<PlayerHealth>();
+
+        if (health != null)
+        {
+            int savedLevel = PlayerPrefs.GetInt("Hero_Level_" + heroID, 1);
+            int savedEXP = PlayerPrefs.GetInt("Hero_EXP_" + heroID, 0);
+            int savedMaxHP = PlayerPrefs.GetInt("Hero_MaxHP_" + heroID, 100 + (savedLevel - 1) * 20);
+            int savedMaxMP = PlayerPrefs.GetInt("Hero_MaxMP_" + heroID, 100 + (savedLevel - 1) * 10);
+
+            health.currentLevel = savedLevel;
+            health.currentEXP = savedEXP;
+            health.maxHealth = savedMaxHP;
+            health.currentHealth = savedMaxHP;
+            health.maxMana = savedMaxMP;
+            health.currentMana = savedMaxMP;
+
+            health.UpdateUI();
+
+            Debug.Log($"<color=yellow>[Shop Load Progress]</color> Hero ID: {heroID} | Nạp Level: {savedLevel}, EXP: {savedEXP}, MaxHP: {savedMaxHP}, MaxMP: {savedMaxMP}");
+        }
+    }
 
     // =========================================================
     // TÌM CHILD OBJECT THEO TÊN
@@ -591,13 +570,11 @@ public class HeroSlot : MonoBehaviour
             if (child.name == name)
                 return child;
 
-
             Transform result =
                 FindDeepChild(
                     child,
                     name
                 );
-
 
             if (result != null)
                 return result;
@@ -605,7 +582,6 @@ public class HeroSlot : MonoBehaviour
 
         return null;
     }
-
 
     // =========================================================
     // RESET TOÀN BỘ SHOP DATA
@@ -616,27 +592,22 @@ public class HeroSlot : MonoBehaviour
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
-
         // Xóa danh sách hero đã mua trong RAM
         sessionOwnedHeroes.Clear();
 
-
         // Reset hero hiện tại về mặc định ID 20
         CurrentHeroID = 20;
-
 
         Debug.Log(
             "<color=green>[Shop Reset]</color> " +
             "Đã xóa toàn bộ dữ liệu mua nhân vật!"
         );
 
-
         // Cập nhật tất cả HeroSlot
         HeroSlot[] slots =
             FindObjectsByType<HeroSlot>(
                 FindObjectsSortMode.None
             );
-
 
         foreach (var slot in slots)
         {

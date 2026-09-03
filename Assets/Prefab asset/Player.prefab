@@ -37,7 +37,7 @@ Transform:
   m_GameObject: {fileID: 2518873520825815000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 40, y: -13, z: 0}
+  m_LocalPosition: {x: 48.473656, y: -11.402928, z: 0}
   m_LocalScale: {x: 6, y: 6, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -157,7 +157,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.00815881, y: -0.004984066}
+  m_Offset: {x: 0.00815881, y: -0.019961486}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -167,7 +167,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.11085135, y: 0.19003189}
+  m_Size: {x: 0.11085135, y: 0.14340131}
   m_EdgeRadius: 0
 --- !u!50 &4910114394088830674
 Rigidbody2D:
@@ -213,6 +213,7 @@ MonoBehaviour:
   weaponHolder: {fileID: 803386836572654701}
   firePoint: {fileID: 8901015696989878722}
   weaponRotationOffset: -45
+  heroID: 100
   shootSound: {fileID: 8300000, guid: e08bb22e01a994d498c86d426a0e84dd, type: 3}
   shootVolume: 100
   healSound: {fileID: 0}

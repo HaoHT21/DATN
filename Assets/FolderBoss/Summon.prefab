@@ -212,6 +212,11 @@ MonoBehaviour:
   loseTargetDistance: 10
   wanderRadius: 5
   wanderWaitTime: 2
+  wallCheckDistance: 0.8
+  sideRayOffset: 0.4
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &6454910713266590159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,8 +257,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e4851d279219164daa38ecc8c8a500d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
+  maxHealth: 50
+  currentHealth: 50
   onlyTakeBombDamage: 0
   expReward: 30
   destroyDelay: 0.5

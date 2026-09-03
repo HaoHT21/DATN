@@ -47,7 +47,14 @@ public class PlayerStats : MonoBehaviour
         {
             Score -= price;
             UpdateUI();
-            SpawnPurchasedItem(itemID);
+
+            // CHỈ spawn nếu là vật phẩm thông thường rớt dưới đất (itemID < 20)
+            // Nếu là Hero (itemID >= 20), HeroSlot.cs sẽ tự xử lý SwapPlayerOnMap để giữ đúng Level, HP, Mana và Súng
+            if (itemID < 20)
+            {
+                SpawnPurchasedItem(itemID);
+            }
+
             Debug.Log("[Shop] Mua thành công!");
             return true;
         }
@@ -60,35 +67,22 @@ public class PlayerStats : MonoBehaviour
 
     private void SpawnPurchasedItem(int id)
     {
-        // 1. Lấy prefab từ Manager tương ứng
-        GameObject prefab = (id >= 20) ? HiroManager.Instance?.GetHeroPrefabByID(id) : ShopManager.Instance?.GetPrefabByID(id);
+        // Lấy prefab vật phẩm từ ShopManager
+        GameObject prefab = ShopManager.Instance?.GetPrefabByID(id);
 
         if (prefab != null)
         {
-            // 2. Tìm vị trí của Player hiện tại trong Scene
+            // Tìm vị trí của Player hiện tại trong Scene
             GameObject currentObj = GameObject.FindGameObjectWithTag("Player");
             Vector3 spawnPos = (currentObj != null) ? currentObj.transform.position : Vector3.zero;
 
-            // 3. Xử lý logic
-            if (id >= 20)
-            {
-                // Thay thế nhân vật
-                if (currentObj != null) Destroy(currentObj);
-
-                GameObject newPlayer = Instantiate(prefab, spawnPos, Quaternion.identity);
-                newPlayer.tag = "Player"; // Đảm bảo gán lại Tag để các lần mua sau tìm được
-                Debug.Log($"[Shop] Đã thay thế nhân vật ID: {id}");
-            }
-            else
-            {
-                // Rớt vật phẩm dưới chân Player (Offset Y = -0.8f)
-                Instantiate(prefab, spawnPos + new Vector3(0, -0.8f, 0), Quaternion.identity);
-                Debug.Log($"[Shop] Đã spawn vật phẩm ID: {id} tại vị trí của Player");
-            }
+            // Rớt vật phẩm dưới chân Player (Offset Y = -0.8f)
+            Instantiate(prefab, spawnPos + new Vector3(0, -0.8f, 0), Quaternion.identity);
+            Debug.Log($"[Shop] Đã spawn vật phẩm ID: {id} tại vị trí của Player");
         }
         else
         {
-            Debug.LogError($"[Shop] Không tìm thấy Prefab cho ID: {id}. Kiểm tra lại ShopManager/HiroManager!");
+            Debug.LogError($"[Shop] Không tìm thấy Prefab cho ID: {id}. Kiểm tra lại ShopManager!");
         }
     }
 

@@ -293,5 +293,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
-  expReward: 30
+  onlyTakeBombDamage: 0
+  expReward: 10000
   destroyDelay: 0.2
+  showHealthBar: 1

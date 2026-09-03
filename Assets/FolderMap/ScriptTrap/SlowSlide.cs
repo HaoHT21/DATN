@@ -16,7 +16,7 @@ public class SlowSlide : MonoBehaviour
         effect = other.GetComponent<EffectManager>();
 
         if (effect != null)
-            effect.SetSlideSlow(slowPercent);
+            effect.AddSlideSlow(slowPercent);
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -25,6 +25,6 @@ public class SlowSlide : MonoBehaviour
             return;
 
         if (effect != null)
-            effect.RemoveSlideSlow();
+            effect.RemoveSlideSlow(slowPercent);
     }
 }

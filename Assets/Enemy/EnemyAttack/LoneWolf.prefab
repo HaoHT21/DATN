@@ -298,6 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
+  onlyTakeBombDamage: 0
   expReward: 30
   destroyDelay: 0.5
   showHealthBar: 1
@@ -319,6 +320,14 @@ MonoBehaviour:
   nextWaypointDistance: 0.2
   updateRate: 0.25
   enemyVisual: {fileID: 804165510151357474}
+  loseTargetDistance: 10
+  wanderRadius: 5
+  wanderWaitTime: 2
+  wallCheckDistance: 0.8
+  sideRayOffset: 0.4
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &4903979808780016093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,8 +341,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 2269104888992594006, guid: af1b4e67cb2e0504a823a28bb003fa40, type: 3}
-  minCoin: 25
-  maxCoin: 50
+  minCoin: 0
+  maxCoin: 75
 --- !u!114 &8689311037017913672
 MonoBehaviour:
   m_ObjectHideFlags: 0

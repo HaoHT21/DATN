@@ -210,6 +210,14 @@ MonoBehaviour:
   nextWaypointDistance: 0.2
   updateRate: 0.25
   enemyVisual: {fileID: 7763603407439364821}
+  loseTargetDistance: 10
+  wanderRadius: 5
+  wanderWaitTime: 2
+  wallCheckDistance: 0.8
+  sideRayOffset: 0.4
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &4313215253566040633
 MonoBehaviour:
   m_ObjectHideFlags: 0

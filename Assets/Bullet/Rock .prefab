@@ -160,7 +160,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e66ea3123bcd0a48b50344053939b28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 15
+  knockbackForce: 8
   hitCollider: {fileID: 2586480633093719889}
   Rock: {fileID: 6429866210589312552}
 --- !u!1 &6429866210589312552

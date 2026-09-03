@@ -94,7 +94,7 @@ public class SlowZone : MonoBehaviour
                     if (!slowActive && playerEffect != null)
                     {
                         slowActive = true;
-                        playerEffect.SetSlow(slowPercent);
+                        playerEffect.AddSlow(slowPercent);
                     }
 
                     // Đầy thanh -> Chuyển sang trạng thái Rút (Draining)
@@ -114,7 +114,7 @@ public class SlowZone : MonoBehaviour
                     if (slowActive && playerEffect != null)
                     {
                         slowActive = false;
-                        playerEffect.RemoveSlow();
+                        playerEffect.RemoveSlow(slowPercent);
                     }
 
                     // Hết thanh -> Random thời gian chờ mới cho chu kỳ tiếp theo
@@ -161,7 +161,7 @@ public class SlowZone : MonoBehaviour
 
         if (slowActive && playerEffect != null)
         {
-            playerEffect.RemoveSlow();
+            playerEffect.RemoveSlow(slowPercent);
         }
 
         slowActive = false;
